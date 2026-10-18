@@ -73,3 +73,10 @@ Each entry names the rule above that it satisfies.
   (`tools/test_setup_*.py` with two golden JSONs, `test_strata_mcp.py`, `test_qimage.py`,
   `test_docker_entrypoint.py`, `test_poly_prebuilt.py`). The jobs of `setup.py` that were not downloads (choosing
   engine flags per card, RAM and context) become documented flags in `README.md`.
+- **Rule 2, Python in the serving path:** `serve/` (92 files, 33.9k lines: the HTTP server with the OpenAI,
+  Anthropic and Responses dialects, the jinja2 chat templating, the Python tokenizer path, the per-family
+  reasoning and tool-call parsers, MCP, structured output, replicas, Prometheus, the hardware monitor, the web
+  UI and 58 test files) and `polystrata.py` (the terminal front end, which imports `serve/`). Replaced by the C++
+  front end in `frontend/`, built from the pinned llama.cpp's `common`, `mtmd`, `cpp-httplib` and the
+  engine-agnostic files of `tools/server`. The engines' stdin/stdout protocol is unchanged.
+
