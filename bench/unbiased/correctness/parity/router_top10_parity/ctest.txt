@@ -1,0 +1,31 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 61
+    Start 61: router_top10_parity
+
+61: Test command: /home/rk/us2-build/build/bin/router_top10_parity "--selftest"
+61: Working Directory: /home/rk/us2-build/build
+61: Test timeout computed to be: 1200
+61:   random normal              ids exact (0 bad)   weights worst rel 1.378e-07 (0 over tol)   |sum-1| 2.2e-08
+61:   all equal (ties)           ids exact (0 bad)   weights worst rel 0.000e+00 (0 over tol)   |sum-1| 1.5e-08
+61:   12-way exact tie           ids exact (0 bad)   weights worst rel 1.347e-07 (0 over tol)   |sum-1| 2.2e-08
+61:   dominant expert            ids exact (0 bad)   weights worst rel 5.960e-08 (0 over tol)   |sum-1| 1.9e-08
+61:   clamp reachability         top-10 sum >= k/n = 0.01953, clamp is 6.104e-05 -> margin 320x  (CLAMP IS UNREACHABLE, asserted)
+61: 
+61: router_top10: 0 failures over 4 distributions x 64 tokens x 512 experts, top-10
+61: router_top10_parity OK
+1/1 Test #61: router_top10_parity ..............   Passed    0.10 sec
+
+The following tests passed:
+	router_top10_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.10 sec

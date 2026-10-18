@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-iq4xs/base/p05.top.txt",
+ "steps": 128,
+ "top1_agree": 0.9921875,
+ "kl_top20_mean": 0.0011540533347966038,
+ "kl_top20_p99": 0.011554426833282679,
+ "top20_overlap_mean": 0.97734375,
+ "missing_ids": 58,
+ "t1_positions": 119,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.0016333094922101087,
+  "kl_full_p99": 0.032941712800391536,
+  "kl_top20_mean": 0.0017702432661286986,
+  "top1_agree": 0.9921875
+ },
+ "t2_ratio_vs_full_floor": 0.7065735797781958,
+ "t2_ratio_vs_top20_floor": 0.6519179351662636,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p05",
+ "set": "short"
+}

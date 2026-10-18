@@ -1,0 +1,24 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 76
+    Start 76: kv_q8_parity
+
+76: Test command: /home/rk/us2-build/build/bin/kv_q8_parity
+76: Working Directory: /home/rk/us2-build/build
+76: Test timeout computed to be: 1200
+76: kv_q8_parity: OK (worst INT8-vs-FP16 error 0.590 quantization steps)
+1/1 Test #76: kv_q8_parity .....................   Passed    0.21 sec
+
+The following tests passed:
+	kv_q8_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.22 sec

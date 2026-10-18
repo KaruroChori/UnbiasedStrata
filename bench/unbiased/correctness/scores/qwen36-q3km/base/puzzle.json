@@ -1,0 +1,31 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-q3km/base/puzzle.top.txt",
+ "steps": 324,
+ "top1_agree": 0.9845679012345679,
+ "kl_top20_mean": 0.0025282662211637283,
+ "kl_top20_p99": 0.035128110892176795,
+ "top20_overlap_mean": 0.9580246913580246,
+ "missing_ids": 272,
+ "t1_positions": 301,
+ "t1_failures": [
+  [
+   144,
+   5435,
+   1781,
+   0.7599468231201172
+  ]
+ ],
+ "floor": {
+  "steps": 324,
+  "kl_full_mean": 0.0017994462273156048,
+  "kl_full_p99": 0.02536397516232396,
+  "kl_top20_mean": 0.0018647958432447065,
+  "top1_agree": 0.9907407407407407
+ },
+ "t2_ratio_vs_full_floor": 1.405024603005431,
+ "t2_ratio_vs_top20_floor": 1.355787139017104,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "puzzle",
+ "set": "code"
+}

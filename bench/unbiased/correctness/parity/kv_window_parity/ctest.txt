@@ -1,0 +1,31 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 78
+    Start 78: kv_window_parity
+
+78: Test command: /home/rk/us2-build/build/bin/kv_window_parity
+78: Working Directory: /home/rk/us2-build/build
+78: Test timeout computed to be: 1200
+78: kv_window_parity: verify-window KV calls on a streamed layer and on a ring, plain launches and graph replays
+78:   q4_0  direct: 11487 windows (311 attended), 586175 block lookups, 96467 misses, 3784 resident, overflow 0, host/ring-host bad 0, stale slots 0
+78:   q4_0  graph : 11382 windows (308 attended), 531446 block lookups, 91622 misses, 3784 resident, overflow 0, host/ring-host bad 0, stale slots 0
+78:   int8  direct: 11415 windows (309 attended), 569814 block lookups, 89957 misses, 3784 resident, overflow 0, host/ring-host bad 0, stale slots 0
+78:   int8  graph : 11386 windows (308 attended), 544671 block lookups, 88260 misses, 3784 resident, overflow 0, host/ring-host bad 0, stale slots 0
+78:   k8v4  direct: 11361 windows (308 attended), 521080 block lookups, 89671 misses, 3784 resident, overflow 0, host/ring-host bad 0, stale slots 0
+78:   k8v4  graph : 11498 windows (311 attended), 515173 block lookups, 83939 misses, 3784 resident, overflow 0, host/ring-host bad 0, stale slots 0
+78: PASS
+1/1 Test #78: kv_window_parity .................   Passed    9.58 sec
+
+The following tests passed:
+	kv_window_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   9.59 sec

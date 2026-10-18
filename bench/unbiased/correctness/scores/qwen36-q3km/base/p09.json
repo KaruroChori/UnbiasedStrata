@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-q3km/base/p09.top.txt",
+ "steps": 23,
+ "top1_agree": 1.0,
+ "kl_top20_mean": 0.011753040265769048,
+ "kl_top20_p99": 0.07067170115256653,
+ "top20_overlap_mean": 0.9565217391304346,
+ "missing_ids": 20,
+ "t1_positions": 20,
+ "t1_failures": [],
+ "floor": {
+  "steps": 23,
+  "kl_full_mean": 0.004483616614687015,
+  "kl_full_p99": 0.030587791279045755,
+  "kl_top20_mean": 0.010179418344423284,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 2.621330340169927,
+ "t2_ratio_vs_top20_floor": 1.154588589259411,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p09",
+ "set": "short"
+}

@@ -1,0 +1,24 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 109
+    Start 109: q8k_quant_parity
+
+109: Test command: /home/rk/us2-build/build/bin/q8k_quant_parity
+109: Working Directory: /home/rk/us2-build/build
+109: Test timeout computed to be: 1200
+109: q8k_quant_parity: 16 rows x 4 sizes, AVX-2 copy checked, AVX1 copy skipped (AVX2 present, no AVX, or STRATA_FORCE_ISA): identical
+1/1 Test #109: q8k_quant_parity .................   Passed    0.01 sec
+
+The following tests passed:
+	q8k_quant_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.01 sec

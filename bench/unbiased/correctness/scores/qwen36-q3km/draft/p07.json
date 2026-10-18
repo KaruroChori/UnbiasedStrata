@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-q3km/draft/p07.top.txt",
+ "steps": 69,
+ "top1_agree": 1.0,
+ "kl_top20_mean": 0.0008011975676739395,
+ "kl_top20_p99": 0.014636184953270376,
+ "top20_overlap_mean": 0.9528985507246377,
+ "missing_ids": 65,
+ "t1_positions": 68,
+ "t1_failures": [],
+ "floor": {
+  "steps": 69,
+  "kl_full_mean": 0.0005147860458042722,
+  "kl_full_p99": 0.008650832885968743,
+  "kl_top20_mean": 0.0005323156060445584,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 1.556370018581592,
+ "t2_ratio_vs_top20_floor": 1.5051175629197575,
+ "T1": "pass",
+ "T2": "FAIL",
+ "seq": "p07",
+ "set": "short"
+}

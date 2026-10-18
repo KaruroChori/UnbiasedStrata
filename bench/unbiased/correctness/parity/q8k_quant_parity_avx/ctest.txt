@@ -1,0 +1,24 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 110
+    Start 110: q8k_quant_parity_avx
+
+110: Test command: /usr/bin/cmake "-E" "env" "STRATA_FORCE_ISA=avx" "/home/rk/us2-build/build/bin/q8k_quant_parity"
+110: Working Directory: /home/rk/us2-build/build
+110: Test timeout computed to be: 1200
+110: q8k_quant_parity: 16 rows x 4 sizes, AVX-2 copy skipped (no AVX2, or STRATA_FORCE_ISA), AVX1 copy checked: identical
+1/1 Test #110: q8k_quant_parity_avx .............   Passed    0.02 sec
+
+The following tests passed:
+	q8k_quant_parity_avx
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.02 sec

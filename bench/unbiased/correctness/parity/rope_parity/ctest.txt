@@ -1,0 +1,40 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 57
+    Start 57: rope_parity
+
+57: Test command: /home/rk/us2-build/build/bin/rope_parity "--selftest"
+57: Working Directory: /home/rk/us2-build/build
+57: Test timeout computed to be: 1200
+57:   rope table vs float64 reference   bit-exact (0 of 2048 entries differ, worst 0.0e+00)
+57:   rope rotation vs host reference   agrees (0 of 49152 over 1e-6, worst rel 1.089e-07)
+57:   pairing: dim 0 set -> NEOX moves dim 32 (o[half]=0.656987), adjacent would move dim 1 (o[1]=0.000000)   NEOX confirmed
+57:   scaled table, None vs unscaled builder  bit-identical
+57:   scaled table, linear factor 4          bit-exact (0 of 2048 entries differ)
+57:   linear(4) @ p == none @ p/4            bit-identical (0 of 32 rows differ)
+57:   scaled table, yarn factor 4            bit-exact (0 of 2048 entries differ)
+57:   yarn structure: cos_tab[0]==mscale 1.1386, first pair extrapolates, last interpolates   confirmed
+57:   observability: none vs linear(2) at position 100   visible (|0.8623 - 0.9650|)
+57:   rope rotation over the yarn table      agrees (0 of 49152 over 1e-6, worst rel 1.031e-07)
+57:   native path vs table path, yarn factor 2   agrees (0 of 98304 over 3e-3, worst rel 2.775e-04)
+57:   native path vs table path, none            agrees (0 of 98304 over 3e-3, worst rel 2.595e-04)
+57:   native_qsa_rms_norm_rope hd=128 nr=64      bit-identical (0 of 49152 elements differ)
+57:   native_qsa_rms_norm_rope hd=256 nr=64      bit-identical (0 of 98304 elements differ)
+57: 
+57: rope: 0 failures
+57: rope_parity OK
+1/1 Test #57: rope_parity ......................   Passed    0.13 sec
+
+The following tests passed:
+	rope_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.13 sec

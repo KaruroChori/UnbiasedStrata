@@ -1,0 +1,31 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-q3km/base/d4k.top.txt",
+ "steps": 256,
+ "top1_agree": 0.9765625,
+ "kl_top20_mean": 0.024806356445532446,
+ "kl_top20_p99": 0.24031151284886826,
+ "top20_overlap_mean": 0.9582031249999999,
+ "missing_ids": 214,
+ "t1_positions": 203,
+ "t1_failures": [
+  [
+   96,
+   4361,
+   4560,
+   0.6801185607910156
+  ]
+ ],
+ "floor": {
+  "steps": 256,
+  "kl_full_mean": 0.004027863624942408,
+  "kl_full_p99": 0.03316883404244119,
+  "kl_top20_mean": 0.02747912961735597,
+  "top1_agree": 0.9765625
+ },
+ "t2_ratio_vs_full_floor": 6.15868826638517,
+ "t2_ratio_vs_top20_floor": 0.9027344312195614,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "d4k",
+ "set": "long"
+}

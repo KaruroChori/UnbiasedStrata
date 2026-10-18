@@ -1,0 +1,24 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 137
+    Start 137: poly_kv_q8_test
+
+137: Test command: /home/rk/us2-build/build/bin/poly_kv_q8_test
+137: Working Directory: /home/rk/us2-build/build
+137: Test timeout computed to be: 1200
+137: poly_kv_q8_test: PASS (91530 values checked)
+1/1 Test #137: poly_kv_q8_test ..................   Passed    0.17 sec
+
+The following tests passed:
+	poly_kv_q8_test
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.18 sec

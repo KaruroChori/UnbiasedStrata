@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-iq4xs/draft/lru.top.txt",
+ "steps": 400,
+ "top1_agree": 0.9925,
+ "kl_top20_mean": 0.0008078353554366959,
+ "kl_top20_p99": 0.017706117123544654,
+ "top20_overlap_mean": 0.9617499999999999,
+ "missing_ids": 306,
+ "t1_positions": 390,
+ "t1_failures": [],
+ "floor": {
+  "steps": 400,
+  "kl_full_mean": 0.001073313427257854,
+  "kl_full_p99": 0.01966593316064257,
+  "kl_top20_mean": 0.0010938871950349949,
+  "top1_agree": 0.995
+ },
+ "t2_ratio_vs_full_floor": 0.7526555942755578,
+ "t2_ratio_vs_top20_floor": 0.7384996909218342,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "lru",
+ "set": "code"
+}

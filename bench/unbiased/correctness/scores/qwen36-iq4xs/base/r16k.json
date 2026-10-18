@@ -1,0 +1,31 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-iq4xs/base/r16k.top.txt",
+ "steps": 510,
+ "top1_agree": 0.9764705882352941,
+ "kl_top20_mean": 0.014157940384446902,
+ "kl_top20_p99": 0.20906598720971376,
+ "top20_overlap_mean": 0.9533333333333333,
+ "missing_ids": 476,
+ "t1_positions": 421,
+ "t1_failures": [
+  [
+   440,
+   9665,
+   28109,
+   0.5232734680175781
+  ]
+ ],
+ "floor": {
+  "steps": 510,
+  "kl_full_mean": 0.0037526994904357176,
+  "kl_full_p99": 0.03083894492769008,
+  "kl_top20_mean": 0.014018120926982292,
+  "top1_agree": 0.9725490196078431
+ },
+ "t2_ratio_vs_full_floor": 3.772734912702284,
+ "t2_ratio_vs_top20_floor": 1.009974193987404,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "r16k",
+ "set": "realtext"
+}

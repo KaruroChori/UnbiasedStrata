@@ -1,0 +1,25 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 48
+    Start 48: verify_parity
+
+48: Test command: /home/rk/us2-build/build/bin/verify_parity "--selftest"
+48: Working Directory: /home/rk/us2-build/build
+48: Test timeout computed to be: 1200
+48: argmax_rows, row_top_prob_split: bitwise equal to the one-block kernels (ties, NaN, -inf, 1-8 rows on one scratch)
+48: verify_parity: PASS
+1/1 Test #48: verify_parity ....................   Passed    0.23 sec
+
+The following tests passed:
+	verify_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.23 sec

@@ -1,0 +1,35 @@
+ok   pos     0 rows  1: 0.00e+00 from the other kernels, alone same, on the card same
+ok   pos     0 rows  2: 2.38e-07 from the other kernels, alone same, on the card same
+ok   pos     0 rows  4: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos     0 rows  8: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos     5 rows  1: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos     5 rows  2: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos     5 rows  4: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos     5 rows  8: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos    63 rows  1: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos    63 rows  2: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos    63 rows  4: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos    63 rows  8: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos    64 rows  1: 4.17e-07 from the other kernels, alone same, on the card same
+ok   pos    64 rows  2: 4.17e-07 from the other kernels, alone same, on the card same
+ok   pos    64 rows  4: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos    64 rows  8: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos  1000 rows  1: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos  1000 rows  2: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos  1000 rows  4: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos  1000 rows  8: 5.96e-07 from the other kernels, alone same, on the card same
+ok   pos  4095 rows  1: 2.38e-07 from the other kernels, alone same, on the card same
+ok   pos  4095 rows  2: 2.38e-07 from the other kernels, alone same, on the card same
+ok   pos  4095 rows  4: 2.38e-07 from the other kernels, alone same, on the card same
+ok   pos  4095 rows  8: 3.58e-07 from the other kernels, alone same, on the card same
+ok   pos 30000 rows  1: 1.79e-07 from the other kernels, alone same, on the card same
+ok   pos 30000 rows  2: 2.09e-07 from the other kernels, alone same, on the card same
+ok   pos 30000 rows  4: 2.09e-07 from the other kernels, alone same, on the card same
+ok   pos 30000 rows  8: 2.10e-07 from the other kernels, alone same, on the card same
+ok   pos  2000 rows 13: 4.77e-07 from the other kernels, alone same, on the card same
+ok   pos 32752 rows 16: 5.36e-07 from the other kernels, alone same, on the card same
+ok   batch pos     0 rows   37: 1.67e-03 from attend() (results up to 3.35)
+ok   batch pos     0 rows 1024: 1.67e-03 from attend() (results up to 3.35)
+ok   batch pos  1000 rows  517: 1.02e-03 from attend() (results up to 2.56)
+ok   batch pos 30000 rows  700: 6.14e-04 from attend() (results up to 1.41)
+all passed

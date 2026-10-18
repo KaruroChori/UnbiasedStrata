@@ -1,0 +1,24 @@
+blk.40 expert   0  Q3_K/Q4_K  relative error: CPU 0.0469, GPU 0.020598, two in a launch: the same bits
+blk.40 expert 128  Q3_K/Q4_K  relative error: CPU 0.0386, GPU 0.012938, two in a launch: the same bits
+blk.40 expert 255  Q3_K/Q4_K  relative error: CPU 0.0478, GPU 0.017238, two in a launch: the same bits
+blk.34 expert   0  IQ3_XXS/Q6_K  relative error: CPU 0.0445, GPU 0.019220, two in a launch: the same bits
+blk.34 expert 128  IQ3_XXS/Q6_K  relative error: CPU 0.0513, GPU 0.018541, two in a launch: the same bits  FAIL
+blk.34 expert 255  IQ3_XXS/Q6_K  relative error: CPU 0.0451, GPU 0.018231, two in a launch: the same bits
+blk.0 expert   0  IQ3_XXS/IQ4_XS  relative error: CPU 0.0405, GPU 0.015984, two in a launch: the same bits
+blk.0 expert 128  IQ3_XXS/IQ4_XS  relative error: CPU 0.0395, GPU 0.016163, two in a launch: the same bits
+blk.0 expert 255  IQ3_XXS/IQ4_XS  relative error: CPU 0.0424, GPU 0.020290, two in a launch: the same bits
+blk.39 expert   0  IQ4_XS/Q6_K  relative error: CPU 0.0472, GPU 0.019238, two in a launch: the same bits
+blk.39 expert 128  IQ4_XS/Q6_K  relative error: CPU 0.0450, GPU 0.016651, two in a launch: the same bits
+blk.39 expert 255  IQ4_XS/Q6_K  relative error: CPU 0.0450, GPU 0.020748, two in a launch: the same bits
+Q8_0     [  512 ->   2048]  relative error: vector 0.0121, batch 0.012070  (blk.0.ffn_down_shexp.weight)
+Q8_0     [ 2048 ->    512]  relative error: vector 0.0117, batch 0.011745  (blk.0.ffn_gate_shexp.weight)
+Q8_0     [ 2048 ->   4096]  relative error: vector 0.0118, batch 0.011794  (blk.0.attn_gate.weight)
+Q8_0     [ 2048 ->   8192]  relative error: vector 0.0117, batch 0.011745  (blk.0.attn_qkv.weight)
+Q8_0     [ 4096 ->   2048]  relative error: vector 0.0113, batch 0.011259  (blk.0.ssm_out.weight)
+Q3_K     [ 2048 ->    512]  relative error: vector 0.0117, batch 0.011684  (blk.40.ffn_gate_exps.weight)
+Q4_K     [  512 ->   2048]  relative error: vector 0.0113, batch 0.027452  (blk.40.ffn_down_exps.weight)
+Q6_K     [  512 ->   2048]  relative error: vector 0.0114, batch 0.011409  (blk.34.ffn_down_exps.weight)
+Q6_K     [ 2048 -> 248320]  relative error: vector 0.0118, batch 0.011798  (output.weight)
+IQ3_XXS  [ 2048 ->    512]  relative error: vector 0.0117, batch 0.011696  (blk.0.ffn_gate_exps.weight)
+IQ4_XS   [  512 ->   2048]  relative error: vector 0.0123, batch 0.012338  (blk.0.ffn_down_exps.weight)
+IQ4_XS   [ 2048 ->    512]  relative error: vector 0.0114, batch 0.011348  (blk.39.ffn_gate_exps.weight)

@@ -1,0 +1,34 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 62
+    Start 62: native_multi_parity
+
+62: Test command: /home/rk/us2-build/build/bin/native_multi_parity
+62: Working Directory: /home/rk/us2-build/build
+62: Test timeout computed to be: 1200
+62:   router multi == single, random logits                bitwise (19 cases)
+62:   router multi == single, exact ties                   bitwise (19 cases)
+62:   router multi == single, NaN logits                   bitwise (19 cases)
+62:   router_top10 on 256 experts (non-512 fallback)       matches the host reference
+62:   combine k=10 + shared (float4 kernel)                bitwise (9 cases)
+62:   combine k=10 + shared, output misaligned             bitwise (9 cases)
+62:   combine k=10 without shared                          bitwise (9 cases)
+62:   combine k=9 + shared                                 bitwise (9 cases)
+62: 
+62: native_multi: 0 failures
+62: native_multi_parity OK
+1/1 Test #62: native_multi_parity ..............   Passed    0.20 sec
+
+The following tests passed:
+	native_multi_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.20 sec

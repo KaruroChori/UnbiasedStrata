@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/poly/qwen36-q3km/pb512/r16k.top.txt",
+ "steps": 510,
+ "top1_agree": 0.9823529411764705,
+ "kl_top20_mean": 0.012160926752551269,
+ "kl_top20_p99": 0.18300899730825335,
+ "top20_overlap_mean": 0.9580392156862745,
+ "missing_ids": 428,
+ "t1_positions": 422,
+ "t1_failures": [],
+ "floor": {
+  "steps": 510,
+  "kl_full_mean": 0.004396721621206221,
+  "kl_full_p99": 0.035306188258545534,
+  "kl_top20_mean": 0.013561760283175142,
+  "top1_agree": 0.9705882352941176
+ },
+ "t2_ratio_vs_full_floor": 2.7659078286641607,
+ "t2_ratio_vs_top20_floor": 0.896707101336855,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "r16k",
+ "set": "realtext"
+}

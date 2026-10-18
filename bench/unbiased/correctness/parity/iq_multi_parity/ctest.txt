@@ -1,0 +1,69 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 40
+    Start 40: iq_multi_parity
+
+40: Test command: /home/rk/us2-build/build/bin/iq_multi_parity
+40: Working Directory: /home/rk/us2-build/build
+40: Test timeout computed to be: 1200
+40: IQ2_XXS  type 16     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 3.13e-05)
+40: IQ2_XXS  type 16      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 3.53e-05)
+40: IQ2_XS   type 17     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 3.66e-05)
+40: IQ2_XS   type 17      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 3.56e-05)
+40: IQ3_XXS  type 18     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 9.59e-06)
+40: IQ3_XXS  type 18      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 9.44e-06)
+40: IQ4_NL   type 20     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 7.89e-08)
+40: IQ4_NL   type 20      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 7.65e-08)
+40: IQ3_S    type 21     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 6.84e-08)
+40: IQ3_S    type 21      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 5.04e-08)
+40: IQ2_S    type 22     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 3.21e-05)
+40: IQ2_S    type 22      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 5.66e-05)
+40: IQ4_XS   type 23     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 6.98e-08)
+40: IQ4_XS   type 23      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 1.63e-07)
+40: IQ1_M    type 29     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 6.77e-08)
+40: IQ1_M    type 29      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 6.65e-08)
+40: Q2_0     type 42     67 x  2560  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 7.04e-08)
+40: Q2_0     type 42      5 x  1024  iq_mmvq ncols 1..8, 11: bitwise equal to the old kernel (ref rel <= 8.68e-08)
+40: IQ2_XXS /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_XXS /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_XXS /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_XS  /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_XS  /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_XS  /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ3_XXS /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ3_XXS /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ3_XXS /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ3_S   /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ3_S   /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ3_S   /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_S   /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_S   /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ2_S   /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ4_XS  /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ4_XS  /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ4_XS  /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ1_M   /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ1_M   /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: IQ1_M   /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: Q2_0    /IQ4_NL   2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: Q2_0    /Q2_0     2560 x  640  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: Q2_0    /IQ4_XS   1024 x  512  native_expert_grouped, 9 groups, 35 entries: bitwise equal to the old kernels
+40: q8_1 finite (quantize_q8_1_rows): 237 finite blocks as before, 3 overflowed blocks clamped finite
+40: q8_1 finite (native_quantize_q8_1): 237 finite blocks as before, 3 overflowed blocks clamped finite
+40: q8_1 finite (native_swiglu_quantize_q8_1): 237 finite blocks as before, 3 overflowed blocks clamped finite
+40: iq_multi_parity: 0 failures
+1/1 Test #40: iq_multi_parity ..................   Passed    2.10 sec
+
+The following tests passed:
+	iq_multi_parity
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   2.11 sec

@@ -1,0 +1,30 @@
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+UpdateCTestConfiguration  from :/home/rk/us2-build/build/DartConfiguration.tcl
+Test project /home/rk/us2-build/build
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 117
+    Start 117: native_expert_parity_q4_K_q8_0
+
+117: Test command: /home/rk/us2-build/build/bin/native_expert_parity "--synthetic" "q4_K/q8_0"
+117: Working Directory: /home/rk/us2-build/build
+117: Test timeout computed to be: 120
+117:           width invariance (1 vs 3 tokens): gate/up 0, down 0 rows differ
+117:           q4_K gate rows, AVX2 multi-token vs ggml vec_dot: 0 of 36 token-sets differ in any bit; 4 tokens one thread 368 us vs ggml 394 us (1.07x)
+117:           q8_0 down rows, AVX2 multi-token vs ggml vec_dot: 0 of 36 token-sets differ in any bit; 4 tokens one thread 505 us vs ggml 558 us (1.10x)
+117:           gpu decode-once vs per-entry kernels: bitwise equal
+117:           GPU dequant vs ggml to_float: rel 0.00e+00, 0 of 4915200 values differ in any bit; fp16 of it: 0 differ; embedding rows: 0 of 640 differ
+117: synthetic q4_K    /q8_0    blob  3584000  cpu rel 1.32e-02  gpu rel 1.25e-02  cpu-gpu 1.53e-02  ok
+117: native_expert_parity: 0 failures
+1/1 Test #117: native_expert_parity_q4_K_q8_0 ...   Passed    0.68 sec
+
+The following tests passed:
+	native_expert_parity_q4_K_q8_0
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.69 sec
