@@ -177,6 +177,7 @@ struct strata_context_impl {
     mtmd_helper_init_opt  init_opt{};
     int32_t               vision_width = 0;  // the projector's output width, checked against the model's embedding
     int32_t               image_pad_id = -1; // the token whose runs in the ids the engine replaces with picture rows
+    bool                  p_mmproj_gpu = false;
 
     server_chat_params           chat_params;
     std::map<std::string, bool>  chat_caps;
@@ -435,9 +436,9 @@ struct strata_context_impl {
         // the request parser (server-common) replaces each image_url part by a marker that is random per process
         // (get_media_marker); mtmd must look for that same marker, as server-context.cpp sets it
         cp.media_marker  = get_media_marker();
-        cp.use_gpu       = false; // the card belongs to the engine; upstream encoded on the CPU as well
+        cp.use_gpu       = p.mmproj_use_gpu; // CPU unless --mmproj-gpu (main.cpp): the card is the engine's
         cp.print_timings = false;
-        cp.warmup        = false;
+        cp.warmup        = p.mmproj_use_gpu; // on the card, allocate the work buffers now, not at the first picture
         cp.n_threads     = p.cpuparams.n_threads > 0 ? p.cpuparams.n_threads
                                                      : std::max(1u, std::thread::hardware_concurrency() / 2);
         if (p.image_max_tokens > 0) {
@@ -454,8 +455,9 @@ struct strata_context_impl {
         }
         vision_width = proj_width;
         image_pad_id = pad[0];
-        LOG_INF("vision: %s, rows of %d, encoder on the CPU with %d threads, image_pad=%d\n",
-                p.mmproj.path.c_str(), vision_width, cp.n_threads, image_pad_id);
+        p_mmproj_gpu = p.mmproj_use_gpu;
+        LOG_INF("vision: %s, rows of %d, encoder on the %s (%d CPU threads), image_pad=%d\n",
+                p.mmproj.path.c_str(), vision_width, cp.use_gpu ? "GPU" : "CPU", cp.n_threads, image_pad_id);
         return true;
     }
 
@@ -534,7 +536,8 @@ struct strata_context_impl {
             ids.insert(ids.end(), (size_t) n_tok, image_pad_id);
             ++n_pictures;
             const double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
-            SRV_INF("task %d: picture %d: %d rows (%dx%d) encoded in %.0f ms on the CPU\n", t.id, n_pictures, n_tok, nx, ny, ms);
+            SRV_INF("task %d: picture %d: %d rows (%dx%d) encoded in %.0f ms on the %s\n", t.id, n_pictures, n_tok, nx, ny, ms,
+                    p_mmproj_gpu ? "GPU" : "CPU");
             i += (size_t) n_tok;
         }
         if (std::fclose(f) != 0) {

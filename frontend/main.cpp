@@ -51,8 +51,10 @@ void usage() {
         "  -m, --model FILE       the GGUF the vocabulary and chat template are read from (no tensors are loaded)\n"
         "  --host, --port, --api-key, --threads-http, --temp, --top-k, --top-p, --min-p, --reasoning-format,\n"
         "  --chat-template-kwargs, --alias ...   llama-server options (see llama-server --help)\n"
-        "  --mmproj FILE          the model's vision projector: image_url parts are encoded here on the CPU and\n"
-        "                         handed to the engine (Qwen family; --threads sets the encoder's threads)\n"
+        "  --mmproj FILE          the model's vision projector: image_url parts are encoded in this process and\n"
+        "                         handed to the engine (Qwen family); on the CPU (--threads N) unless --mmproj-gpu\n"
+        "  --mmproj-gpu           encode on the card: about 1 GB of VRAM plus work buffers, taken before the engine\n"
+        "                         sizes its expert cache only if the encoder loads first; for cards with room\n"
         "  --                     everything after it is passed to the engine; --serve is added\n"
         "\n"
         "example (Qwen3.6-35B-A3B from its GGUF):\n"
@@ -88,6 +90,7 @@ int main(int argc, char ** argv) {
     std::string engine_exe;
     std::vector<std::string> engine_args;
     std::vector<char *> llama_argv;
+    bool mmproj_gpu = false; // the vision encoder on the card: only where the engine leaves room (a 48 GB card)
     llama_argv.push_back(argv[0]);
     for (int i = 1; i < argc; ++i) {
         const std::string a = argv[i];
@@ -104,6 +107,10 @@ int main(int argc, char ** argv) {
         }
         if (a.rfind("--engine=", 0) == 0) {
             engine_exe = a.substr(9);
+            continue;
+        }
+        if (a == "--mmproj-gpu") {
+            mmproj_gpu = true;
             continue;
         }
         llama_argv.push_back(argv[i]);
@@ -130,6 +137,9 @@ int main(int argc, char ** argv) {
     if (!common_params_parse((int) llama_argv.size(), llama_argv.data(), params, LLAMA_EXAMPLE_SERVER)) {
         return 1;
     }
+    // llama-server encodes images on the GPU unless --no-mmproj-offload; here the card is the engine's, so the
+    // encoder runs on the CPU unless --mmproj-gpu asks for the card (upstream PolyStrata's choice as well)
+    params.mmproj_use_gpu = mmproj_gpu;
     if (params.model.path.empty()) {
         std::fprintf(stderr, "unbiased-strata: -m <model.gguf> is required (the vocabulary and chat template come from it)\n");
         return 2;
