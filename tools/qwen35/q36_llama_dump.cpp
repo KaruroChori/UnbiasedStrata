@@ -96,7 +96,12 @@ int main(int argc, char** argv) {
     const char* cx = std::getenv("STRATA_DUMP_CTX");
     const int nctx = cx ? std::atoi(cx) : 4096;
     cp.n_ctx = nctx;
-    cp.n_batch = cp.n_ubatch = nctx;
+    cp.n_batch = nctx;
+    // STRATA_DUMP_UBATCH: the micro-batch (default: the context, capped at 4096). A 32K prompt as one micro-batch
+    // needs a 35 GB compute buffer (UD-Q3_K_M on a 48 GB card, 2026-10-18); the prompt is then read in pieces of
+    // this size, which changes nothing but the compute buffer and which rows share an MMQ tile.
+    const char* ub = std::getenv("STRATA_DUMP_UBATCH");
+    cp.n_ubatch = ub ? std::atoi(ub) : std::min(nctx, 4096);
     cp.op_offload = ngl > 0;   // --ngl 0 is the CPU backend: no prompt matmuls offloaded to a GPU either
     cp.cb_eval = on_tensor;
     cp.cb_eval_user_data = &cap;
