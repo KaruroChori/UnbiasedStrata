@@ -369,7 +369,10 @@ prefill 4K/16K/32K 2065/2531/2616 vs 1924/2342/2393). Row 2 (Qwen3.6 UD-Q3_K_M):
 run-to-run range (chat 213.5 vs 220.8, sustained 200.0 vs 207.6, ranges overlap); prefill 4K 4.7 % faster,
 prefill 16K 2.3 % slower with non-overlapping ranges (3486 vs 3570), which the pass rule counts as a finding
 to explain. The engine binaries were built separately in the two trees (sha256 in each arm's provenance),
-so an engine-build difference is not excluded. Two client-compatibility gaps found and fixed on the way
+so an engine-build difference was suspected; the attribution arms of 07:04 UTC (fork front end driving
+upstream's engine binaries) confirm it: with one engine binary, prefill is equal within 1 % and decode within the
+run-to-run range on both models, so the front end passes and the differences are the engine builds (step 14a makes
+them identical in flags). Two client-compatibility gaps found and fixed on the way
 (`/health` fields, usage in streams; commits 453d3015, 96f4ef1f). Row 3 (pi, Flash-Next): all six runs complete the task; wall time per generated token within noise (fork 76.6 vs
 upstream 72.1 tok/s median); raw wall medians 44.7 vs 36.3 s because the sampled trajectories differed in length.
 

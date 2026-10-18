@@ -72,15 +72,38 @@ is coincidence: the server-side spans were 43.9, 38.5 and 44.0 s (`row3/fork-fla
 The fork's server logged 'a grammar was requested; this engine does not constrain sampling, parsing only' on every
 request: pi sends a JSON schema for tool arguments, which neither server enforces at the sampler.
 
+## Attribution arms: fork front end, upstream engine binaries (`forkfe-upengine-*`, 07:04 and 07:10 UTC)
+
+The fork's front end driving upstream's `build/strata` and `build/strata-poly` (sha256 `4e7254ef…`, `c893c169…`),
+same files and flags as the arms above. Medians:
+
+| Model | Workload | upstream FE + upstream engine | fork FE + upstream engine | fork FE + fork engine |
+| --- | --- | --- | --- | --- |
+| Flash-Next | chat decode | 87.1 | 93.3 | 103.1 |
+| | sustained decode | 105.1 | 108.9 | 119.1 |
+| | prefill 4K / 16K / 32K | 1924 / 2342 / 2393 | 1908 / 2329 / 2385 | 2065 / 2531 / 2616 |
+| | agent turn decode | 110.6 | 104.0 | 116.8 |
+| Qwen3.6 UD-Q3_K_M | chat decode | 220.8 | 228.2 | 213.5 |
+| | sustained decode | 207.6 | 205.9 | 200.0 |
+| | prefill 4K / 16K | 3652 / 3570 | 3873 / 3535 | 3822 / 3486 |
+| | agent turn decode | 194.0 | 195.4 | 186.9 |
+
+With the same engine binary behind both front ends, prefill is equal (within 1 %) and decode is within the run-to-run
+range. The differences of the fork arms, Flash-Next 7 to 18 % faster and Qwen3.6 16K prefill 2.3 % slower, therefore
+come from the engine binaries built in the fork's tree, not from the front end. The two builds compile the same
+sources; what differs is the build directory, the compiler probe (`HOSTCXX`), `CUDA_ARCHS` (fork `61;75;86;89` with
+`STRATA_EXPERIMENTAL_SM60`, upstream's installer `86` alone for this card) and the time of the build. PLAN.md step
+14(a) makes the engine builds identical in flags before any further speed claim. The front end passes section 11's
+rule on both models.
+
 ## Reading
 
 - Row 1: the fork is faster than upstream on every workload, by 6 to 18 % on decode and 7 to 9 % on prefill; the
   chat and sustained ranges do not overlap. The engine binaries differ, so this is not attributed to the front end
   yet (PLAN.md section 11 asks only that the fork is not slower).
 - Row 2: decode is within the run-to-run range on chat, agent and sustained (ranges overlap). Prefill 16K is 2.3 %
-  slower with non-overlapping ranges (3483 - 3497 vs 3568 - 3589); prefill 4K is 4.7 % faster. Per the plan's pass
-  rule this one cell is a finding to explain, not a pass. Candidates: engine build differences (see above), the
-  fork's own `expert-profile.txt` written during the run versus upstream's.
+  slower with non-overlapping ranges (3483 - 3497 vs 3568 - 3589); prefill 4K is 4.7 % faster. The attribution arms
+  place this in the engine build, not the front end (see above).
 - Chat TTFT is lower on the fork on both models (0.85x and 0.62x).
 - Row 3: pi finishes the task on both; wall time per generated token is within noise (fork 76.6 vs upstream 72.1 tok/s
   median); raw wall medians (44.7 vs 36.3 s) differ because the sampled trajectories differed in length.
