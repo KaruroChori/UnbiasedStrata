@@ -1,0 +1,9 @@
+{
+ "arm": "fork-flash-next",
+ "engine_binary": "/opt/us2-build/build/bin/strata",
+ "engine_sha256": "62b91d67a03c03898e2801ab595fcc6dede03bed94994e6109d05ff38c4be22d",
+ "fork_commit": "4c25aa6f6a99d6cb9f0a350bf1141865c158f593",
+ "nvidia_smi": "NVIDIA GeForce RTX 3090, 580.126.20, 24576 MiB",
+ "cpu_quota": "3112500/100000",
+ "started_utc": "2026-10-18T05:54:20Z"
+}

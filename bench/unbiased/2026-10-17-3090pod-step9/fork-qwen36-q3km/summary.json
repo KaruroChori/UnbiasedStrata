@@ -1,0 +1,174 @@
+{
+ "checks": {
+  "requests": 42,
+  "all_successful": true,
+  "skipped": {
+   "32K": "the context is 32768 tokens"
+  },
+  "failures": []
+ },
+ "sustained": {
+  "decode_tps": {
+   "median": 200.04086940658718,
+   "min": 188.40828185289035,
+   "max": 218.4481375906923,
+   "n": 9
+  },
+  "prompt_tps": {
+   "median": 3480.571323437466,
+   "min": 3237.6854367152764,
+   "max": 3579.3625075958635,
+   "n": 9
+  },
+  "ttft_s": {
+   "median": 1.28,
+   "min": 0.502,
+   "max": 1.499,
+   "n": 9
+  },
+  "total_s": {
+   "median": 3.929,
+   "min": 2.85,
+   "max": 4.148,
+   "n": 9
+  },
+  "draft_acceptance_pct": 79.95057151683658
+ },
+ "chat": {
+  "median": 213.496,
+  "min": 196.544,
+  "max": 259.215,
+  "n": 9
+ },
+ "chat_ttft_s": {
+  "median": 0.11,
+  "min": 0.107,
+  "max": 0.117,
+  "n": 9
+ },
+ "prefill": {
+  "4K": {
+   "median": 3821.634,
+   "min": 3792.145,
+   "max": 3831.57,
+   "n": 3
+  },
+  "16K": {
+   "median": 3486.29,
+   "min": 3482.95,
+   "max": 3497.354,
+   "n": 3
+  }
+ },
+ "prefill_ttft_s": {
+  "4K": {
+   "median": 1.064,
+   "min": 1.056,
+   "max": 1.073,
+   "n": 3
+  },
+  "16K": {
+   "median": 4.607,
+   "min": 4.572,
+   "max": 4.611,
+   "n": 3
+  }
+ },
+ "agent": {
+  "turn_decode_tps": {
+   "median": 186.86,
+   "min": 169.366,
+   "max": 202.841,
+   "n": 15
+  },
+  "turn_ttft_s": {
+   "median": 1.069,
+   "min": 0.518,
+   "max": 1.198,
+   "n": 15
+  }
+ },
+ "per_document": {
+  "docs/DETAILS.md": {
+   "prompt_tokens": null,
+   "decode_tps": {
+    "median": 198.46779753177523,
+    "min": 188.40828185289035,
+    "max": 200.04086940658718,
+    "n": 3
+   },
+   "prompt_tps": {
+    "median": 3573.327179584466,
+    "min": 3562.408125790833,
+    "max": 3579.3625075958635,
+    "n": 3
+   },
+   "ttft_s": {
+    "median": 1.437,
+    "min": 1.435,
+    "max": 1.499,
+    "n": 3
+   },
+   "total_s": {
+    "median": 4.076,
+    "min": 3.992,
+    "max": 4.148,
+    "n": 3
+   }
+  },
+  "docs/HOW_IT_WORKS.md": {
+   "prompt_tokens": null,
+   "decode_tps": {
+    "median": 217.67865944024638,
+    "min": 207.85572616085997,
+    "max": 218.4481375906923,
+    "n": 3
+   },
+   "prompt_tps": {
+    "median": 3435.6673317870136,
+    "min": 3237.6854367152764,
+    "max": 3462.376259857871,
+    "n": 3
+   },
+   "ttft_s": {
+    "median": 0.506,
+    "min": 0.502,
+    "max": 0.537,
+    "n": 3
+   },
+   "total_s": {
+    "median": 2.877,
+    "min": 2.85,
+    "max": 2.965,
+    "n": 3
+   }
+  },
+  "docs/INSTALL.md": {
+   "prompt_tokens": null,
+   "decode_tps": {
+    "median": 193.09702691039465,
+    "min": 192.30566590446887,
+    "max": 202.56179224771049,
+    "n": 3
+   },
+   "prompt_tps": {
+    "median": 3480.571323437466,
+    "min": 3474.900404742404,
+    "max": 3483.8761111332565,
+    "n": 3
+   },
+   "ttft_s": {
+    "median": 1.28,
+    "min": 1.278,
+    "max": 1.284,
+    "n": 3
+   },
+   "total_s": {
+    "median": 3.929,
+    "min": 3.807,
+    "max": 3.938,
+    "n": 3
+   }
+  }
+ }
+}

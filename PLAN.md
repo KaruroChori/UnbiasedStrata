@@ -313,7 +313,7 @@ Expected diff shape: removals dominated by `setup.py`, `serve/`, translations an
 | 6 | First end-to-end chat, both engines | Qwen3.6 UD-Q3_K_M from GGUF; Flash-Next IQ3_XXS from the pod's existing pack and MTP dir. Streaming and non-streaming, reasoning on and off, greedy output equal to upstream PolyStrata on the same ids (teacher-forced id comparison, not text) |
 | 7 | Tool calls under pi | pi completes a multi-step coding task against each model. Test the request shapes pi sends: no `max_tokens`, `max_tokens` 32768, optional arguments first, `reasoning_content` on assistant messages, parallel calls, a client that disconnects mid-stream, a stream silent during a long prompt. Raw output logged on parse failure |
 | 8 | Images | a screenshot through pi to Qwen3.6; projector width checked against the model |
-| 9 | Measurements (§11) | tables under `bench/unbiased/` with commands, raw outputs, checksums of the model files |
+| 9 | Measurements (§11) | tables under `bench/unbiased/` with commands, raw outputs, checksums of the model files | Rows 1-2 done 2026-10-18 (`bench/unbiased/2026-10-17-3090pod-step9/`); row 3 pending; one cell to explain (Qwen3.6 16K prefill 2.3 % slower). |
 | 10 | `README.md`, `UPSTREAM.md` complete | every `src/`/`include/` hunk since the import appears in `UPSTREAM.md`; README has only numbers that have rows |
 | 11 | **Correctness plan** (added 2026-10-17). An agent writes `docs/CORRECTNESS-PLAN.md`: how to check PolyStrata's engines against llama.cpp at the pinned commit for the kernels actually in use on our target (the expert MMQ paths for IQ3_XXS and the K-quants, the MTP draft layer, the Q8/int8 KV paths, the prompt path, `strata-poly`'s qwen35moe path), which of upstream's ~70 parity and bench programs cover them and what each compares against, the teacher-forced greedy id comparison against llama.cpp for Flash-Next and Qwen3.6 (same ids in, how many tokens, what divergence is tolerated and why), what a failure would mean for the fork, and the cost in machine time. Planning only: this step runs nothing on a GPU and changes no code | the document, with each proposed check naming the program or script, the reference it compares against and the pass criterion; your sign-off on which checks become a later step |
 | 12 | **Correctness checks** (added 2026-10-17). Run the checks step 11 proposed and you signed off: upstream's parity programs that cover the kernels in use, and the teacher-forced greedy id comparison of each engine against llama.cpp at the pinned commit for Flash-Next IQ3_XXS and Qwen3.6 UD-Q3_K_M. Results, commands and raw outputs under `bench/unbiased/correctness/`; a divergence is a bug to find, in the engine or in llama.cpp, before any README claim beyond "same output as upstream PolyStrata" | every signed-off check has a result on disk with its pass criterion met, or an open finding with the first diverging token, the inputs that reproduce it and which side is wrong; `docs/MODEL-FILES.md` says per file whether it passed |
@@ -353,6 +353,15 @@ script, upstream PolyStrata and this fork back to back, three runs each, median 
 Pass: fork within noise of upstream (the run-to-run range) on decode and PP. A fork slower than
 upstream on any row is a bug to find before the README claims anything. The llama.cpp rows already
 recorded stay in the table as context, labelled with their different quant.
+
+Rows 1 and 2 measured 2026-10-18 UTC on the RTX 3090 pod: `bench/unbiased/2026-10-17-3090pod-step9/README.md`.
+Row 1 (Flash-Next): fork faster on every workload (chat decode 103.1 vs 87.1 tok/s, sustained 119.1 vs 105.1,
+prefill 4K/16K/32K 2065/2531/2616 vs 1924/2342/2393). Row 2 (Qwen3.6 UD-Q3_K_M): decode within the
+run-to-run range (chat 213.5 vs 220.8, sustained 200.0 vs 207.6, ranges overlap); prefill 4K 4.7 % faster,
+prefill 16K 2.3 % slower with non-overlapping ranges (3486 vs 3570), which the pass rule counts as a finding
+to explain. The engine binaries were built separately in the two trees (sha256 in each arm's provenance),
+so an engine-build difference is not excluded. Two client-compatibility gaps found and fixed on the way
+(`/health` fields, usage in streams; commits 453d3015, 96f4ef1f). Row 3 (pi wall time) pending.
 
 ## 12. Decisions, taken 2026-10-17
 
