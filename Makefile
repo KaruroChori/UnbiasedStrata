@@ -3,7 +3,8 @@
 #
 #   git clone <repo> && cd <repo>
 #   git submodule update --init
-#   make build                      # build/bin/strata, build/bin/strata-poly, build/bin/libstrata_kq.so
+#   make build                      # build/bin/{strata,strata-poly,libstrata_kq.so,unbiased-strata}
+#   make test                       # the front end against a fake engine; no GPU needed
 #
 BUILD_DIR  ?= build
 # CUDA archs: GTX 10 (61), RTX 20 / GTX 16 (75), RTX 30 (86), RTX 40 (89).  Any arch below 75 turns on upstream's
@@ -13,8 +14,12 @@ CUDA_ARCHS ?= 61;75;86;89
 # nvcc: on PATH, else the toolkit's usual place (RunPod images and distro packages differ).  NVCC=/path overrides.
 NVCC ?= $(or $(shell command -v nvcc 2>/dev/null),$(wildcard /usr/local/cuda/bin/nvcc))
 ifeq ($(NVCC),)
-  $(error nvcc not found on PATH or in /usr/local/cuda/bin; install a CUDA 12.x toolkit or set NVCC=/path/to/nvcc)
+  ifneq ($(filter build configure,$(MAKECMDGOALS)),)
+    $(error nvcc not found on PATH or in /usr/local/cuda/bin; install a CUDA 12.x toolkit or set NVCC=/path/to/nvcc)
+  endif
 endif
+# Everything below that runs nvcc is skipped when there is none (a laptop running `make frontend` or `make test`).
+ifneq ($(NVCC),)
 NVCC_ARCHS := $(shell $(NVCC) --list-gpu-arch 2>/dev/null | sed 's/compute_//' | tr '\n' ' ')
 ifneq ($(NVCC_ARCHS),)
   CUDA_ARCHS_DROPPED := $(strip $(foreach a,$(subst ;, ,$(CUDA_ARCHS)),$(if $(filter $(firstword $(subst -, ,$(a))),$(NVCC_ARCHS)),,$(a))))
@@ -36,13 +41,14 @@ HOSTCXX ?= $(shell for c in g++-15 g++-14 g++-13 g++-12 g++-11 g++; do p=$$(comm
              t=$$(mktemp /tmp/strata-hc-XXXXXX.cu) && printf 'int main(){return 0;}\n' > $$t && \
              if $(NVCC) -ccbin $$p -c $$t -o /dev/null >/dev/null 2>&1; then rm -f $$t; echo $$p; break; fi; rm -f $$t; done)
 HOSTCC   := $(subst g++,gcc,$(HOSTCXX))
+endif
 COMPILER_FLAGS := $(if $(HOSTCXX),-DCMAKE_C_COMPILER=$(HOSTCC) -DCMAKE_CXX_COMPILER=$(HOSTCXX) -DCMAKE_CUDA_HOST_COMPILER=$(HOSTCXX),)
 # capped: inside a container nproc reports the host's CPUs, not the container's quota
 JOBS       ?= $(shell n=$$(nproc 2>/dev/null || echo 4); [ $$n -gt 16 ] && n=16; echo $$n)
 # what `make build` produces; upstream's `all` also builds about 70 parity and bench programs
-TARGETS    := strata strata-poly strata_kq llama-common mtmd
+TARGETS    := strata strata-poly strata_kq unbiased-strata
 
-.PHONY: build configure clean
+.PHONY: build configure clean test
 
 configure:
 	@test -f third_party/llama.cpp/ggml/CMakeLists.txt || \
@@ -55,7 +61,22 @@ configure:
 
 build: configure
 	cmake --build $(BUILD_DIR) -j $(JOBS) --target $(TARGETS)
-	@echo "built:"; ls -1 $(BUILD_DIR)/bin/strata $(BUILD_DIR)/bin/strata-poly $(BUILD_DIR)/bin/libstrata_kq.so
+	@echo "built:"; ls -1 $(BUILD_DIR)/bin/strata $(BUILD_DIR)/bin/strata-poly $(BUILD_DIR)/bin/libstrata_kq.so $(BUILD_DIR)/bin/unbiased-strata
+
+# The front end alone, without CUDA: for a laptop or a CI box. Needs only a C++20 compiler and CMake.
+.PHONY: frontend
+frontend:
+	cmake -S . -B $(BUILD_DIR)-frontend -DCMAKE_BUILD_TYPE=Release -DSTRATA_ENABLE_CUDA=OFF -DSTRATA_BUILD_TESTS=OFF \
+	      -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=$(abspath $(BUILD_DIR))-frontend/bin $(CMAKE_EXTRA)
+	cmake --build $(BUILD_DIR)-frontend -j $(JOBS) --target unbiased-strata
+
+# The front end's tests, against a fake engine (frontend/tests/fake-engine.py): the adapter's cases (cancel, drain,
+# backpressure, child exit, ERR) and the HTTP surface a coding agent touches (frontend/tests/e2e.sh).  Needs python3
+# and curl; no GPU and no model.  Runs in the CUDA-free build directory, so it works on the build box and on a laptop.
+test: frontend
+	cmake --build $(BUILD_DIR)-frontend -j $(JOBS) --target engine_test
+	$(BUILD_DIR)-frontend/engine_test frontend/tests/fake-engine.py
+	frontend/tests/e2e.sh $(BUILD_DIR)-frontend/bin/unbiased-strata
 
 clean:
 	rm -rf $(BUILD_DIR)
