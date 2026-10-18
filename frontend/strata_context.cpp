@@ -621,7 +621,9 @@ struct strata_context_impl {
 
         res->verbose           = t.params.verbose;
         res->stream            = t.params.stream;
-        res->include_usage     = t.params.include_usage;
+        // always report usage in the final streamed chunk: upstream PolyStrata's server does, and its clients
+        // (tools/strata_bench.py reads prompt_tokens from it) do not send stream_options.include_usage
+        res->include_usage     = true;
         res->res_type          = t.params.res_type;
         res->oaicompat_model   = t.params.oaicompat_model;
         res->oaicompat_cmpl_id = t.params.oaicompat_cmpl_id;

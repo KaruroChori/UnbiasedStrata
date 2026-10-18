@@ -34,7 +34,7 @@ done
 # /health and /v1/models
 h=$(curl -s "$URL/health"); check $([ "$(echo "$h" | j 'd["status"]')" = ok ] && echo 0 || echo 1) "/health: $h"
 # upstream PolyStrata clients (tools/strata_bench.py) require these two to treat the server as a loaded strata server
-check $([ "$(echo "$h" | j 'd["service"]')" = strata ] && [ "$(echo "$h" | j 'd["loaded"]')" = True ] && echo 0 || echo 1) "/health: service=strata loaded=true"
+check $([ "$(echo "$h" | j 'd["service"]')" = strata ] && [ "$(echo "$h" | j 'd["loaded"]')" = true ] && echo 0 || echo 1) "/health: service=strata loaded=true"
 m=$(curl -s "$URL/v1/models"); check $([ "$(echo "$m" | j 'd["data"][0]["id"]')" = fake ] && echo 0 || echo 1) "/v1/models id: $(echo "$m" | j '{k: d["data"][0].get(k) for k in ("id", "context_length")}')"
 
 # non-streaming chat
@@ -47,10 +47,14 @@ check $([ "$(echo "$r" | j 'd["usage"]["completion_tokens"]')" = 4 ] && echo 0 |
 # streaming chat: role chunk, content deltas, finish chunk, [DONE]
 s=$(curl -s -N "$URL/v1/chat/completions" -H 'content-type: application/json' -d '{"model":"fake","stream":true,"messages":[{"role":"user","content":"Say hello"}],"max_tokens":32}')
 n_data=$(echo "$s" | grep -c '^data: {')
-joined=$(echo "$s" | grep '^data: {' | sed 's/^data: //' | python3 -c 'import json,sys; print("".join((json.loads(l)["choices"][0]["delta"].get("content") or "") for l in sys.stdin if l.strip()), end="")')
+# the last chunk carries usage (and timings) with an empty choices array, as upstream PolyStrata always does
+joined=$(echo "$s" | grep '^data: {' | sed 's/^data: //' | python3 -c 'import json,sys; print("".join((c[0]["delta"].get("content") or "") for c in (json.loads(l)["choices"] for l in sys.stdin if l.strip()) if c), end="")')
 check $([ "$joined" = "Hello, world!" ] && echo 0 || echo 1) "stream deltas join to the content ($n_data chunks)"
 check $(echo "$s" | grep -q '^data: \[DONE\]' && echo 0 || echo 1) "stream ends with [DONE]"
-check $([ "$(echo "$s" | grep '^data: {' | tail -1 | sed 's/^data: //' | j 'd["choices"][0]["finish_reason"]')" = stop ] && echo 0 || echo 1) "stream finish_reason stop"
+finish=$(echo "$s" | grep '^data: {' | sed 's/^data: //' | python3 -c 'import json,sys; print([c[0]["finish_reason"] for c in (json.loads(l)["choices"] for l in sys.stdin if l.strip()) if c and c[0].get("finish_reason")][-1])')
+check $([ "$finish" = stop ] && echo 0 || echo 1) "stream finish_reason stop"
+last=$(echo "$s" | grep '^data: {' | tail -1 | sed 's/^data: //')
+check $([ "$(echo "$last" | j 'd["usage"]["completion_tokens"]')" = 4 ] && [ "$(echo "$last" | j 'len(d["choices"])')" = 0 ] && echo 0 || echo 1) "stream last chunk: usage.completion_tokens 4, empty choices"
 
 # a client that disconnects mid-stream: the engine is told to stop and the next request is clean. The fake engine
 # reads its env once at start, so this needs a second server whose engine streams a long reply slowly (token 9707,
