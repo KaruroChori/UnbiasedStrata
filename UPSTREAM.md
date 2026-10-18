@@ -79,4 +79,8 @@ Each entry names the rule above that it satisfies.
   UI and 58 test files) and `polystrata.py` (the terminal front end, which imports `serve/`). Replaced by the C++
   front end in `frontend/`, built from the pinned llama.cpp's `common`, `mtmd`, `cpp-httplib` and the
   engine-agnostic files of `tools/server`. The engines' stdin/stdout protocol is unchanged.
+- **Rule 4, marketing:** the six translated READMEs (383 KB), `docs/media/` (12 MB: a 9.6 MB demo video still,
+  a 1.8 MB GIF, the figure SVGs and their generator), `.github/` (issue and PR templates), `SECURITY.md` (the
+  upstream project's advisory process) and `AGENTS.md` (contributor notes for upstream's tests and installers).
+  `README.md` is rewritten for this fork; until then its image links point at removed files.
 
