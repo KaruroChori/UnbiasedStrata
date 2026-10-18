@@ -1,0 +1,16 @@
+## Summary
+
+**wordstats.py** — added a `--json` flag:
+- `main()` now parses argv for `--json` (and `-h`/`--help`), collecting the remaining args as files.
+- With `--json`: prints the full word→count mapping via `json.dumps(total, indent=2, sort_keys=True)` (stdlib `json` only; `Counter` serializes as a dict).
+- Without it: unchanged top-10 table output; no files still exits 2 with the usage line (now `wordstats.py [--json] FILE...`).
+
+**test_wordstats.py** (new) — 6 unittest tests:
+- `count_words`: basic counts, punctuation/case normalization, empty input.
+- CLI via `subprocess` + `sys.executable`: default table output (exact top-2 lines and line count), `--json` output parsed with `json.loads` and compared to the full expected dict, and no-args exits 2 with "usage" on stderr.
+
+**Verification**
+- `python3 -m unittest -v` → 6 tests OK. One initial failure was a wrong expected count in my test (`the` = 3, not 4); fixed the test, not the script.
+- `python3 wordstats.py --json sample.txt` → JSON object shown above; default table output confirmed unchanged.
+
+**git** — committed as `b9e073d "wordstats: add --json output flag and unittest suite"` (3 files: wordstats.py, test_wordstats.py, .gitignore). I initially committed stray `__pycache__/*.pyc` files, so I added a `.gitignore`, removed them from the index, and amended the commit; working tree is clean.

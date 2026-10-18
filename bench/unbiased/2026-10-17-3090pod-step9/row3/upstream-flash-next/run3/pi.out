@@ -1,0 +1,23 @@
+All done. Summary of changes:
+
+**`wordstats.py`** — added a `--json` flag (standard library only, using `json`):
+- `main()` now parses args into a `files` list and an `as_json` flag.
+- With `--json`: prints the full word→count mapping as a JSON object (`json.dumps(total, indent=2, sort_keys=True)`).
+- Without it: unchanged top-10 table output. Usage message updated to `wordstats.py [--json] FILE...`.
+
+**`test_wordstats.py`** (new) — 6 unittest tests:
+- `count_words`: basic counting, punctuation stripping/lowercasing, punctuation-only tokens ignored.
+- CLI via `subprocess` + `sys.executable`: default table format/content, `--json` output parsed with `json.loads` and compared to the full expected dict, and no-args → exit code 2 with usage on stderr.
+
+**`.gitignore`** (new) — excludes `__pycache__/` and `*.pyc` (the first commit accidentally included compiled caches; I amended it to remove them).
+
+**Verification:** `python3 -m unittest -v` → 6 tests, all OK (initially 3 failed because my expected counts were miscounted — I fixed the test expectations, not the script). `python3 wordstats.py sample.txt` output is unchanged; `python3 wordstats.py --json sample.txt` outputs:
+
+```json
+{
+  "and": 1, "boat": 1, "deep": 1, "is": 3,
+  "sea": 2, "small": 1, "the": 3, "wide": 1
+}
+```
+
+**Committed:** `afef897 "Add --json flag to wordstats and unit tests"` (3 files, working tree clean).

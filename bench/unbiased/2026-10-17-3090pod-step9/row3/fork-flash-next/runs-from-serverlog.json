@@ -1,0 +1,35 @@
+[
+ {
+  "run": 1,
+  "requests": 12,
+  "prompt_tokens_read": 3491,
+  "generated_tokens": 3028,
+  "prompt_s": 7.2,
+  "decode_s": 27.6,
+  "decode_tps": 109.6,
+  "final_context_tokens": 6529,
+  "draft_acceptance_pct": 83.7
+ },
+ {
+  "run": 2,
+  "requests": 11,
+  "prompt_tokens_read": 8653,
+  "generated_tokens": 3426,
+  "prompt_s": 6.1,
+  "decode_s": 31.2,
+  "decode_tps": 109.7,
+  "final_context_tokens": 6867,
+  "draft_acceptance_pct": 78.5
+ },
+ {
+  "run": 3,
+  "requests": 12,
+  "prompt_tokens_read": 3657,
+  "generated_tokens": 3619,
+  "prompt_s": 6.4,
+  "decode_s": 30.9,
+  "decode_tps": 117.3,
+  "final_context_tokens": 7286,
+  "draft_acceptance_pct": 77.9
+ }
+]
