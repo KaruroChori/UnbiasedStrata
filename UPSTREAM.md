@@ -59,6 +59,26 @@ GPU, Pascal or newer, CUDA 12.x), each recorded below with the file, the reason 
   `strata` failed to link on `__cxa_call_terminate` (upstream's installer handles the same case, its #1645).
   `HOSTCXX=/usr/bin/g++-13` overrides the probe.
 
+## Front end behaviour (`frontend/`), where it differs from llama-server or from upstream's server
+
+Recorded here because a client written for one of the two may notice.
+
+- **`/health`** returns llama.cpp's `{"status": "ok", "busy": ...}` plus upstream's `"service": "strata"`,
+  `"loaded": true`, `"model"`, `"max_context"` (commit 453d3015). Upstream's `tools/strata_bench.py` refuses a server
+  without the first two; the first step-9 fork arm was lost to that
+  (`bench/unbiased/2026-10-17-3090pod-step9/README.md`).
+- **Streams always end with a usage chunk** (empty `choices`, `usage`, `timings`), as upstream's server does,
+  whether or not the client sent `stream_options.include_usage`; llama-server sends it only on request (96f4ef1f).
+  Same reason: the bench client reads `prompt_tokens` from it.
+- **One slot.** Requests are served one at a time in arrival order, as upstream's server does with one engine.
+- **No constrained decoding.** `response_format` and tool schemas are parsed and used for output parsing, not
+  enforced at the sampler, because the engine samples; logged once per such request.
+- **`--mmproj` is refused** until PLAN.md step 8 lands (upstream's Python server encodes images on the CPU).
+- **`--sse-ping-interval`** is llama-server's (default 30 s); the measured Flash-Next runs used 10.
+- **SIGTERM exits 1**, not 0, after stopping the engine: the engine child dies with the process group and the front
+  end reports it as an engine death with an empty message. Open; matters only to a service manager.
+- **Default `min_p`** is llama-server's 0.05 when a request omits it; upstream's server sends none. pi sends 0.
+
 ## Patches to llama.cpp (`patches/`)
 
 - `llama.cpp-qwen3-coder-any-argument-order.patch` (`common/parsers/qwen3-coder.cpp`): the Qwen3-Coder
@@ -70,7 +90,9 @@ GPU, Pascal or newer, CUDA 12.x), each recorded below with the file, the reason 
 
 ## Engine source (`src/`, `include/`)
 
-No changes yet.
+No changes: `git diff 0197ae86 HEAD -- src include` is empty (checked 2026-10-18). The engines measured in step 9 are
+these sources built in this tree; their binaries differ from upstream's build of the same sources, and the step-9
+record says so where it matters.
 
 ## Removed
 
@@ -95,7 +117,8 @@ Each entry names the rule above that it satisfies.
 - **Rule 4, marketing:** the six translated READMEs (383 KB), `docs/media/` (12 MB: a 9.6 MB demo video still,
   a 1.8 MB GIF, the figure SVGs and their generator), `.github/` (issue and PR templates), `SECURITY.md` (the
   upstream project's advisory process) and `AGENTS.md` (contributor notes for upstream's tests and installers).
-  `README.md` is rewritten for this fork; until then its image links point at removed files.
+  `README.md` is rewritten for this fork (PLAN.md step 10); the fork's model-file record is `docs/MODEL-FILES.md`,
+  its measurements are under `bench/unbiased/`.
 - **Documents only removed components (decided 2026-10-17):** `docs/INSTALL.md`, `AI_SETUP.md`, `MCP_SERVER.md`,
   `IMAGES.md`, `LLAMA_SWAP.md`, `COMMUNITY_BENCHMARKS.md`, `FAQ.md`; `chat.py` (a terminal client) and
   `tools/calibrate.py` (imports `setup` and `serve.server`), with their tests.
