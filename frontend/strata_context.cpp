@@ -432,6 +432,9 @@ struct strata_context_impl {
             return false;
         }
         mtmd_context_params cp = mtmd_context_params_default();
+        // the request parser (server-common) replaces each image_url part by a marker that is random per process
+        // (get_media_marker); mtmd must look for that same marker, as server-context.cpp sets it
+        cp.media_marker  = get_media_marker();
         cp.use_gpu       = false; // the card belongs to the engine; upstream encoded on the CPU as well
         cp.print_timings = false;
         cp.warmup        = false;
