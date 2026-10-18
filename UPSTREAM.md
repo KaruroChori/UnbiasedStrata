@@ -86,14 +86,12 @@ Each entry names the rule above that it satisfies.
 - **Documents only removed components (decided 2026-10-17):** `docs/INSTALL.md`, `AI_SETUP.md`, `MCP_SERVER.md`,
   `IMAGES.md`, `LLAMA_SWAP.md`, `COMMUNITY_BENCHMARKS.md`, `FAQ.md`; `chat.py` (a terminal client) and
   `tools/calibrate.py` (imports `setup` and `serve.server`), with their tests.
-
-## Kept but not runnable
-
-These stay because no rule removes them, but they import `setup` or `serve` and so do not run here: the engine gate
-scripts `tools/batch_groups_cache_test.py`, `cancel_park_test.py`, `conversation_cache_*.py`,
-`conversation_restore_speed.py`, `logit_bias_english_example.py`, `logit_bias_http_probe.py`,
-`session_pressure_test.py`, and `tools/strata_bench.py` (one helper from `setup`), `tools/make_poly_release.py`,
-`tools/test_mtp_fetch.py`, `tools/test_shards.py`, `test_strata_tokenizer.py`, `test_effort_end_args.py`,
-`test_research_run.py`, `test_benchmark_prompt.py`, `test_dll_closure.py`, `test_windows_amd_gpu.py`, and the
-benchmark scripts under `bench/results/*/`. Upstream's own copies run against upstream.
-
+- **Scripts that imported removed modules (decided 2026-10-17):** the engine gate scripts that drove the engine
+  through the Python server's `StrataEngine` class (`tools/batch_groups_cache_test.py`, `cancel_park_test.py`,
+  `conversation_cache_*.py`, `conversation_restore_speed.py`, `logit_bias_english_example.py`,
+  `logit_bias_http_probe.py`, `session_pressure_test.py`), `tools/strata_bench.py` with `bench.sh` and `BENCH.bat`
+  (one helper from `setup`), `tools/make_poly_release.py`, and the tests that imported `setup` or `serve`
+  (`test_mtp_fetch.py`, `test_shards.py`, `test_strata_tokenizer.py`, `test_effort_end_args.py`,
+  `test_research_run.py`, `test_benchmark_prompt.py`, `test_dll_closure.py`, `test_windows_amd_gpu.py`, the
+  `test_conversation_cache_*` and `test_strata_bench.py`). The benchmark scripts under `bench/results/*/` stay as
+  the record they are. Upstream's copies run against upstream.
