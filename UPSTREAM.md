@@ -83,4 +83,17 @@ Each entry names the rule above that it satisfies.
   a 1.8 MB GIF, the figure SVGs and their generator), `.github/` (issue and PR templates), `SECURITY.md` (the
   upstream project's advisory process) and `AGENTS.md` (contributor notes for upstream's tests and installers).
   `README.md` is rewritten for this fork; until then its image links point at removed files.
+- **Documents only removed components (decided 2026-10-17):** `docs/INSTALL.md`, `AI_SETUP.md`, `MCP_SERVER.md`,
+  `IMAGES.md`, `LLAMA_SWAP.md`, `COMMUNITY_BENCHMARKS.md`, `FAQ.md`; `chat.py` (a terminal client) and
+  `tools/calibrate.py` (imports `setup` and `serve.server`), with their tests.
+
+## Kept but not runnable
+
+These stay because no rule removes them, but they import `setup` or `serve` and so do not run here: the engine gate
+scripts `tools/batch_groups_cache_test.py`, `cancel_park_test.py`, `conversation_cache_*.py`,
+`conversation_restore_speed.py`, `logit_bias_english_example.py`, `logit_bias_http_probe.py`,
+`session_pressure_test.py`, and `tools/strata_bench.py` (one helper from `setup`), `tools/make_poly_release.py`,
+`tools/test_mtp_fetch.py`, `tools/test_shards.py`, `test_strata_tokenizer.py`, `test_effort_end_args.py`,
+`test_research_run.py`, `test_benchmark_prompt.py`, `test_dll_closure.py`, `test_windows_amd_gpu.py`, and the
+benchmark scripts under `bench/results/*/`. Upstream's own copies run against upstream.
 
