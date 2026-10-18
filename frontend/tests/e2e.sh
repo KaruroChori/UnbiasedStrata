@@ -80,6 +80,14 @@ BIG=$(mktemp "${TMPDIR:-/tmp}/us2-e2e-big-XXXXXX")
 code=$(curl -s -o "$BIG" -w '%{http_code}' "$URL/v1/chat/completions" -H 'content-type: application/json' -d "{\"model\":\"fake\",\"messages\":[{\"role\":\"user\",\"content\":\"$big\"}]}")
 check $([ "$code" = 400 ] && echo 0 || echo 1) "oversize prompt -> $code: $(j 'd["error"]["type"]' < "$BIG")"
 
+# a picture without --mmproj is refused with llama.cpp's own message, not a crash (with --mmproj the rows go to the
+# engine as GENI; that path needs a real projector file and is checked by frontend/tests/images-real-engine.sh)
+IMG=$(mktemp "${TMPDIR:-/tmp}/us2-e2e-img-XXXXXX")
+img=$(curl -s -o "$IMG" -w '%{http_code}' "$URL/v1/chat/completions" -H 'content-type: application/json' -d '{"model":"fake","messages":[{"role":"user","content":[{"type":"text","text":"what is this"},{"type":"image_url","image_url":{"url":"data:image/png;base64,iVBORw0KGgo="}}]}]}')
+# llama.cpp raises this as a runtime error, which its ex_wrapper maps to 500 (llama-server answers the same)
+check $([ "$img" = 400 ] || [ "$img" = 500 ] || [ "$img" = 501 ] && grep -qi "image" "$IMG" && curl -s "$URL/health" | grep -q '"status":"ok"' && echo 0 || echo 1) "image without --mmproj -> $img: $(j 'd["error"]["message"]' < "$IMG" | cut -c1-80); server alive"
+rm -f "$IMG"
+
 # tokenize / detokenize round trip
 t=$(curl -s "$URL/tokenize" -H 'content-type: application/json' -d '{"content":"Hello, world!"}' | j 'd["tokens"]')
 d=$(curl -s "$URL/detokenize" -H 'content-type: application/json' -d "{\"tokens\":$t}" | j 'd["content"]')

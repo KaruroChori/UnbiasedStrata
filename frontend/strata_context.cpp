@@ -17,6 +17,9 @@
 #include "common.h"
 #include "llama.h"
 #include "log.h"
+#include "gguf.h"
+#include "mtmd.h"
+#include "mtmd-helper.h"
 
 #include <algorithm>
 #include <atomic>
@@ -24,6 +27,9 @@
 #include <cstdio>
 #include <mutex>
 #include <set>
+#include <chrono>
+#include <thread>
+#include <unistd.h>
 
 using strata_frontend::Engine;
 using strata_frontend::EngineLine;
@@ -58,9 +64,14 @@ struct Slot {
 
     int32_t n_predict = -1;
 
+    std::string images_path; // the request's picture rows for GENI (step 8); unlinked when the slot is released
+
     bool active() const { return task != nullptr; }
 
     void release() {
+        if (!images_path.empty()) {
+            ::unlink(images_path.c_str());
+        }
         *this = Slot{};
     }
 
@@ -158,10 +169,14 @@ struct strata_context_impl {
     llama_model *       model = nullptr;
     const llama_vocab * vocab = nullptr;
 
-    // images arrive in step 8 of PLAN.md: until then mctx stays null and image_url parts are refused by
-    // oaicompat_chat_params_parse with llama.cpp's own message
+    // images (PLAN.md step 8): the model's vision encoder and projector (--mmproj) run in this process on the CPU
+    // through llama.cpp's mtmd, as upstream's strata-vision did in a child; the rows go to the engine in a file named
+    // by a GENI request. Without --mmproj mctx stays null and image_url parts are refused by
+    // oaicompat_chat_params_parse with llama.cpp's own message.
     mtmd_context *        mctx = nullptr;
     mtmd_helper_init_opt  init_opt{};
+    int32_t               vision_width = 0;  // the projector's output width, checked against the model's embedding
+    int32_t               image_pad_id = -1; // the token whose runs in the ids the engine replaces with picture rows
 
     server_chat_params           chat_params;
     std::map<std::string, bool>  chat_caps;
@@ -283,11 +298,16 @@ struct strata_context_impl {
             slot.release();
             return;
         }
+        std::vector<int32_t> ids;
         if (t.tokens.has_mtmd) {
-            // step 8: image rows through GENI
-            send_error(t, "images are not supported by this build yet", ERROR_TYPE_NOT_SUPPORTED);
-            slot.release();
-            return;
+            std::string ierr;
+            if (!encode_pictures(t, ids, ierr)) {
+                send_error(t, ierr, ERROR_TYPE_SERVER);
+                slot.release();
+                return;
+            }
+        } else {
+            ids = t.tokens.get_text_tokens();
         }
         const long long room = n_ctx - n_prompt - ENGINE_CONTEXT_RESERVE;
         if (room <= 0) {
@@ -311,8 +331,8 @@ struct strata_context_impl {
                     t.id, t.params.sampling.grammar.grammar.size());
         }
 
-        const std::string header = gen_header(t, slot.n_predict);
-        if (!engine.send_request(header, t.tokens.get_text_tokens())) {
+        const std::string header = gen_header(t, slot.n_predict, slot.images_path);
+        if (!engine.send_request(header, ids)) {
             send_error(t, "the engine is not running", ERROR_TYPE_UNAVAILABLE);
             slot.release();
             return;
@@ -329,9 +349,9 @@ struct strata_context_impl {
 
     // `GEN <max_new> key=value...` from the request's sampling parameters. Absent keys mean greedy to the engine
     // (generate.cpp: "Absent = greedy"), so temperature <= 0 sends none of them.
-    std::string gen_header(const server_task & t, int32_t max_new) const {
+    std::string gen_header(const server_task & t, int32_t max_new, const std::string & images_path = std::string()) const {
         const auto & s = t.params.sampling;
-        std::string h = "GEN " + std::to_string(max_new);
+        std::string h = (images_path.empty() ? "GEN " : "GENI ") + std::to_string(max_new);
         char b[128];
         if (s.temp > 0.0f) {
             std::snprintf(b, sizeof b, " temperature=%g", (double) s.temp); h += b;
@@ -358,7 +378,171 @@ struct strata_context_impl {
             }
             h += lb;
         }
+        if (!images_path.empty()) {
+            // GENI <max_new> [key=value ...] image_pad=<id> <file> <ids>: the engine reads strata-vision records from the
+            // file and places them at the runs of image_pad (src/poly/main.cpp take_pictures, generate.cpp for strata)
+            h += " image_pad=" + std::to_string(image_pad_id) + " " + images_path;
+        }
         return h;
+    }
+
+    // ---- pictures (step 8) ------------------------------------------------------------------------------------------
+
+    // The projector file and the vision encoder, on the CPU: the GPU is the engine's. Fails when the projector's
+    // output width is not the model's embedding width (the wrong mmproj for this model) or the vocabulary has no
+    // <|image_pad|> token (a model family whose picture placeholders this front end does not know yet).
+    bool init_vision(const common_params & p, std::string & err) {
+        int32_t proj_width = 0;
+        {
+            gguf_init_params gp{ /* no_alloc */ true, /* ctx */ nullptr };
+            gguf_context * gg = gguf_init_from_file(p.mmproj.path.c_str(), gp);
+            if (gg == nullptr) {
+                err = "cannot read the projector file " + p.mmproj.path;
+                return false;
+            }
+            const int64_t k = gguf_find_key(gg, "clip.vision.projection_dim");
+            if (k >= 0) {
+                proj_width = (int32_t) gguf_get_val_u32(gg, k);
+            }
+            gguf_free(gg);
+        }
+        if (proj_width <= 0) {
+            err = "the projector file has no clip.vision.projection_dim: " + p.mmproj.path;
+            return false;
+        }
+        // the vocab-only model has no hparams; the embedding width comes from the GGUF's metadata
+        char arch[64] = {0}, val[32] = {0};
+        int32_t want = 0;
+        if (llama_model_meta_val_str(model, "general.architecture", arch, sizeof arch) > 0 &&
+            llama_model_meta_val_str(model, (std::string(arch) + ".embedding_length").c_str(), val, sizeof val) > 0) {
+            want = std::atoi(val);
+        }
+        if (want <= 0) {
+            err = "cannot read the model's embedding width from " + p.model.path;
+            return false;
+        }
+        if (proj_width != want) {
+            err = string_format("the projector writes rows of %d values but the model's embedding width is %d: %s is not this model's mmproj",
+                                proj_width, want, p.mmproj.path.c_str());
+            return false;
+        }
+        const llama_tokens pad = common_tokenize(vocab, "<|image_pad|>", false, true);
+        if (pad.size() != 1) {
+            err = "the model has no <|image_pad|> token; pictures are supported for the Qwen family only so far";
+            return false;
+        }
+        mtmd_context_params cp = mtmd_context_params_default();
+        cp.use_gpu       = false; // the card belongs to the engine; upstream encoded on the CPU as well
+        cp.print_timings = false;
+        cp.warmup        = false;
+        cp.n_threads     = p.cpuparams.n_threads > 0 ? p.cpuparams.n_threads
+                                                     : std::max(1u, std::thread::hardware_concurrency() / 2);
+        if (p.image_max_tokens > 0) {
+            cp.image_max_tokens = p.image_max_tokens;
+        }
+        if (p.image_min_tokens > 0) {
+            cp.image_min_tokens = p.image_min_tokens;
+        }
+        mctx = mtmd_init_from_file(p.mmproj.path.c_str(), model, cp);
+        if (mctx == nullptr || !mtmd_support_vision(mctx)) {
+            if (mctx) { mtmd_free(mctx); mctx = nullptr; }
+            err = "cannot load the vision encoder " + p.mmproj.path;
+            return false;
+        }
+        vision_width = proj_width;
+        image_pad_id = pad[0];
+        LOG_INF("vision: %s, rows of %d, encoder on the CPU with %d threads, image_pad=%d\n",
+                p.mmproj.path.c_str(), vision_width, cp.n_threads, image_pad_id);
+        return true;
+    }
+
+    // Encodes the request's pictures (the media chunks of its tokens) into one file of strata-vision records and
+    // writes the ids the engine reads: the text tokens as they are, a run of image_pad per picture, one per row.
+    bool encode_pictures(const server_task & t, std::vector<int32_t> & ids, std::string & err) {
+        if (mctx == nullptr) {
+            err = "images need the server started with --mmproj";
+            return false;
+        }
+        char name[] = "/tmp/unbiased-strata-pictures-XXXXXX";
+        const int fd = ::mkstemp(name);
+        if (fd < 0) {
+            err = "cannot create the pictures file";
+            return false;
+        }
+        slot.images_path = name;
+        std::FILE * f = ::fdopen(fd, "wb");
+        if (f == nullptr) {
+            ::close(fd);
+            err = "cannot open the pictures file";
+            return false;
+        }
+        const size_t n = t.tokens.size();
+        int n_pictures = 0;
+        ids.reserve(n);
+        for (size_t i = 0; i < n;) {
+            if (t.tokens[i] != LLAMA_TOKEN_NULL) {
+                ids.push_back(t.tokens[i]);
+                ++i;
+                continue;
+            }
+            const mtmd_input_chunk * ch = nullptr;
+            try {
+                ch = t.tokens.find_chunk(i).get();
+            } catch (const std::exception &) {
+                ch = nullptr;
+            }
+            if (ch == nullptr || mtmd_input_chunk_get_type(ch) != MTMD_INPUT_CHUNK_TYPE_IMAGE) {
+                std::fclose(f);
+                err = "only pictures are supported, not audio or video";
+                return false;
+            }
+            const int32_t n_tok = (int32_t) mtmd_input_chunk_get_n_tokens(ch);
+            const auto t0 = std::chrono::steady_clock::now();
+            if (mtmd_encode_chunk(mctx, ch) != 0) {
+                std::fclose(f);
+                err = "the vision encoder failed";
+                return false;
+            }
+            const float * embd = mtmd_get_output_embd(mctx);
+            const mtmd_image_tokens * it = mtmd_input_chunk_get_tokens_image(ch);
+            if (embd == nullptr || it == nullptr || n_tok < 1) {
+                std::fclose(f);
+                err = "the vision encoder returned nothing";
+                return false;
+            }
+            // the grid from the decoder positions of the last row (strata-vision does the same)
+            const mtmd_decoder_pos last = mtmd_image_tokens_get_decoder_pos(it, 0, (size_t) n_tok - 1);
+            int32_t nx = (int32_t) last.x + 1, ny = (int32_t) last.y + 1;
+            if (n_tok > 1 && nx == n_tok && ny == n_tok) {
+                ny = 1;
+            }
+            if ((int64_t) nx * ny != n_tok) {
+                std::fclose(f);
+                err = string_format("picture %d: %d rows are not a grid (tiled encoders are not supported)", n_pictures + 1, n_tok);
+                return false;
+            }
+            const int32_t hdr[5] = {0x31455653, n_tok, nx, ny, vision_width};
+            const size_t count = (size_t) n_tok * (size_t) vision_width;
+            if (std::fwrite(hdr, sizeof hdr, 1, f) != 1 || std::fwrite(embd, sizeof(float), count, f) != count) {
+                std::fclose(f);
+                err = "short write to the pictures file";
+                return false;
+            }
+            ids.insert(ids.end(), (size_t) n_tok, image_pad_id);
+            ++n_pictures;
+            const double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
+            SRV_INF("task %d: picture %d: %d rows (%dx%d) encoded in %.0f ms on the CPU\n", t.id, n_pictures, n_tok, nx, ny, ms);
+            i += (size_t) n_tok;
+        }
+        if (std::fclose(f) != 0) {
+            err = "cannot write the pictures file";
+            return false;
+        }
+        if (!ids.empty() && ids.back() == image_pad_id) {
+            err = "a prompt cannot end in a picture";
+            return false;
+        }
+        return true;
     }
 
     void cancel_current() {
@@ -875,6 +1059,12 @@ bool strata_context::load(common_params & params, std::string & err) {
     I.model_path = params.model.path;
     I.model_name = params.model_alias.empty() ? file_stem(params.model.path) : *params.model_alias.begin();
 
+    if (!params.mmproj.path.empty()) {
+        if (!I.init_vision(params, err)) {
+            return false;
+        }
+    }
+
     // mirrors the chat template setup in server_context_impl::load_model
     {
         common_chat_templates_ptr chat_templates;
@@ -896,7 +1086,7 @@ bool strata_context::load(common_params & params, std::string & err) {
             /* reasoning_format      */ params.reasoning_format,
             /* chat_template_kwargs  */ params.default_template_kwargs,
             /* tmpls                 */ std::move(chat_templates),
-            /* allow_image           */ false,
+            /* allow_image           */ I.mctx != nullptr,
             /* allow_audio           */ false,
             /* allow_video           */ false,
             /* enable_thinking       */ enable_thinking,

@@ -51,6 +51,8 @@ void usage() {
         "  -m, --model FILE       the GGUF the vocabulary and chat template are read from (no tensors are loaded)\n"
         "  --host, --port, --api-key, --threads-http, --temp, --top-k, --top-p, --min-p, --reasoning-format,\n"
         "  --chat-template-kwargs, --alias ...   llama-server options (see llama-server --help)\n"
+        "  --mmproj FILE          the model's vision projector: image_url parts are encoded here on the CPU and\n"
+        "                         handed to the engine (Qwen family; --threads sets the encoder's threads)\n"
         "  --                     everything after it is passed to the engine; --serve is added\n"
         "\n"
         "example (Qwen3.6-35B-A3B from its GGUF):\n"
@@ -130,10 +132,6 @@ int main(int argc, char ** argv) {
     }
     if (params.model.path.empty()) {
         std::fprintf(stderr, "unbiased-strata: -m <model.gguf> is required (the vocabulary and chat template come from it)\n");
-        return 2;
-    }
-    if (!params.mmproj.path.empty()) {
-        std::fprintf(stderr, "unbiased-strata: --mmproj (images) is not in this build yet; see PLAN.md step 8\n");
         return 2;
     }
     auto model_name = params.model.get_name();
