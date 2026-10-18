@@ -21,7 +21,8 @@ this front end. Upstream's model notes are kept as they were: [docs/MODELS.md](d
 [docs/QWEN36.md](docs/QWEN36.md), [docs/GLM.md](docs/GLM.md), [docs/DEEPSEEK.md](docs/DEEPSEEK.md),
 [docs/LFM.md](docs/LFM.md), [docs/BACKENDS.md](docs/BACKENDS.md).
 
-Images are not served yet (PLAN.md step 8): `--mmproj` is refused at start.
+Pictures: Qwen3.6 with its projector file (`--mmproj`, below); the encoder runs on the CPU in the front end and the
+engine takes the rows. Measured once, `bench/unbiased/2026-10-18-a6000-qwen36-iq4xs-images-step8/`.
 
 ## Build
 
@@ -83,6 +84,12 @@ build/bin/unbiased-strata --engine build/bin/strata-poly \
   -- --model /models/Qwen3.6-35B-A3B-UD-Q3_K_M.gguf --max-context 32768 \
      --expert-profile /models/expert-profile-q3km.txt --tail-skip 6
 ```
+
+With pictures, add `--mmproj /models/mmproj-F16.gguf` (the projector from the same `-MTP` repository) and
+`--threads N` for the encoder before the `--`. The front end checks the projector's width against the model's at
+start, encodes each picture with llama.cpp's mtmd and hands the rows to the engine over upstream's `GENI`
+protocol. A picture is at most 300 rows by default (upstream's installer's CPU setting; `--image-max-tokens`
+changes it), which read a 1920x1080 dashboard correctly in 15 s of encoding on a Ryzen 7 1700.
 
 **Qwen3.8-Flash-Next GSQ-RCO IQ3_XXS** (`strata`; the two GGUF shards, the pack directory made from shard 1, the MTP
 draft directory). On the 24 GB card:
@@ -173,7 +180,9 @@ Flash-Next and Qwen3.6 (text and token count; the token-id comparison against ll
 - One request at a time: the front end has one slot and queues the rest.
 - No constrained decoding: a request's `response_format` or tool schema is parsed, not enforced at the sampler; the
   server logs `a grammar was requested; this engine does not constrain sampling` once per such request.
-- No images yet (`--mmproj` refused); upstream's vision path is CPU-side and slow, and the port is PLAN.md step 8.
+- Pictures are encoded on the CPU, 15 s each at the 300-row default on an 8-thread Ryzen 7 1700, quadratic in rows
+  (2040 rows took 146 s). The front end's ggml is built without CUDA (the engines bring their own), so `--mmproj-gpu`
+  is refused; giving the encoder the card is a build change to llama.cpp's ggml in this tree, not done.
 - Streams always end with a usage chunk (empty `choices`), as upstream's server does, whether or not the client asked
   for `stream_options.include_usage`.
 - On SIGTERM the front end exits with status 1 after stopping the engine. Harmless under a shell; a systemd unit should

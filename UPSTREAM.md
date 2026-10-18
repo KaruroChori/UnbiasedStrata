@@ -73,7 +73,13 @@ Recorded here because a client written for one of the two may notice.
 - **One slot.** Requests are served one at a time in arrival order, as upstream's server does with one engine.
 - **No constrained decoding.** `response_format` and tool schemas are parsed and used for output parsing, not
   enforced at the sampler, because the engine samples; logged once per such request.
-- **`--mmproj` is refused** until PLAN.md step 8 lands (upstream's Python server encodes images on the CPU).
+- **Pictures are encoded in the front end** (`--mmproj FILE`, commit 71886db0 and after): llama.cpp's mtmd runs the
+  projector and the front end writes upstream's `SVE1` record file and sends `GENI … image_pad=<id> <file>`, the
+  protocol upstream's Python server spoke to `strata-vision`. Projector width is checked against the model's
+  embedding width at start. The default row budget is upstream's installer's (300 on the CPU, 1024 on the GPU;
+  `--image-max-tokens` overrides). The encoder runs on the CPU: the front end's ggml is built without CUDA, and
+  `--mmproj-gpu` is refused when ggml has no GPU device (17e27213). Measured in
+  `bench/unbiased/2026-10-18-a6000-qwen36-iq4xs-images-step8/`.
 - **`--sse-ping-interval`** is llama-server's (default 30 s); the measured Flash-Next runs used 10.
 - **SIGTERM exits 1**, not 0, after stopping the engine: the engine child dies with the process group and the front
   end reports it as an engine death with an empty message. Open; matters only to a service manager.
