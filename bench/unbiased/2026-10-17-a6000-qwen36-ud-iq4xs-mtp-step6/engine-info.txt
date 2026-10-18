@@ -1,0 +1,15 @@
+0.04.856.759 I engine info: batch_slots=0
+0.04.856.767 I engine info: context=32768
+0.04.856.772 I engine info: conversation_cache_mib=0
+0.04.856.773 I engine info: conversation_cache_min_free_mib=2560
+0.04.856.773 I engine info: conversation_cache_slots=4
+0.04.856.773 I engine info: engine=0.1.45
+0.04.856.773 I engine info: expert_cache_mib=14887
+0.04.856.774 I engine info: expert_slots=10496
+0.04.856.774 I engine info: pool_workers=12
+0.04.856.774 I engine info: vram_elastic=1
+0.04.856.774 I engine info: vram_free_mib=29312
+0.04.856.775 I engine ready: context 32768 tokens, model qwen3.6-35b-a3b-ud-iq4_xs
+df27a780435b7b45c2597536112ea3cb091f8544c3d0c3318d9f4258b31f7adf  /mnt/ds4/unbiased-strata/qwen36/Qwen3.6-35B-A3B-UD-IQ4_XS.gguf
+NVIDIA RTX A6000, 550.163.01
+bash: line 1: /usr/local/cuda/bin/nvcc: No such file or directory
