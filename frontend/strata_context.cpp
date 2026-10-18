@@ -975,7 +975,11 @@ void strata_context::init_routes(server_http_context & http) {
             res->error(format_error_response("the engine is not running", ERROR_TYPE_UNAVAILABLE));
             return res;
         }
-        res->ok({{"status", "ok"}, {"busy", I->slot.active()}});
+        // llama.cpp's shape ("status") plus the fields upstream PolyStrata clients (tools/strata_bench.py,
+        // its is_strata / wait_ready) look for: "service" and "loaded". The engine only serves once loaded.
+        res->ok({{"status", "ok"}, {"busy", I->slot.active()},
+                 {"service", "strata"}, {"loaded", true},
+                 {"model", I->model_name}, {"max_context", I->n_ctx}});
         return res;
     };
 

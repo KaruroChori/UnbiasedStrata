@@ -33,6 +33,8 @@ done
 
 # /health and /v1/models
 h=$(curl -s "$URL/health"); check $([ "$(echo "$h" | j 'd["status"]')" = ok ] && echo 0 || echo 1) "/health: $h"
+# upstream PolyStrata clients (tools/strata_bench.py) require these two to treat the server as a loaded strata server
+check $([ "$(echo "$h" | j 'd["service"]')" = strata ] && [ "$(echo "$h" | j 'd["loaded"]')" = True ] && echo 0 || echo 1) "/health: service=strata loaded=true"
 m=$(curl -s "$URL/v1/models"); check $([ "$(echo "$m" | j 'd["data"][0]["id"]')" = fake ] && echo 0 || echo 1) "/v1/models id: $(echo "$m" | j '{k: d["data"][0].get(k) for k in ("id", "context_length")}')"
 
 # non-streaming chat
