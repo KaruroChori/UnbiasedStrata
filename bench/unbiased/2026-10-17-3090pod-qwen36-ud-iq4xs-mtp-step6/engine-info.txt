@@ -1,0 +1,15 @@
+0.10.124.400 I engine info: batch_slots=0
+0.10.124.411 I engine info: context=32768
+0.10.124.411 I engine info: conversation_cache_mib=0
+0.10.124.422 I engine info: conversation_cache_min_free_mib=2560
+0.10.124.423 I engine info: conversation_cache_slots=4
+0.10.124.423 I engine info: engine=0.1.45
+0.10.124.424 I engine info: expert_cache_mib=14887
+0.10.124.424 I engine info: expert_slots=10496
+0.10.124.424 I engine info: pool_workers=31
+0.10.124.425 I engine info: vram_elastic=1
+0.10.124.425 I engine info: vram_free_mib=5029
+0.10.124.427 I engine ready: context 32768 tokens, model qwen3.6-35b-a3b-ud-iq4_xs
+NVIDIA GeForce RTX 3090, 580.126.20
+Build cuda_12.8.r12.8/compiler.35583870_0
+cat: /sys/fs/cgroup/cpu.max: No such file or directory

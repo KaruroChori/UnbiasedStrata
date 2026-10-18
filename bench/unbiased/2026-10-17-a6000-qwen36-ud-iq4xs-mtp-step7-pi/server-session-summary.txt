@@ -1,0 +1,9 @@
+requests launched: 22
+requests done: 13
+finish reasons:       1 finish=length      12 finish=stop 
+tool-call parse failures: 0
+W/E lines:
+--- GEN headers seen (pi session, max_tokens and sampling):
+GEN 64 prompt=30
+--- Q3_K_M-MTP copy:
+15.9297 GiB of 15.93
