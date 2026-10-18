@@ -43,6 +43,16 @@ ARMS = {
       cmd=lambda d, cfg: [str(FORK / 'build/bin/unbiased-strata'), '--engine', str(FORK / 'build/bin/strata-poly'), '-m', str(Q36), '--host', '127.0.0.1', '--port', '18091',
                           '--alias', 'qwen3.6-35b-a3b-ud-q3_k_m', '--'] + q36_args(str(d / 'expert-profile.txt'))),
 }
+# Attribution arms (2026-10-18): fork front end + upstream engine binaries, same files and flags. Compare with
+# upstream-* (upstream front end + upstream engine) and fork-* (fork front end + fork engine).
+ARMS['forkfe-upengine-flash-next'] = dict(port=18090, model='qwen3.8-flash-next-iq3_xxs', engine=str(ROOT / 'build/strata'),
+    cfg=lambda d: {'exe': str(FORK / 'build/bin/unbiased-strata'), 'engine': str(ROOT / 'build/strata'), 'model_name': 'qwen3.8-flash-next-iq3_xxs', 'args': FN_ENGINE_ARGS},
+    cmd=lambda d, cfg: [str(FORK / 'build/bin/unbiased-strata'), '--engine', str(ROOT / 'build/strata'), '-m', str(FN1), '--host', '127.0.0.1', '--port', '18090',
+                        '--alias', 'qwen3.8-flash-next-iq3_xxs', '--'] + FN_ENGINE_ARGS)
+ARMS['forkfe-upengine-qwen36-q3km'] = dict(port=18091, model='qwen3.6-35b-a3b-ud-q3_k_m', engine=str(ROOT / 'build/strata-poly'),
+    cfg=lambda d: {'exe': str(FORK / 'build/bin/unbiased-strata'), 'engine': str(ROOT / 'build/strata-poly'), 'model_name': 'qwen3.6-35b-a3b-ud-q3_k_m', 'args': q36_args(str(d / 'expert-profile.txt'))},
+    cmd=lambda d, cfg: [str(FORK / 'build/bin/unbiased-strata'), '--engine', str(ROOT / 'build/strata-poly'), '-m', str(Q36), '--host', '127.0.0.1', '--port', '18091',
+                        '--alias', 'qwen3.6-35b-a3b-ud-q3_k_m', '--'] + q36_args(str(d / 'expert-profile.txt')))
 order = sys.argv[2:] or list(ARMS)
 
 def stat(v):

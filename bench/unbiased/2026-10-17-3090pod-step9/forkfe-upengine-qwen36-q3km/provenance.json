@@ -1,0 +1,9 @@
+{
+ "arm": "forkfe-upengine-qwen36-q3km",
+ "engine_binary": "/opt/polystrata-v0.1.45-poly.1/build/strata-poly",
+ "engine_sha256": "c893c1690e43b9be3a80c99316909f7a68f4e1db53ff232165e631ffc9ac648b",
+ "fork_commit": "4261ebfa111d1d49ae60883c209ad211399b1b1c",
+ "nvidia_smi": "NVIDIA GeForce RTX 3090, 580.126.20, 24576 MiB",
+ "cpu_quota": "3112500/100000",
+ "started_utc": "2026-10-18T07:09:47Z"
+}

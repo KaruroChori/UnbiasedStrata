@@ -1,0 +1,13 @@
+[
+ "/opt/polystrata-v0.1.45-poly.1/.venv/bin/python",
+ "/opt/polystrata-v0.1.45-poly.1/tools/strata_bench.py",
+ "--url",
+ "http://127.0.0.1:18091",
+ "--config",
+ "/opt/us2-results/step9/2026-10-17-rtx3090/forkfe-upengine-qwen36-q3km/server.json",
+ "--runs",
+ "3",
+ "--long",
+ "--out",
+ "/opt/us2-results/step9/2026-10-17-rtx3090/forkfe-upengine-qwen36-q3km/community"
+]
