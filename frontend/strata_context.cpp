@@ -18,6 +18,7 @@
 #include "llama.h"
 #include "log.h"
 #include "gguf.h"
+#include "ggml-backend.h"
 #include "mtmd.h"
 #include "mtmd-helper.h"
 
@@ -432,6 +433,12 @@ struct strata_context_impl {
             err = "the model has no <|image_pad|> token; pictures are supported for the Qwen family only so far";
             return false;
         }
+        if (p.mmproj_use_gpu && ggml_backend_dev_by_type(GGML_BACKEND_DEVICE_TYPE_GPU) == nullptr) {
+            // ggml in this build has no GPU backend (the engines bring their own CUDA; llama.cpp's ggml is built
+            // without it), so mtmd would silently run on the CPU
+            err = "--mmproj-gpu: this build's ggml has no GPU backend; the encoder can only run on the CPU";
+            return false;
+        }
         mtmd_context_params cp = mtmd_context_params_default();
         // the request parser (server-common) replaces each image_url part by a marker that is random per process
         // (get_media_marker); mtmd must look for that same marker, as server-context.cpp sets it
@@ -441,9 +448,10 @@ struct strata_context_impl {
         cp.warmup        = p.mmproj_use_gpu; // on the card, allocate the work buffers now, not at the first picture
         cp.n_threads     = p.cpuparams.n_threads > 0 ? p.cpuparams.n_threads
                                                      : std::max(1u, std::thread::hardware_concurrency() / 2);
-        if (p.image_max_tokens > 0) {
-            cp.image_max_tokens = p.image_max_tokens;
-        }
+        // the picture's row budget: upstream's installer gave the CPU encoder 300 tokens and the GPU one 1024
+        // (setup.py VISION); the encoder's attention is quadratic in it (a 1920x1080 screenshot uncapped is 2040
+        // rows: 146 s on a Ryzen 7 1700). --image-max-tokens overrides.
+        cp.image_max_tokens = p.image_max_tokens > 0 ? p.image_max_tokens : (p.mmproj_use_gpu ? 1024 : 300);
         if (p.image_min_tokens > 0) {
             cp.image_min_tokens = p.image_min_tokens;
         }
@@ -456,8 +464,8 @@ struct strata_context_impl {
         vision_width = proj_width;
         image_pad_id = pad[0];
         p_mmproj_gpu = p.mmproj_use_gpu;
-        LOG_INF("vision: %s, rows of %d, encoder on the %s (%d CPU threads), image_pad=%d\n",
-                p.mmproj.path.c_str(), vision_width, cp.use_gpu ? "GPU" : "CPU", cp.n_threads, image_pad_id);
+        LOG_INF("vision: %s, rows of %d, encoder on the %s (%d CPU threads), at most %d rows a picture, image_pad=%d\n",
+                p.mmproj.path.c_str(), vision_width, cp.use_gpu ? "GPU" : "CPU", cp.n_threads, cp.image_max_tokens, image_pad_id);
         return true;
     }
 
