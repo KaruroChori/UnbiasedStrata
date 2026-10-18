@@ -61,4 +61,15 @@ No changes yet.
 
 ## Removed
 
-Nothing yet. The import is the current head of the engine tree.
+Each entry names the rule above that it satisfies.
+
+- **Rule 1, installers and downloaders:** `setup.py` (8,223 lines: hardware detection, pip, CUDA, llama.cpp zips,
+  prebuilt engines from GitHub releases, model files from Hugging Face or ModelScope, pack and MTP orchestration,
+  run-config JSON, start), `setup.sh`, `SETUP.bat`, `START-HERE.bat`, `UPDATE.bat`, `update.sh`, `Dockerfile`,
+  `docker-entrypoint.sh`, `.dockerignore`, `flake.nix`, `flake.lock`, `requirements.txt` (replaced by
+  `tools/requirements.txt`: numpy and regex, for the offline tools only), `conftest.py` (pytest root for
+  `setup.py`'s tests), `tools/strata_mcp.py` (an installer driven over MCP), `tools/image/` (stable-diffusion.cpp,
+  Vulkan SDK and model downloads), `tools/hip/package_windows.py` (AMD nightly wheels), and their tests
+  (`tools/test_setup_*.py` with two golden JSONs, `test_strata_mcp.py`, `test_qimage.py`,
+  `test_docker_entrypoint.py`, `test_poly_prebuilt.py`). The jobs of `setup.py` that were not downloads (choosing
+  engine flags per card, RAM and context) become documented flags in `README.md`.
