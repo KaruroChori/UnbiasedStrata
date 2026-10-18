@@ -315,8 +315,11 @@ Expected diff shape: removals dominated by `setup.py`, `serve/`, translations an
 | 8 | Images | a screenshot through pi to Qwen3.6; projector width checked against the model |
 | 9 | Measurements (§11) | tables under `bench/unbiased/` with commands, raw outputs, checksums of the model files |
 | 10 | `README.md`, `UPSTREAM.md` complete | every `src/`/`include/` hunk since the import appears in `UPSTREAM.md`; README has only numbers that have rows |
+| 11 | **Correctness plan** (added 2026-10-17). An agent writes `docs/CORRECTNESS-PLAN.md`: how to check PolyStrata's engines against llama.cpp at the pinned commit for the kernels actually in use on our target (the expert MMQ paths for IQ3_XXS and the K-quants, the MTP draft layer, the Q8/int8 KV paths, the prompt path, `strata-poly`'s qwen35moe path), which of upstream's ~70 parity and bench programs cover them and what each compares against, the teacher-forced greedy id comparison against llama.cpp for Flash-Next and Qwen3.6 (same ids in, how many tokens, what divergence is tolerated and why), what a failure would mean for the fork, and the cost in machine time. Planning only: this step runs nothing on a GPU and changes no code | the document, with each proposed check naming the program or script, the reference it compares against and the pass criterion; your sign-off on which checks become a later step |
 
-Steps 2, 6, 7, 8, 9 need a Linux box with an NVIDIA card. You hand me the machines; the RunPod pod
+Step 11 is a plan, not a run; it exists because the plan above inherits the engines' correctness from upstream without
+checking it (TRELLO.md: "Vet polystrata fork on correctness"), and the step-6 gate as run compared text and token counts,
+not ids. Steps 2, 6, 7, 8, 9 need a Linux box with an NVIDIA card. You hand me the machines; the RunPod pod
 from the 2026-10-17 benchmark has the IQ3_XXS pack, the MTP dir and the upstream build. Nothing
 runs on the homelab.
 
