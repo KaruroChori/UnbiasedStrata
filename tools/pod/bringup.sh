@@ -29,7 +29,7 @@ wait
 echo "downloads and builds finished $(date -u +%FT%TZ)"; tail -n 1 dl-*.log
 # --- Flash-Next pack and MTP draft directory (upstream's tools, as its installer runs them) ---
 SH1=$M/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf
-( cd $F && python3 tools/iq_pack.py --gguf $SH1 --out $M/pack-iq3-xxs > $B/pack.log 2>&1 && echo "pack ok" || echo "pack FAILED (pack.log)" ) &
+( cd $F && python3 tools/iq_pack.py --gguf $SH1 --out $M/pack-iq3-xxs > $B/pack.log 2>&1 && cp data/expert-profile.bin $M/pack-iq3-xxs/expert-profile.bin && echo "pack ok" || echo "pack FAILED (pack.log)" ) &  # the shipped expert ranking, as the installer places it; the engine exits without it
 ( cd $F && STRATA_SOURCE=huggingface python3 tools/mtp_fetch.py fetch --out $M/mtp-src > $B/mtp.log 2>&1 \
   && python3 tools/mtp_pack.py --src $M/mtp-src --experts q2_0 --out $M/mtp-src/mtp-q2_0.gguf >> $B/mtp.log 2>&1 \
   && python3 tools/mtp_rt.py --gguf $M/mtp-src/mtp-q2_0.gguf --out $M/mtp >> $B/mtp.log 2>&1 \

@@ -1,0 +1,1 @@
+a8469d55 step 13: acceptance harness (pi in Docker, four tasks, judges), API-only acceptance script, GLM vocabulary load fix

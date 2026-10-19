@@ -1,0 +1,35 @@
+== deepseek
+0.00.117.944 I llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+0.18.828.158 I engine info: batch_slots=0
+0.18.828.170 I engine info: context=32768
+0.18.828.171 I engine info: conversation_cache_mib=8192
+0.18.828.172 I engine info: conversation_cache_min_free_mib=2560
+0.18.828.172 I engine info: conversation_cache_slots=4
+0.18.828.173 I engine info: engine=0.1.45
+0.18.828.174 I engine info: expert_cache_mib=80036
+0.18.828.175 I engine info: expert_slots=11008
+0.18.828.175 I engine info: pool_workers=46
+0.18.828.176 I engine info: vram_elastic=1
+0.18.828.177 I engine info: vram_free_mib=91672
+0.18.828.180 I engine ready: context 32768 tokens, model deepseek-v4-flash-ud-iq2_xxs-b200
+== glm
+0.00.158.841 I llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+0.00.295.054 I validate_override: Using metadata override (  str) 'general.architecture' = 0.00.295.056 I llama
+0.00.308.845 I llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+0.00.619.338 I validate_override: Using metadata override (  str) 'general.architecture' = 0.00.619.339 I llama
+0.22.873.625 I engine info: batch_slots=0
+0.22.873.637 I engine info: context=32768
+0.22.873.638 I engine info: conversation_cache_mib=8192
+0.22.873.639 I engine info: conversation_cache_min_free_mib=2560
+0.22.873.639 I engine info: conversation_cache_slots=4
+0.22.873.640 I engine info: engine=0.1.45
+0.22.873.641 I engine info: expert_cache_mib=102225
+0.22.873.641 I engine info: expert_slots=12096
+0.22.873.642 I engine info: pool_workers=46
+0.22.873.642 I engine info: vram_elastic=1
+0.22.873.643 I engine info: vram_free_mib=69514
+0.22.873.646 I engine ready: context 32768 tokens, model glm-5.3-flash-3.0bit-b200
+NVIDIA B200, 183359 MiB, 595.91.07
+NVIDIA B200, 183359 MiB, 595.91.07
+4650000 100000
+Mem:            2015         584         405         111        1149        1431

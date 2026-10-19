@@ -20,15 +20,19 @@ case $TASK in
     python3 -c "import json,sys; print(json.dumps({'pass': $rc==0, 'tests_untouched': sys.argv[1]==sys.argv[2], 'pytest': sys.argv[3].splitlines()[-1]}))" "$changed" "$orig" "$out"; exit $rc ;;
   minesweeper)
     [ -f "$WORK/index.html" ] || { echo '{"pass": false, "why": "no index.html"}'; exit 1; }
-    export PATH="$HOME/.bun/bin:$PATH"; B="bun run $HOME/Code/lookingglass/src/cli.ts"
+    export PATH="$HOME/.bun/bin:$PATH"; lg() { bun run "$HOME/Code/lookingglass/src/cli.ts" "$@"; }
     # one browser: campaigns on different servers may judge at the same moment
-    LOCK=/tmp/us2-judge-browser.lock; n=0; until mkdir "$LOCK" 2>/dev/null; do sleep 2; n=$((n+1)); [ $n -gt 300 ] && { rmdir "$LOCK"; }; done; trap 'rmdir "$LOCK" 2>/dev/null' EXIT
-    $B console --clear > /dev/null 2>&1; $B goto "file://$WORK/index.html" > /dev/null 2>&1
-    cells=$($B js "document.querySelectorAll('.cell').length" 2>/dev/null | tr -dc 0-9)
-    revealed=$($B js "var c=document.querySelector('.cell[data-row=\"4\"][data-col=\"4\"]'); if(c){c.click();} document.querySelectorAll('.cell.revealed').length" 2>/dev/null | tr -dc 0-9)
-    errs=$($B console --errors 2>/dev/null | grep -c -i "error")
-    $B screenshot "$WORK/../judge-screenshot.png" > /dev/null 2>&1
-    pass=false; [ "${cells:-0}" -ge 81 ] && [ "${revealed:-0}" -ge 1 ] && [ "${errs:-1}" -eq 0 ] && pass=true
-    echo "{\"pass\": $pass, \"cells\": ${cells:-0}, \"revealed_after_click\": ${revealed:-0}, \"console_errors\": ${errs:-1}}"; [ $pass = true ] ;;
+    LOCK=/tmp/us2-judge-browser.lock; n=0; until mkdir "$LOCK" 2>/dev/null; do sleep 2; n=$((n+1)); [ $n -gt 300 ] && { rmdir "$LOCK"; }; done
+    # the browser refuses file: URLs, so the work dir is served over HTTP for the duration
+    PORT=$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1])')
+    (cd "$WORK" && python3 -m http.server --bind 127.0.0.1 "$PORT" > /dev/null 2>&1) & HTTP=$!
+    trap 'kill $HTTP 2>/dev/null; rmdir "$LOCK" 2>/dev/null' EXIT; sleep 1
+    lg console --clear > /dev/null 2>&1; lg goto "http://127.0.0.1:$PORT/index.html" > /dev/null 2>&1; sleep 1
+    cells=$(lg js "document.querySelectorAll('.cell').length" 2>/dev/null | tr -dc 0-9)
+    revealed=$(lg js "var c=document.querySelector('.cell[data-row=\"4\"][data-col=\"4\"]'); if(c){c.click();} document.querySelectorAll('.cell.revealed').length" 2>/dev/null | tr -dc 0-9)
+    errlines=$(lg console --errors 2>/dev/null | grep -v -i "no console errors" | grep -c .)
+    lg screenshot "$WORK/../judge-screenshot.png" > /dev/null 2>&1
+    pass=false; [ "${cells:-0}" -ge 81 ] && [ "${revealed:-0}" -ge 1 ] && [ "${errlines:-1}" -eq 0 ] && pass=true
+    echo "{\"pass\": $pass, \"cells\": ${cells:-0}, \"revealed_after_click\": ${revealed:-0}, \"console_errors\": ${errlines:-1}}"; [ $pass = true ] ;;
   *) echo '{"pass": false, "why": "unknown task"}'; exit 1 ;;
 esac

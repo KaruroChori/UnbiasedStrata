@@ -93,6 +93,13 @@ Recorded here because a client written for one of the two may notice.
   because the grammar's tool-call group is optional and has no end anchor, such a call was dropped silently:
   the client got `finish_reason=stop` and an empty answer (UnbiasedStrata 1, 2026-10-08, REGINA-104). Qwen3.6's
   template routes to the same parser. Carried over unchanged; it applies cleanly at this pin.
+- `llama.cpp-any-argument-order.patch` (`common/chat-auto-parser-generator.cpp`, `common/parsers/deepseek.cpp`): the same for every
+  template the auto-generated PEG grammar serves (DeepSeek V4 Flash's DSML, GLM 5.3 Flash's `<arg_key>` form, and
+  the rest). Upstream accepts the required arguments only in the schema's order, which holds when its own sampler
+  is constrained by the grammar; this engine samples unconstrained, and both models wrote `content` before `path`
+  for a `write` tool that declares `path` first, so a finished, well-formed call was reported to the client as
+  "output does not match the expected peg-native format" (PLAN.md step 13, 2026-10-19, USTRAT-7). Whether every
+  required argument is present is left to the tool, as upstream already leaves it for optional-only tools.
 
 ## Engine source (`src/`, `include/`)
 

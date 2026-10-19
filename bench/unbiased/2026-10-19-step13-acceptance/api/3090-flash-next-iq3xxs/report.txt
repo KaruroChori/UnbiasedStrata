@@ -1,0 +1,10 @@
+== /v1/models
+['qwen3.8-flash-next-iq3_xxs-3090']
+== 1. sampled chat with thinking: answer present, reasoning separated, finish=stop
+{"content": "391", "reasoning_chars": 134, "finish": "stop", "ok": true}
+== 2. same request, same seed, twice: identical ids (sampling is seeded)
+{"a": "The endless blue expanse of the sea stretches to the horizon, whispering ancient secrets with every ", "same": false}
+   (seeded sampling not reproducible: recorded, not failed; drafting changes the path)
+== 3. tool call, pi-shaped: a tool_calls entry with a JSON-parsable argument object
+{"tool_calls": [{"type": "function", "function": {"name": "read", "arguments": "{\"path\":\"/etc/hostname\"}"}, "id": "lIS9te6jK0wExMD0sn12lGgSrq1GwhGF"}], "ok": true}
+== 4. decode speed: 3 x 256 tokens of prose, thinking off, median tokens/s from the server's timings

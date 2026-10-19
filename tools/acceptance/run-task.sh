@@ -20,7 +20,7 @@ import json, sys, pathlib
 d, served, port, temp, topk, topp, seed = sys.argv[1:]; d = pathlib.Path(d)
 (d / "models.json").write_text(json.dumps({"providers": {"UnbiasedStrata 2": {
     "baseUrl": f"http://host.docker.internal:{port}/v1", "api": "openai-completions", "apiKey": "local",
-    "models": [{"id": served, "name": served, "reasoning": True, "input": ["text"], "contextWindow": 32768, "maxTokens": 8192,
+    "models": [{"id": served, "name": served, "reasoning": True, "input": ["text"], "contextWindow": 32768, "maxTokens": 24576,
                 "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0},
                 "samplingParams": {"temperature": float(temp), "top_k": int(topk), "top_p": float(topp), "min_p": 0, "presence_penalty": 0, "repeat_penalty": 1, "seed": int(seed)},
                 "compat": {"supportsStore": False, "supportsDeveloperRole": False, "supportsReasoningEffort": True, "maxTokensField": "max_tokens", "requiresReasoningContentOnAssistantMessages": True}}]}}}, indent=1))
@@ -44,9 +44,17 @@ if command -v tmux > /dev/null; then
   tmux has-session -t $TMUX_SESSION 2> /dev/null || tmux new-session -d -s $TMUX_SESSION -n hub "echo 'us2 acceptance runs; one window per run'; bash"
   tmux new-window -d -t $TMUX_SESSION -n "$(echo "$MODEL" | cut -c1-14)/$TASK" "docker logs -f $NAME 2>&1 | python3 $HERE/pretty.py; echo; echo '[container exited] run dir $RUN'; bash"
 fi
+# watchdog: a tool call that runs more than TOOL_CAP_S (default 300 s) is killed inside the container, as a person at the
+# terminal would do; pi then sees the tool fail and goes on. Logged to harness-notes.txt.
+TOOL_CAP_S=${TOOL_CAP_S:-300}
+( while docker inspect -f '{{.State.Running}}' "$NAME" 2>/dev/null | grep -q true; do
+    docker exec "$NAME" sh -c "ps -eo pid=,etimes=,comm= | awk '\$1>1 && \$2>$TOOL_CAP_S && \$3!=\"ps\" && \$3!=\"sh\" && \$3!=\"awk\" {print \$1, \$2, \$3}'" 2>/dev/null | while read -r pid et comm; do
+      [ -n "$pid" ] && { docker exec "$NAME" kill -9 "$pid" 2>/dev/null; echo "$(date -u +%FT%TZ) watchdog killed pid $pid ($comm) after ${et}s" >> "$RUN/harness-notes.txt"; }
+    done; sleep 30; done ) &
+WATCHDOG=$!
 # wait, with a wall-clock cap
 rc=$(timeout "$TIMEOUT_S" docker wait "$NAME" 2>/dev/null); [ -n "$rc" ] || { docker kill "$NAME" > /dev/null 2>&1; rc=124; echo "TIMEOUT after ${TIMEOUT_S}s" >&2; }
-END=$(date +%s)
+END=$(date +%s); kill $WATCHDOG 2>/dev/null
 docker logs "$NAME" > "$RUN/pi.jsonl" 2> "$RUN/pi.log"; docker rm "$NAME" > /dev/null 2>&1
 curl -s -m 5 "http://127.0.0.1:$PORT/props" > "$RUN/server-after.json" 2>/dev/null || true
 # judge

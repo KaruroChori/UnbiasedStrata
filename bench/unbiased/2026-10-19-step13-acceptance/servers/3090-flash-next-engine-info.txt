@@ -1,0 +1,38 @@
+strata: PLE table mlock failed (Cannot allocate memory; raise `ulimit -l`): its pages stay faulted in but may be reclaimed
+strata generate: profile /opt/us2-models/pack-iq3-xxs/expert-profile.bin: 24576 ranked pairs, built for 24576 slots
+strata generate: pre-filled 10531 of 10531 slots from the profile in 0.9 s (20475 MB/s); slot 0 verified
+strata generate: R4 hit path ON - resident experts are computed on the GPU
+strata generate: token graph hit path: 10531 resident experts, decided on the device
+strata serve: STRATA_ROUTE_TAIL_SKIP=7 is ON (default): a missed expert that every token of a verify window routes at rank 7 or lower is skipped (+10..20% decode on 12-16 GB cards that miss experts, a
+0.31.725.353 I engine info: arena_mib=40925
+0.31.725.364 I engine info: context=65536
+0.31.725.364 I engine info: conversation_cache_mib=0
+0.31.725.373 I engine info: conversation_cache_min_free_mib=2560
+0.31.725.373 I engine info: conversation_cache_min_tokens=0
+0.31.725.373 I engine info: conversation_cache_slots=4
+0.31.725.374 I engine info: cvec=0
+0.31.725.374 I engine info: engine=0.1.45
+0.31.725.375 I engine info: expert_cache_mib=17485
+0.31.725.375 I engine info: expert_cache_primary_mib=17485
+0.31.725.375 I engine info: expert_slots=10531
+0.31.725.375 I engine info: expert_slots_primary=10531
+0.31.725.376 I engine info: kv=int8
+0.31.725.378 I engine info: kv_resident=32768
+0.31.725.378 I engine info: logit_bias=1
+0.31.725.379 I engine info: lookup=3
+0.31.725.379 I engine info: mtp_max=4
+0.31.725.379 I engine info: pcie_frac=0.55
+0.31.725.379 I engine info: pool_workers=24
+0.31.725.380 I engine info: prefill_cap=8192
+0.31.725.380 I engine info: prefill_pipe=0
+0.31.725.380 I engine info: prefill_stages=1
+0.31.725.380 I engine info: spec=6
+0.31.725.381 I engine info: spec_min_p=0.50
+0.31.725.381 I engine info: stream_all_min=1024
+0.31.725.381 I engine info: tail_role_token=-1
+0.31.725.381 I engine info: vram_elastic=0
+0.31.725.381 I engine info: vram_free_mib=465
+0.31.725.385 I engine ready: context 65536 tokens, model qwen3.8-flash-next-iq3_xxs-3090
+NVIDIA GeForce RTX 3090, 24576 MiB, 580.159.03
+3113000 100000
+Mem:            1007         156         665           2         195         851
