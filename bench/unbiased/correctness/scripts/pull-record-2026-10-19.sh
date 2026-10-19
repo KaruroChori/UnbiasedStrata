@@ -3,7 +3,8 @@
 # inputs per tokenizer, the references' top-20 extracts and checksums (the f32 logits stay on the pod), the engine
 # arms' outputs, the scores, the chain scripts and logs.
 set -u
-SSH="ssh -p 30381 -i $HOME/.ssh/id_ed25519"; H=root@38.80.152.146; P=/opt/us2-correctness
+# pod address: override with US2_POD_PORT / US2_POD_HOST (2026-10-19: the B200 pod was replaced by 205.196.144.34:11149)
+SSH="ssh -p ${US2_POD_PORT:-11149} -i $HOME/.ssh/id_ed25519"; H=root@${US2_POD_HOST:-205.196.144.34}; P=/opt/us2-correctness
 cd "$(dirname "$0")/.." || exit 1
 for fam in deepseek glm; do
   mkdir -p inputs-$fam reference/$fam poly/$fam scores/$fam
