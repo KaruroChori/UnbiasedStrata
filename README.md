@@ -173,7 +173,14 @@ requests, not medians of a benchmark):
 | Qwen3.6 UD-IQ4_XS | 205 to 245 | 207 to 215 |
 
 Greedy answers to the same prompt were identical on the two boxes and identical to upstream on the pod for both
-Flash-Next and Qwen3.6 (text and token count; the token-id comparison against llama.cpp is PLAN.md step 12).
+Flash-Next and Qwen3.6 (text and token count). Against llama.cpp at the pinned commit (PLAN.md step 12,
+`bench/unbiased/correctness/`, 2026-10-18 on the A6000): teacher-forced on 16 sequences per model, both engines' per-step
+distributions are as close to llama.cpp's GPU run as llama.cpp's own CPU run is (mean KL 0.6 to 1.2x that spread on every
+set and arm), and the greedy token agrees at every position with a 0.5-nat margin except a handful of near ties per arm
+(Qwen3.6: 4 of 2,700; Flash-Next: 0 to 4 of about 2,880 depending on the arm). The findings, each with a ticket, are in
+that directory's README: upstream's own `poly_expert_parity` exceeds its bound on one expert; speculation is not bitwise
+inert above 4-token windows (it passes the KL gate); `strata`'s bits depend on the free VRAM at start when not every
+expert fits the card.
 
 ## Known limits
 
@@ -187,8 +194,11 @@ Flash-Next and Qwen3.6 (text and token count; the token-id comparison against ll
   for `stream_options.include_usage`.
 - On SIGTERM the front end exits with status 1 after stopping the engine. Harmless under a shell; a systemd unit should
   not use `Restart=on-failure` until this is fixed.
-- The engines are upstream's at v0.1.45-poly.1, unmodified, including their correctness. Checking them against llama.cpp
-  at the pinned commit for the kernels in use is PLAN.md steps 11 and 12.
+- The engines are upstream's at v0.1.45-poly.1, unmodified, including their correctness; the checks against llama.cpp at
+  the pinned commit are above ("Measured") and in `bench/unbiased/correctness/`. Two things to know from them: `strata`'s
+  answer can differ from one start to the next on a card that does not hold every expert, because `--expert-cache auto`
+  sizes the cache from the free VRAM and the CPU-computed share of the misses rounds differently (a fixed `--expert-cache N`
+  pins it); and `strata-poly`'s drafting changes low-order bits above 4-token windows (within llama.cpp's own CPU/GPU spread).
 
 ## What was removed, and the rule
 

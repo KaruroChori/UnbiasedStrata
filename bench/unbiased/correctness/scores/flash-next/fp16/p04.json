@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/fp16/p04.scored.tsv",
+ "steps": 128,
+ "top1_agree": 0.9921875,
+ "kl_top20_mean": 0.0037083197175994294,
+ "kl_top20_p99": 0.05807847664872854,
+ "top20_overlap_mean": 0.9261718749999999,
+ "missing_ids": 189,
+ "t1_positions": 125,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.01066849794055503,
+  "kl_full_p99": 0.11356813850189705,
+  "kl_top20_mean": 0.010758792325067875,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 0.34759529769441033,
+ "t2_ratio_vs_top20_floor": 0.3446780647451557,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p04",
+ "set": "short"
+}

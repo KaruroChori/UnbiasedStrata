@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/t4/d31k.scored.tsv",
+ "steps": 255,
+ "top1_agree": 0.9803921568627451,
+ "kl_top20_mean": 0.0025169616044137737,
+ "kl_top20_p99": 0.0306963289592964,
+ "top20_overlap_mean": 0.943529411764706,
+ "missing_ids": 288,
+ "t1_positions": 214,
+ "t1_failures": [],
+ "floor": {
+  "steps": 255,
+  "kl_full_mean": 0.0024342853442936518,
+  "kl_full_p99": 0.05219748793361313,
+  "kl_top20_mean": 0.0024514450535937857,
+  "top1_agree": 0.9647058823529412
+ },
+ "t2_ratio_vs_full_floor": 1.0339632575589086,
+ "t2_ratio_vs_top20_floor": 1.0267256860291205,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "d31k",
+ "set": "long"
+}

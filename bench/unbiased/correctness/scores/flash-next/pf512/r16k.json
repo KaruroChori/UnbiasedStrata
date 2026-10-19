@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/pf512/r16k.scored.tsv",
+ "steps": 509,
+ "top1_agree": 0.931237721021611,
+ "kl_top20_mean": 0.014751776466003445,
+ "kl_top20_p99": 0.1633277773639829,
+ "top20_overlap_mean": 0.9383104125736738,
+ "missing_ids": 628,
+ "t1_positions": 406,
+ "t1_failures": [],
+ "floor": {
+  "steps": 509,
+  "kl_full_mean": 0.00926527422347889,
+  "kl_full_p99": 0.06582559999634703,
+  "kl_top20_mean": 0.01673602662366728,
+  "top1_agree": 0.9430255402750491
+ },
+ "t2_ratio_vs_full_floor": 1.5921575670821866,
+ "t2_ratio_vs_top20_floor": 0.8814383962046402,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "r16k",
+ "set": "realtext"
+}

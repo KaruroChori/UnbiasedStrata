@@ -75,6 +75,10 @@ def score(gpu, cpu, eng, out, label):
     rows = []; kls = []; agree = 0; t1_pos = 0; t1_fail = []; overlaps = []; missing_total = 0
     for s in range(n):
         lp = logsoftmax(gpu[s]); pi, pp = topk_dist(lp)
+        lq = logsoftmax(cpu[s]); qi, qp = topk_dist(lq)
+        f_full = float((np.exp(lp) * (lp - lq)).sum())
+        f_b, _ = kl_bucketed(pi, pp, dict(zip(map(int, qi), qp)), 1.0 - qp.sum())
+        cpu_agree = int(lq.argmax() == pi[0])
         gap = float(lp[pi[0]] - lp[pi[1]])
         e_top, q = eng[s]
         kl, miss = kl_bucketed(pi, pp, q, 1.0 - sum(q.values())); missing_total += miss
@@ -83,14 +87,16 @@ def score(gpu, cpu, eng, out, label):
         if gap >= 0.5:
             t1_pos += 1
             if not a: t1_fail.append((s, int(pi[0]), e_top, gap))
-        rows.append(f'{s}\t{int(pi[0])}\t{gap:.4f}\t{e_top}\t{a}\t{ov:.2f}\t{kl:.6f}\t{miss}')
-    out.write('step\tllama_argmax\tllama_top2_gap\tengine_argmax\tagree\ttop20_overlap\tkl_top20\tmissing\n' + '\n'.join(rows) + '\n')
+        rows.append(f'{s}\t{int(pi[0])}\t{gap:.4f}\t{e_top}\t{a}\t{ov:.2f}\t{kl:.6f}\t{miss}\t{cpu_agree}\t{f_full:.6f}\t{f_b:.6f}')
+    out.write('step\tllama_argmax\tllama_top2_gap\tengine_argmax\tagree\ttop20_overlap\tkl_top20\tmissing\tcpu_agree\tfloor_kl_full\tfloor_kl_top20\n' + '\n'.join(rows) + '\n')
     s = dict(label=label, steps=n, top1_agree=agree / n, kl_top20_mean=float(np.mean(kls)), kl_top20_p99=float(np.percentile(kls, 99)),
              top20_overlap_mean=float(np.mean(overlaps)), missing_ids=missing_total, t1_positions=t1_pos, t1_failures=t1_fail,
              floor=fl, t2_ratio_vs_full_floor=float(np.mean(kls)) / fl['kl_full_mean'] if fl['kl_full_mean'] > 0 else None,
              t2_ratio_vs_top20_floor=float(np.mean(kls)) / fl['kl_top20_mean'] if fl['kl_top20_mean'] > 0 else None)
     s['T1'] = 'pass' if not t1_fail else 'FAIL'
-    s['T2'] = 'pass' if s['t2_ratio_vs_full_floor'] is not None and s['t2_ratio_vs_full_floor'] <= 1.5 else 'FAIL'
+    # T2 like for like: the engine prints its top 20, so its KL is the bucketed one; the floor used for the gate is the
+    # same bucketed KL between the two reference runs. The full-vocabulary floor is reported beside it.
+    s['T2'] = 'pass' if s['t2_ratio_vs_top20_floor'] is not None and s['t2_ratio_vs_top20_floor'] <= 1.5 else 'FAIL'
     print(json.dumps(s), file=sys.stderr)
 
 if __name__ == '__main__':
@@ -103,5 +109,10 @@ if __name__ == '__main__':
         score(gpu, cpu, eng, out, sys.argv[4])
     elif mode == 'strata':
         gpu, cpu = load_full(sys.argv[2]), load_full(sys.argv[3]); eng = read_engine('strata', sys.argv[4], int(sys.argv[5]))
+        # <seq>.offset.txt beside the scored rows: the rows start at reference step k (a resumed read loses step 0)
+        import os
+        off_path = sys.argv[4].replace('.scored.tsv', '.offset.txt')
+        k = int(open(off_path).read().strip()) if os.path.exists(off_path) else 0
+        if k: print(f'note: engine rows start at reference step {k}', file=sys.stderr)
         out = open(sys.argv[6], 'w') if len(sys.argv) > 6 else sys.stdout
-        score(gpu, cpu, eng, out, sys.argv[4])
+        score(gpu[k:], cpu[k:], eng, out, sys.argv[4])

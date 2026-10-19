@@ -12,6 +12,8 @@
 //   step's logits (f32, [step][vocab]).
 //   --prompt is tokenized with special tokens parsed and no BOS added (Qwen adds none).
 #include "llama.h"
+#include <thread>
+#include <algorithm>
 #include "ggml-backend.h"
 
 #include <cstdio>
@@ -103,6 +105,10 @@ int main(int argc, char** argv) {
     const char* ub = std::getenv("STRATA_DUMP_UBATCH");
     cp.n_ubatch = ub ? std::atoi(ub) : std::min(nctx, 4096);
     cp.op_offload = ngl > 0;   // --ngl 0 is the CPU backend: no prompt matmuls offloaded to a GPU either
+    // STRATA_DUMP_THREADS: CPU threads for the CPU backend (default: every hardware thread; llama.cpp's own default
+    // is 4). Each output element is computed whole by one thread in ggml-cpu, so the count does not change the bits.
+    const char* th = std::getenv("STRATA_DUMP_THREADS");
+    cp.n_threads = cp.n_threads_batch = th ? std::atoi(th) : (int) std::max(1u, std::thread::hardware_concurrency());
     cp.cb_eval = on_tensor;
     cp.cb_eval_user_data = &cap;
     llama_context* ctx = llama_init_from_model(mdl, cp);

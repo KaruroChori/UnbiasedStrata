@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/int8/lru.scored.tsv",
+ "steps": 400,
+ "top1_agree": 1.0,
+ "kl_top20_mean": 0.0005028500113181366,
+ "kl_top20_p99": 0.005202253304617667,
+ "top20_overlap_mean": 0.9642499999999998,
+ "missing_ids": 286,
+ "t1_positions": 384,
+ "t1_failures": [],
+ "floor": {
+  "steps": 400,
+  "kl_full_mean": 0.0005603474268507396,
+  "kl_full_p99": 0.006244759899841502,
+  "kl_top20_mean": 0.0006458320144238771,
+  "top1_agree": 0.9975
+ },
+ "t2_ratio_vs_full_floor": 0.8973897036419896,
+ "t2_ratio_vs_top20_floor": 0.7786080591974224,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "lru",
+ "set": "code"
+}

@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/cpu/puzzle.scored.tsv",
+ "steps": 324,
+ "top1_agree": 0.9969135802469136,
+ "kl_top20_mean": 0.000673644706051457,
+ "kl_top20_p99": 0.0077612845172576085,
+ "top20_overlap_mean": 0.9700617283950616,
+ "missing_ids": 194,
+ "t1_positions": 303,
+ "t1_failures": [],
+ "floor": {
+  "steps": 324,
+  "kl_full_mean": 0.0009689974138393055,
+  "kl_full_p99": 0.01010916765493011,
+  "kl_top20_mean": 0.0009979069217944869,
+  "top1_agree": 0.9969135802469136
+ },
+ "t2_ratio_vs_full_floor": 0.6951976304894159,
+ "t2_ratio_vs_top20_floor": 0.6750576545155884,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "puzzle",
+ "set": "code"
+}

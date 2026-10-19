@@ -1,0 +1,31 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/pincpu/p07.scored.tsv",
+ "steps": 128,
+ "top1_agree": 0.9921875,
+ "kl_top20_mean": 0.0038910264613113365,
+ "kl_top20_p99": 0.06269047174323736,
+ "top20_overlap_mean": 0.9410156249999999,
+ "missing_ids": 151,
+ "t1_positions": 126,
+ "t1_failures": [
+  [
+   92,
+   248045,
+   248046,
+   0.5210533142089844
+  ]
+ ],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.002920875950757497,
+  "kl_full_p99": 0.039859787967305334,
+  "kl_top20_mean": 0.003653999201270403,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 1.332143688026957,
+ "t2_ratio_vs_top20_floor": 1.0648679014375606,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "p07",
+ "set": "short"
+}

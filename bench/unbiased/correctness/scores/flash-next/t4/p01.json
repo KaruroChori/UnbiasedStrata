@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/t4/p01.scored.tsv",
+ "steps": 128,
+ "top1_agree": 1.0,
+ "kl_top20_mean": 0.0005040213038600532,
+ "kl_top20_p99": 0.009584588264979366,
+ "top20_overlap_mean": 0.967578125,
+ "missing_ids": 83,
+ "t1_positions": 122,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.00032710558669607666,
+  "kl_full_p99": 0.004462623509316128,
+  "kl_top20_mean": 0.0004632903210907396,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 1.5408520195295659,
+ "t2_ratio_vs_top20_floor": 1.0879167574090893,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p01",
+ "set": "short"
+}

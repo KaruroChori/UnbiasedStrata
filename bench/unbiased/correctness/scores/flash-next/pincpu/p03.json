@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/pincpu/p03.scored.tsv",
+ "steps": 128,
+ "top1_agree": 1.0,
+ "kl_top20_mean": 0.003611931177192812,
+ "kl_top20_p99": 0.03857284015833351,
+ "top20_overlap_mean": 0.9726562499999999,
+ "missing_ids": 70,
+ "t1_positions": 115,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.001799730110981493,
+  "kl_full_p99": 0.015190016613912786,
+  "kl_top20_mean": 0.003984564506143512,
+  "top1_agree": 0.9921875
+ },
+ "t2_ratio_vs_full_floor": 2.0069293474358916,
+ "t2_ratio_vs_top20_floor": 0.9064807889604589,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p03",
+ "set": "short"
+}

@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/fp16/puzzle.scored.tsv",
+ "steps": 324,
+ "top1_agree": 0.9938271604938271,
+ "kl_top20_mean": 0.0007170085557153535,
+ "kl_top20_p99": 0.008001547979310438,
+ "top20_overlap_mean": 0.9686728395061729,
+ "missing_ids": 203,
+ "t1_positions": 303,
+ "t1_failures": [],
+ "floor": {
+  "steps": 324,
+  "kl_full_mean": 0.0009689974138393055,
+  "kl_full_p99": 0.01010916765493011,
+  "kl_top20_mean": 0.0009979069217944869,
+  "top1_agree": 0.9969135802469136
+ },
+ "t2_ratio_vs_full_floor": 0.7399488847699435,
+ "t2_ratio_vs_top20_floor": 0.718512458482593,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "puzzle",
+ "set": "code"
+}

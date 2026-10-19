@@ -24,25 +24,25 @@ for f in sorted(runs.glob(glob)):
     s = json.loads(js[-1]); s['seq'] = seq; s['set'] = sets.get(seq, '?')
     (out / f'{seq}.json').write_text(json.dumps(s, indent=1) + '\n'); rows.append(s)
     print(f"{s['set']}/{seq}: {s['steps']} steps, top1 {s['top1_agree']:.3f} (floor {s['floor']['top1_agree']:.3f}), "
-          f"KL {s['kl_top20_mean']:.5f} vs floor {s['floor']['kl_full_mean']:.5f} (x{s['t2_ratio_vs_full_floor']:.2f}), "
+          f"KL {s['kl_top20_mean']:.5f} vs floor top20 {s['floor']['kl_top20_mean']:.5f} (x{s['t2_ratio_vs_top20_floor']:.2f}; full-vocab floor {s['floor']['kl_full_mean']:.5f}), "
           f"T1 {s['T1']} ({s['t1_positions']} positions, {len(s['t1_failures'])} fail), T2 {s['T2']}")
 # summary
 lines = [f'# Scores: {tag} / {arm} against reference {ref}', '',
-         '| Set | Seq | Steps | Top-1 agree | Floor top-1 | KL top20 (mean / p99) | Floor KL full (mean / p99) | Ratio | T1 (positions >= 0.5 nat / failures) | T2 |',
-         '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
+         '| Set | Seq | Steps | Top-1 agree | Floor top-1 | KL top20 (mean / p99) | Floor KL top20 | Ratio | Floor KL full (mean / p99) | T1 (positions >= 0.5 nat / failures) | T2 |',
+         '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |']
 for s in sorted(rows, key=lambda s: (s['set'], s['seq'])):
     fl = s['floor']
     lines.append(f"| {s['set']} | {s['seq']} | {s['steps']} | {s['top1_agree']:.3f} | {fl['top1_agree']:.3f} | {s['kl_top20_mean']:.5f} / {s['kl_top20_p99']:.4f} | "
-                 f"{fl['kl_full_mean']:.5f} / {fl['kl_full_p99']:.4f} | {s['t2_ratio_vs_full_floor']:.2f} | {s['T1']} ({s['t1_positions']} / {len(s['t1_failures'])}) | {s['T2']} |")
+                 f"{fl['kl_top20_mean']:.5f} | {s['t2_ratio_vs_top20_floor']:.2f} | {fl['kl_full_mean']:.5f} / {fl['kl_full_p99']:.4f} | {s['T1']} ({s['t1_positions']} / {len(s['t1_failures'])}) | {s['T2']} |")
 if rows:
     import statistics
     agg = {}
     for s in rows: agg.setdefault(s['set'], []).append(s)
-    lines += ['', '## Per set (steps-weighted)', '', '| Set | Steps | Top-1 agree | Floor top-1 | KL top20 | Floor KL full | Ratio | T1 failures | T2 |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- |']
+    lines += ['', '## Per set (steps-weighted)', '', '| Set | Steps | Top-1 agree | Floor top-1 | KL top20 | Floor KL top20 | Ratio | T1 failures | T2 |', '| --- | --- | --- | --- | --- | --- | --- | --- | --- |']
     for k, v in sorted(agg.items()):
         n = sum(s['steps'] for s in v)
         w = lambda key, sub=None: sum((s[key] if sub is None else s[sub][key]) * s['steps'] for s in v) / n
-        kl, flk = w('kl_top20_mean'), w('kl_full_mean', 'floor')
+        kl, flk = w('kl_top20_mean'), w('kl_top20_mean', 'floor')
         fails = sum(len(s['t1_failures']) for s in v)
         lines.append(f"| {k} | {n} | {w('top1_agree'):.3f} | {w('top1_agree','floor'):.3f} | {kl:.5f} | {flk:.5f} | {kl/flk if flk else float('nan'):.2f} | {fails} | {'pass' if kl <= 1.5*flk else 'FAIL'} |")
     fails = [(s['seq'], f) for s in rows for f in s['t1_failures']]

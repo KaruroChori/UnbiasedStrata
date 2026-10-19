@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/cpu/p01.scored.tsv",
+ "steps": 128,
+ "top1_agree": 0.9921875,
+ "kl_top20_mean": 0.0004805237265367199,
+ "kl_top20_p99": 0.010180688281489741,
+ "top20_overlap_mean": 0.9726562499999999,
+ "missing_ids": 70,
+ "t1_positions": 122,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.00032710558669607666,
+  "kl_full_p99": 0.004462623509316128,
+  "kl_top20_mean": 0.0004632903210907396,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 1.469017180018966,
+ "t2_ratio_vs_top20_floor": 1.0371978534008808,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p01",
+ "set": "short"
+}

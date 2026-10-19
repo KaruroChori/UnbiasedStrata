@@ -100,6 +100,12 @@ No changes: `git diff 0197ae86 HEAD -- src include` is empty (checked 2026-10-18
 these sources built in this tree; their binaries differ from upstream's build of the same sources, and the step-9
 record says so where it matters.
 
+Step 12 (`bench/unbiased/correctness/`, 2026-10-18) checked these builds against llama.cpp `3cf03257`: upstream's
+parity programs that cover the kernels in use (38 pass, `poly_expert_parity` fails its own bound on one UD-Q3_K_M expert),
+and teacher-forced per-step distributions on 16 sequences per model (within llama.cpp's own CPU-vs-GPU spread on every set
+and arm). Two upstream claims did not hold and are not repeated here: the draft block is not bitwise inert above 4-token
+windows, and `strata`'s output is not reproducible across starts unless the expert cache is pinned. Tickets USTRAT-1 to 5.
+
 ## Removed
 
 Each entry names the rule above that it satisfies.

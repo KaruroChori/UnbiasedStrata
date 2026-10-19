@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/pin/p04.scored.tsv",
+ "steps": 128,
+ "top1_agree": 1.0,
+ "kl_top20_mean": 0.00749870088865638,
+ "kl_top20_p99": 0.07671510120609662,
+ "top20_overlap_mean": 0.9218749999999999,
+ "missing_ids": 200,
+ "t1_positions": 125,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.01066849794055503,
+  "kl_full_p99": 0.11356813850189705,
+  "kl_top20_mean": 0.010758792325067875,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 0.7028825360832622,
+ "t2_ratio_vs_top20_floor": 0.6969835147002963,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p04",
+ "set": "short"
+}

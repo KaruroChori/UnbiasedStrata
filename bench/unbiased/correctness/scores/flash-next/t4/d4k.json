@@ -1,0 +1,31 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/t4/d4k.scored.tsv",
+ "steps": 255,
+ "top1_agree": 0.9490196078431372,
+ "kl_top20_mean": 0.030676282201572355,
+ "kl_top20_p99": 0.22957459725863577,
+ "top20_overlap_mean": 0.9427450980392157,
+ "missing_ids": 292,
+ "t1_positions": 199,
+ "t1_failures": [
+  [
+   148,
+   15,
+   7154,
+   0.6568279266357422
+  ]
+ ],
+ "floor": {
+  "steps": 255,
+  "kl_full_mean": 0.01010068083626222,
+  "kl_full_p99": 0.07689271396008975,
+  "kl_top20_mean": 0.034729923152487144,
+  "top1_agree": 0.9529411764705882
+ },
+ "t2_ratio_vs_full_floor": 3.0370509373429706,
+ "t2_ratio_vs_top20_floor": 0.8832810273401226,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "d4k",
+ "set": "long"
+}

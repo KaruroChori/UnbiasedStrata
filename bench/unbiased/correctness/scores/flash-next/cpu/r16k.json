@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/cpu/r16k.scored.tsv",
+ "steps": 509,
+ "top1_agree": 0.931237721021611,
+ "kl_top20_mean": 0.014384075638337549,
+ "kl_top20_p99": 0.17188334730874358,
+ "top20_overlap_mean": 0.9419449901768173,
+ "missing_ids": 591,
+ "t1_positions": 406,
+ "t1_failures": [],
+ "floor": {
+  "steps": 509,
+  "kl_full_mean": 0.00926527422347889,
+  "kl_full_p99": 0.06582559999634703,
+  "kl_top20_mean": 0.01673602662366728,
+  "top1_agree": 0.9430255402750491
+ },
+ "t2_ratio_vs_full_floor": 1.5524716583009748,
+ "t2_ratio_vs_top20_floor": 0.8594677794068686,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "r16k",
+ "set": "realtext"
+}

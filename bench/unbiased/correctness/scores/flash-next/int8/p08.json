@@ -1,0 +1,24 @@
+{
+ "label": "/home/rk/us2-results/correctness/strata/int8/p08.scored.tsv",
+ "steps": 128,
+ "top1_agree": 1.0,
+ "kl_top20_mean": 0.0005633394360165325,
+ "kl_top20_p99": 0.005920790261582747,
+ "top20_overlap_mean": 0.9769531249999999,
+ "missing_ids": 59,
+ "t1_positions": 125,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.0004718142471521668,
+  "kl_full_p99": 0.004451960566671267,
+  "kl_top20_mean": 0.0006324882240302447,
+  "top1_agree": 1.0
+ },
+ "t2_ratio_vs_full_floor": 1.1939856403591125,
+ "t2_ratio_vs_top20_floor": 0.8906718174559949,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p08",
+ "set": "short"
+}

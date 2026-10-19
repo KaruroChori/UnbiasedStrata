@@ -4,8 +4,9 @@ PLAN.md step 12, the checks of `docs/CORRECTNESS-PLAN.md` (step 11, signed off 2
 A6000 VM (NVIDIA RTX A6000 48 GB, driver 550.163.01, CUDA 12.4; AMD Ryzen 7 1700, 12 threads given to the VM, AVX2;
 50 GB RAM), not on the RTX 3090 pod the plan was written for: the pod was unreachable that day and the VM holds every
 file of both configurations (`docs/MODEL-FILES.md`). The A6000 is the same architecture as the 3090 (sm_86), so the
-kernels under test are the pod's; what differs is that every expert of both models is resident on the 48 GB card, so no
-CPU or PCIe expert tier ran (section "Not covered").
+kernels under test are the pod's; what differs is the memory: every Qwen3.6 expert is resident on the 48 GB card (no
+CPU or PCIe tier for `strata-poly`), and Flash-Next's 24,576 experts fit it only just, so `strata`'s tiers ran as
+explicit arms with a fixed, smaller cache (section 4) and not in the 24 GB pattern (section 6).
 
 Fork: UnbiasedStrata 2 at 5a4f7136 (engines unmodified since the import, `UPSTREAM.md`), built with
 `CUDA_ARCHS=86` and `-DSTRATA_BUILD_TESTS=ON`. Reference: llama.cpp `3cf03257` from `third_party/llama.cpp`, built
@@ -135,9 +136,134 @@ ratio 1.46, p09, 23 steps). The reference's own runs disagree at a 0.5-nat margi
 
 T0 (draft against base): 6 of 16 sequences differ (d4k, d16k, d31k, lru, p02, puzzle), finding 2 again.
 
+### 3.3 `--check-batch 4` (plan run order step 6)
+
+`scripts/check-batch.sh`: for each short prompt, `strata-poly --tokens … --batch 4 --check-batch 4 --max-new 64`
+answers the prompt and the prompt without its first 1, 2 and 3 tokens on their own and then the four together in
+their own sequences; exit 1 on a differing token. Both files, 10 prompts each: every run exits 0, "the first 64 of 64
+tokens as on its own" for all four sequences (`checkbatch/<model>/<seq>.log`, `logs/check-batch.out`).
+
 ## 4. Configuration A: `strata`, Qwen3.8-Flash-Next IQ3_XXS (plan 3.4)
 
-_(filled when chain-a finishes: reference feasibility on this box, strata arms)_
+**Reference.** The 76 GB GGUF (47.0 GB of layers, the 28.8 GB n-gram shard) does not fit the card, so the "GPU" run
+is a partial offload: `STRATA_DUMP_NGL=28`, 28 of 48 layers on the card (28.6 GB; `scripts/chain-a.sh` probed 28
+first and it fit), the other 20 on ggml-cpu, ubatch 4096. The CPU run is `--ngl 0` at 12 threads, alone on the box
+(beside `strata --serve` it was RAM-starved, the 76 GB going through what was left of a 50 GB page cache): 46 to
+69 s per short sequence, lru 135 s, puzzle 116 s, d4k 560 s, d16k 2,117 s, r16k 2,238 s, d31k 4,376 s
+(`logs/ref-flash-next-cpu.out`). The thread count moves no bits (`probes/cpu-threads/`: 4 and 12 threads give the
+same sha256). The reference's answers are its own greedy ones (`inputs/*/*.answer.flash-next.ids`; the real-text
+answer is fixed).
+
+**Floor.** 3,282 positions, 2,882 with a top-2 gap of 0.5 nats or more; llama.cpp's CPU run disagrees with its
+partial-GPU run at 1 of them (d16k step 254, gap 1.18). Full-vocabulary KL(GPU || CPU), mean by set: short 0.00256,
+code 0.00074, long 0.00778, realtext 0.00925 (the bucketed floors the gate uses are in the table).
+
+**Engine arms** (`scripts/strata-run.py`): a fresh `strata --serve` per sequence with the VM's step-6 line
+(`--resident-experts --ple-io mmap --prefill auto --spec 4 --spec-min-p 0.5 --mtp … --max-context 65536`) plus
+`--prompt-cache 0 --adapt-every 0 --pcie-frac 0.55`, and `STRATA_LOGPOS` (every position read through the verify
+windows, top 20 log-probabilities), `STRATA_LOGPOS_TOPK=20`, `STRATA_ROUTE_TAIL_SKIP=0`, `STRATA_PREFILL_CPU_SHARE=0`,
+`STRATA_IQ_MT_MIN=1`. `--short-read 4096` sends a whole read of at most 4,096 tokens through the windows; a longer
+sequence goes as two requests, the prompt alone (`--prompt-cache 1`, read through the batched prompt path) and then
+prompt + answer, which resumes and reads only the answer through the windows (`generate.cpp` `windows_ok`). That is
+also how a chat reaches the answer positions. A resumed read loses step 0, so those rows are answer[1:]
+(`strata/<arm>/<seq>.offset.txt`; `scripts/realign.py`).
+
+| Arm | Flags on top of the line | Sequences |
+| --- | --- | --- |
+| fp16 | `--kv fp16`, suffix drafter on (windows of 6) | all 16 |
+| t4 | fp16 + `--suffix-draft 0` (windows of 4) | all 16 |
+| int8 | `--kv int8` | all 16 |
+| int8str | `--kv int8 --kv-resident 20480 --short-read 1024` (the tail streamed) | d31k |
+| pf512 | fp16 + `--prefill 512 --short-read 512` (prompt chunks of 512) | long set, r16k |
+| pin | fp16 + `--expert-cache 24380`: every one of the 24,576 experts on the card (finding 4) | all 16 |
+| cpu | fp16 + `--expert-cache 16000 --pcie-frac 0`: 21,311 experts on the card, 3,265 (8.6 GiB) in RAM, every miss computed by the CPU pool (the CPU expert tier, AVX-2 kernels) | all 16 |
+| pcie | as cpu with `--pcie-frac 1`: every miss fetched over PCIe and computed on the GPU | p00 p01 lru puzzle d4k |
+| pin2, pint4, pingpu, pincpu, cpu2 | T0 repeats: pin again; pin + `--suffix-draft 0`; pin + `--pcie-frac 1`; pin + `--pcie-frac 0` (all 16); cpu again | 5 (pincpu: 16) |
+
+### 4.1 Scores
+
+Per set, steps-weighted (`scores/flash-next/<arm>/summary.md` has every sequence). The long set has 765 steps, not
+768: the three resumed reads lose step 0.
+
+| Arm | Set | Steps | Top-1 agree | Floor top-1 | KL top20 | Floor | Ratio | T1 failures | T2 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fp16 | code | 724 | 0.997 | 0.997 | 0.00057 | 0.00080 | 0.71 | 0 | pass |
+| | long | 765 | 0.953 | 0.949 | 0.01594 | 0.01788 | 0.89 | 1 | pass |
+| | realtext | 509 | 0.921 | 0.943 | 0.01424 | 0.01674 | 0.85 | 0 | pass |
+| | short | 1280 | 0.992 | 0.990 | 0.00336 | 0.00469 | 0.72 | 0 | pass |
+| t4 | code | 724 | 0.997 | 0.997 | 0.00058 | 0.00080 | 0.72 | 0 | pass |
+| | long | 765 | 0.962 | 0.949 | 0.01547 | 0.01788 | 0.87 | 1 | pass |
+| | realtext | 509 | 0.945 | 0.943 | 0.01484 | 0.01674 | 0.89 | 0 | pass |
+| | short | 1280 | 0.994 | 0.990 | 0.00369 | 0.00469 | 0.79 | 1 | pass |
+| int8 | code | 724 | 0.999 | 0.997 | 0.00059 | 0.00080 | 0.73 | 0 | pass |
+| | long | 765 | 0.959 | 0.949 | 0.01604 | 0.01788 | 0.90 | 0 | pass |
+| | realtext | 509 | 0.923 | 0.943 | 0.01531 | 0.01674 | 0.91 | 0 | pass |
+| | short | 1280 | 0.991 | 0.990 | 0.00416 | 0.00469 | 0.89 | 1 | pass |
+| int8str | long (d31k) | 255 | 0.973 | 0.965 | 0.00259 | 0.00245 | 1.06 | 0 | pass |
+| pf512 | long | 765 | 0.958 | 0.949 | 0.01479 | 0.01788 | 0.83 | 0 | pass |
+| | realtext | 509 | 0.931 | 0.943 | 0.01475 | 0.01674 | 0.88 | 0 | pass |
+| pin | code | 724 | 0.996 | 0.997 | 0.00063 | 0.00080 | 0.78 | 0 | pass |
+| | long | 765 | 0.957 | 0.949 | 0.01676 | 0.01788 | 0.94 | 3 | pass |
+| | realtext | 509 | 0.931 | 0.943 | 0.01444 | 0.01674 | 0.86 | 0 | pass |
+| | short | 1280 | 0.996 | 0.990 | 0.00428 | 0.00469 | 0.91 | 1 | pass |
+| cpu | code | 724 | 0.999 | 0.997 | 0.00056 | 0.00080 | 0.70 | 0 | pass |
+| | long | 765 | 0.956 | 0.949 | 0.01527 | 0.01788 | 0.85 | 0 | pass |
+| | realtext | 509 | 0.931 | 0.943 | 0.01438 | 0.01674 | 0.86 | 0 | pass |
+| | short | 1280 | 0.991 | 0.990 | 0.00402 | 0.00469 | 0.86 | 0 | pass |
+| pcie | code | 724 | 0.996 | 0.997 | 0.00063 | 0.00080 | 0.78 | 0 | pass |
+| | long (d4k) | 255 | 0.945 | 0.953 | 0.03109 | 0.03473 | 0.90 | 1 | pass |
+| | short (p00, p01) | 256 | 0.996 | 0.988 | 0.00303 | 0.00450 | 0.67 | 0 | pass |
+
+**T2** passes every set in every arm, 0.67 to 0.94x the floor. Per sequence, d31k is above 1.5 in three arms (fp16
+1.79, pin 1.89, cpu 1.59; t4 1.03, int8 1.06, pf512 0.46) at a KL of 0.0025 to 0.0046 against a floor of 0.0025: the
+smallest numbers of the run, where which experts were on the card (finding 4) moves the ratio by a factor of two.
+Top-1 agreement is at or above the floor in every set but realtext, where every arm except t4 is 1 to 2 points under
+it (0.921 to 0.931 against 0.943) with no T1 failure: the disagreements are below the 0.5-nat margin.
+
+**T1, read with the floor.** Of about 2,880 positions with a 0.5-nat margin, the arms disagree with llama.cpp GPU at
+0 (int8str, pf512, cpu), 1 (fp16, int8), 2 (t4) or 4 (pin). One of pin's is the position where llama.cpp's CPU run
+also disagrees (d16k step 254). The other six, all with both reference runs agreeing, are each a close pair that the
+engine puts within a few hundredths of each other, and each flips in some arms and not in others
+(`scores/flash-next/<arm>/<seq>.tsv`; the figures are from the committed `.top20.tsv` and `.scored.tsv`):
+
+| Position | llama.cpp GPU | llama.cpp CPU | Engine, the arms that fail | The arms that agree |
+| --- | --- | --- | --- | --- |
+| d4k 55, gap 0.55 | 1510 0.31 / 11626 0.18 | agrees | pin family and pcie: 11626 0.36 / 1510 0.22 | fp16 0.32 / 0.11, t4, int8, cpu |
+| d4k 148, gap 0.66 | 15 0.29 / 7154 0.14 | 15 0.23 / 7154 0.19 | t4: 7154 0.23 / 15 0.20 | fp16 0.23 / 0.20, pin 0.35 / 0.11, int8, cpu |
+| d4k 248, gap 0.66 | 220 0.28 / 423 0.14 | 220 first, 20934 second | fp16: 20934 0.152 / 220 0.151 | pin 0.21 / 0.13, int8, t4 |
+| d16k 206, gap 1.04 | 5893 0.32 / 1765 0.11 | 5893 0.21 / 1765 0.12 (gap 0.57) | pin, pincpu: 1765 0.19 / 5893 0.16 | fp16 0.22 / 0.17, t4, int8, cpu 0.27 / 0.14 |
+| p06 104, gap 0.97 | 248046 0.73 / 198 0.27 | 0.60 / 0.40 (gap 0.39) | t4: 198 0.55 / 248046 0.45 | fp16 0.56 / 0.44, pin 0.51 / 0.49, int8, cpu |
+| p07 92, gap 0.52 | 248045 0.62 / 248046 0.37 | 0.64 / 0.34 | pin, pincpu, int8: 248046 0.50 / 248045 0.49 | fp16 0.53 / 0.46, t4 0.57 / 0.41, cpu |
+
+Reading: at these positions the engine's two candidates sit closer together than the reference's (0.5 / 0.5 against
+0.6 / 0.4; 0.19 / 0.16 against 0.32 / 0.11), and the reference's own two runs move the margin by up to 0.6 nats at
+two of them (d16k 206, p06 104). No position fails in every arm, the cpu arm fails none, and T2 holds in every set,
+so these are not a systematic bias; they are more of them than configuration B had (one engine-only position), on a
+model whose reference is itself a mixed CPU/GPU run. Finding 5, ticketed, with the plan's section 4 reading: a wrong
+token at a margin is a bug to localize (plan 3.7) before the README claims more than "same output as upstream".
+
+### 4.2 T0, bitwise
+
+Rows compared: every `pos.tsv` field but the position (target id and its log-probability, the argmax and its
+log-probability, the agreement flags, the 20 log-probabilities). `probes/placement/README.txt` has the full list.
+
+| Claim | Arms | Rows | Differing |
+| --- | --- | --- | --- |
+| A second process gives the same bytes | pin vs pin2, 5 sequences | 5,507 | 0 |
+| The window size changes no bits (6/5/1 against 4/3/1) | pin vs pint4 | 5,507 | 0 |
+| The PCIe share has nothing to act on when every expert is on the card | pin vs pingpu, pin vs pincpu | 5,507 each | 0 |
+| Streamed KV equals resident KV | int8str vs int8, d31k | 255 | 0 |
+| The CPU tier repeats | cpu vs cpu2 | 5,507 | 0 |
+| A fetched expert equals a cached one | pcie vs pin | 5,507 | 18 (p01, positions 143-160, 7th significant digit) |
+| Two processes with `--expert-cache auto` | fp16 vs t4 | 16 sequences | 15 sequences differ, puzzle (24541 vs 24543 slots) none |
+
+So: with the expert placement held, `strata` is deterministic across processes, window sizes and KV streaming, and
+the CPU tier is deterministic too; the PCIe path is bitwise the cache-hit path on 4 of 5 sequences and not on the
+fifth (finding 6); and without the placement held, two starts of the same line differ (finding 4).
+
+**Chunk effect.** Step 0 is not visible for the long sequences (the resumed read loses it), so pf512's prompt-chunk
+effect is read from the whole answer: its long-set KL is 0.01479 against fp16's 0.01594 and d31k's 0.00114 against
+0.00440, inside the floor either way.
 
 ## 5. Findings
 
@@ -162,17 +288,40 @@ _(filled when chain-a finishes: reference feasibility on this box, strata arms)_
    144 steps; the mean KL of every engine variant over those steps is 1.4 to 1.5x the floor. Reading: decode-path
    rounding compounding through the recurrent GDN state along a long thinking answer, landing on a 0.7-nat margin.
    Localizing it to a kernel needs per-layer vectors from `strata-poly` (plan 5.3 b).
+4. **`strata`'s bits depend on the free VRAM at start** (`probes/placement/README.txt`). `--expert-cache auto` (also
+   under `--resident-experts`) sizes the GPU expert cache from the VRAM free when the engine starts; on this card that
+   was 40.5 to 41.6 GiB depending on what else sat on it (the CPU reference's CUDA context beside the fp16 arm, nothing
+   beside the int8 arm), giving 24,380 to 24,576 of Flash-Next's 24,576 experts on the card. The ones left over sit in
+   RAM and each miss is split by `--pcie-frac` between the GPU (over PCIe) and the CPU pool, which rounds an expert
+   differently (upstream says so: `docs/DETAILS.md`, #410). So two processes with the same flags gave different
+   log-probabilities at nearly every position (fp16 vs t4), and the same two gave identical ones once the cache held
+   every expert (pin vs pint4). On a 24 GB card, where about half the experts miss, the answer to a prompt depends
+   on the VRAM headroom at start through this path; `--pcie-frac 0` or `1` removes the split but not the
+   dependence on the slot count; a fixed `--expert-cache N` removes both. Ticket USTRAT-4.
+5. **Flash-Next T1 flips** (section 4.1): six positions with a 0.5 to 1.0-nat margin where some arms put the
+   reference's second token first, none in every arm, none in the cpu arm; T2 holds. Ticket USTRAT-5; the plan's
+   3.7 (per-layer vectors against the dump tool's captures) is the way to name a kernel.
+6. **The PCIe-fetched expert is not bitwise the cached one everywhere**: pcie vs pin, 18 of 161 rows on p01 from
+   position 143 differ in the 7th significant digit, 0 of 5,346 rows on the other four sequences. Not located; folded
+   into USTRAT-4.
 
 ## 6. Not covered on this box
 
-- The CPU and PCIe expert tiers of both engines (every expert resident on 48 GB): B arm 5 and the tier parts of A's
-  arms are for a 24 GB or smaller card.
+- `strata-poly`'s CPU expert tier (plan B arm 5): every Qwen3.6 expert is resident on 48 GB.
+- `strata`'s tiers in the 24 GB pattern: here the CPU tier ran with 13 % of the experts in RAM at a fixed cache and
+  every miss on the CPU (cpu arm, 0 T1 failures, T2 pass), the PCIe tier on 5 sequences (pcie arm); on the pod about
+  half the experts miss, the adaptive swaps are on and the PCIe share is refined at run time.
+- The Flash-Next "GPU" reference is a partial offload (28 of 48 layers on the card): the attention and GDN of 20
+  layers ran on ggml-cpu on both reference sides.
 - `poly_attend_test` runs at head dim 64, not Qwen3.6's 256 (plan 2.3).
-- Flash-Next: see section 4.
+- Prompt-path rows for the long sequences (step 0 of a resumed read is lost); the chunk effect is read from the
+  answers.
 
 ## 7. Files
 
 `inputs/` (ids and lengths), `inputs-src/`, `reference/<model>/` (`.gen.txt` greedy ids, `.full.sha256`,
-`.top20.tsv`, `command.sh`, `.log`), `parity/`, `poly/<model>/<arm>/` (`command.sh`, `.log`, `.ids.txt`; the
-`.top.txt` distributions stay on the VM), `scores/<model>/<arm>/` (`summary.md`, per-sequence `.tsv` and `.json`),
-`probes/`, `files/`, `scripts/`.
+`.top20.tsv`, `command.sh`, `.log`; the f32 `.full` files stay on the VM), `parity/`, `poly/<model>/<arm>/`
+(`command.sh`, `.log`, `.ids.txt`; the `.top.txt` distributions stay on the VM), `strata/<arm>/` (`command.sh`,
+`.engine.log`, `.done.txt`, `.scored.tsv` + `.offset.txt`; see `strata/README.txt`), `scores/<model>/<arm>/`
+(`summary.md`, per-sequence `.tsv` and `.json`), `checkbatch/` (section 3.3), `probes/`, `files/`, `scripts/`,
+`logs/` (the chains' stdout).

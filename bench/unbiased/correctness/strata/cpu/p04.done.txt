@@ -1,0 +1,1 @@
+DONE 1 157 2189.5 43.4 stop 0 0 0 420 480 60 0 0.0 157 0 chunk=0 experts_streamed=0
