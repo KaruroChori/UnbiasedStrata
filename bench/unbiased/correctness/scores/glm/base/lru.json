@@ -1,0 +1,37 @@
+{
+ "label": "/opt/us2-correctness/glm/poly/glm/base/lru.top.txt",
+ "steps": 400,
+ "top1_agree": 0.975,
+ "kl_top20_mean": 0.004957115675300666,
+ "kl_top20_p99": 0.04531228177113155,
+ "top20_overlap_mean": 0.9301249999999999,
+ "missing_ids": 559,
+ "t1_positions": 381,
+ "t1_failures": [
+  [
+   307,
+   6018,
+   2240,
+   1.556325912475586
+  ],
+  [
+   360,
+   5120,
+   3397,
+   1.0253734588623047
+  ]
+ ],
+ "floor": {
+  "steps": 400,
+  "kl_full_mean": 0.006603184159896448,
+  "kl_full_p99": 0.11751645312969619,
+  "kl_top20_mean": 0.0067084476600212375,
+  "top1_agree": 0.975
+ },
+ "t2_ratio_vs_full_floor": 0.7507159508600475,
+ "t2_ratio_vs_top20_floor": 0.7389363272284922,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "lru",
+ "set": "code"
+}

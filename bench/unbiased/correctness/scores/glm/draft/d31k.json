@@ -1,0 +1,24 @@
+{
+ "label": "/opt/us2-correctness/glm/poly/glm/draft/d31k.top.txt",
+ "steps": 256,
+ "top1_agree": 0.96875,
+ "kl_top20_mean": 0.004180866118361203,
+ "kl_top20_p99": 0.08314429467884486,
+ "top20_overlap_mean": 0.9312499999999999,
+ "missing_ids": 352,
+ "t1_positions": 214,
+ "t1_failures": [],
+ "floor": {
+  "steps": 256,
+  "kl_full_mean": 0.0031802802476417224,
+  "kl_full_p99": 0.0626665490598418,
+  "kl_top20_mean": 0.005634425550066497,
+  "top1_agree": 0.9609375
+ },
+ "t2_ratio_vs_full_floor": 1.314621917820433,
+ "t2_ratio_vs_top20_floor": 0.7420217165371651,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "d31k",
+ "set": "long"
+}

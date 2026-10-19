@@ -1,0 +1,31 @@
+{
+ "label": "/opt/us2-correctness/deepseek/poly/deepseek/draft/puzzle.top.txt",
+ "steps": 324,
+ "top1_agree": 0.9629629629629629,
+ "kl_top20_mean": 0.005647379545967469,
+ "kl_top20_p99": 0.052301967234851435,
+ "top20_overlap_mean": 0.957253086419753,
+ "missing_ids": 277,
+ "t1_positions": 286,
+ "t1_failures": [
+  [
+   10,
+   582,
+   10037,
+   0.5937004089355469
+  ]
+ ],
+ "floor": {
+  "steps": 324,
+  "kl_full_mean": 0.007362188077555925,
+  "kl_full_p99": 0.08268381902390133,
+  "kl_top20_mean": 0.007393326602100548,
+  "top1_agree": 0.9691358024691358
+ },
+ "t2_ratio_vs_full_floor": 0.7670789562119239,
+ "t2_ratio_vs_top20_floor": 0.7638482444915892,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "puzzle",
+ "set": "code"
+}

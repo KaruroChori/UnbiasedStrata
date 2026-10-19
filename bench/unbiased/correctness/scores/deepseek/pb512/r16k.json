@@ -1,0 +1,31 @@
+{
+ "label": "/opt/us2-correctness/deepseek/poly/deepseek/pb512/r16k.top.txt",
+ "steps": 510,
+ "top1_agree": 0.9666666666666667,
+ "kl_top20_mean": 0.07172792953640329,
+ "kl_top20_p99": 1.2577764690524065,
+ "top20_overlap_mean": 0.9331372549019608,
+ "missing_ids": 682,
+ "t1_positions": 400,
+ "t1_failures": [
+  [
+   445,
+   12919,
+   1956,
+   0.5114917755126953
+  ]
+ ],
+ "floor": {
+  "steps": 510,
+  "kl_full_mean": 0.00662417605980173,
+  "kl_full_p99": 0.06518199797810748,
+  "kl_top20_mean": 0.06770944978763291,
+  "top1_agree": 0.9588235294117647
+ },
+ "t2_ratio_vs_full_floor": 10.828203974178518,
+ "t2_ratio_vs_top20_floor": 1.0593488761372916,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "r16k",
+ "set": "realtext"
+}

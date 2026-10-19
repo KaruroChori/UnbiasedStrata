@@ -1,0 +1,24 @@
+{
+ "label": "/opt/us2-correctness/deepseek/poly/deepseek/draft/r16k.top.txt",
+ "steps": 510,
+ "top1_agree": 0.9607843137254902,
+ "kl_top20_mean": 0.06739405089219314,
+ "kl_top20_p99": 1.2658466063432803,
+ "top20_overlap_mean": 0.9312745098039216,
+ "missing_ids": 701,
+ "t1_positions": 400,
+ "t1_failures": [],
+ "floor": {
+  "steps": 510,
+  "kl_full_mean": 0.00662417605980173,
+  "kl_full_p99": 0.06518199797810748,
+  "kl_top20_mean": 0.06770944978763291,
+  "top1_agree": 0.9588235294117647
+ },
+ "t2_ratio_vs_full_floor": 10.17395224459211,
+ "t2_ratio_vs_top20_floor": 0.995341877737465,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "r16k",
+ "set": "realtext"
+}

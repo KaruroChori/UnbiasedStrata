@@ -1,0 +1,37 @@
+{
+ "label": "/opt/us2-correctness/glm/poly/glm/draft/d4k.top.txt",
+ "steps": 256,
+ "top1_agree": 0.98046875,
+ "kl_top20_mean": 0.03845541357995319,
+ "kl_top20_p99": 0.4940622381915163,
+ "top20_overlap_mean": 0.910546875,
+ "missing_ids": 458,
+ "t1_positions": 233,
+ "t1_failures": [
+  [
+   95,
+   24,
+   21,
+   0.5531711578369141
+  ],
+  [
+   96,
+   100632,
+   100919,
+   1.6897659301757812
+  ]
+ ],
+ "floor": {
+  "steps": 256,
+  "kl_full_mean": 0.01052672906881769,
+  "kl_full_p99": 0.12951971045519303,
+  "kl_top20_mean": 0.0326842153706795,
+  "top1_agree": 0.98828125
+ },
+ "t2_ratio_vs_full_floor": 3.653120862953141,
+ "t2_ratio_vs_top20_floor": 1.1765744762057513,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "d4k",
+ "set": "long"
+}

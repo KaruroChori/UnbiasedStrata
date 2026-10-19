@@ -180,7 +180,7 @@ set and arm), and the greedy token agrees at every position with a 0.5-nat margi
 (Qwen3.6: 4 of 2,700; Flash-Next: 0 to 4 of about 2,880 depending on the arm). The findings, each with a ticket, are in
 that directory's README: upstream's own `poly_expert_parity` exceeds its bound on one expert; speculation is not bitwise
 inert above 4-token windows (it passes the KL gate); `strata`'s bits depend on the free VRAM at start when not every
-expert fits the card.
+expert fits the card. Extended 2026-10-19 to DeepSeek V4 Flash UD-IQ2_XXS and GLM 5.3 Flash 3.0bit on a 2x RTX PRO 6000 pod (section 8 of that record): T2 holds on every set and arm, 0.69 to 1.13x llama.cpp's own CPU-vs-GPU spread; a handful of 0.5-nat-margin flips per model where both llama.cpp runs agree (USTRAT-10); on GLM the draft block's VRAM moves 52 experts to the CPU, so its answers are not bitwise the no-draft ones (USTRAT-9); and llama.cpp master's CPU run differs from the pinned commit's by as much as the engine does, so the DeepSeek numbers are against 3cf03257 specifically (USTRAT-11).
 
 **Model acceptance (PLAN.md step 13, 2026-10-19).** A coding agent (pi 0.85.1, in a container with tools, sampled as
 the model card asks) completed four work items through the fork's server with every served model: a Markdown

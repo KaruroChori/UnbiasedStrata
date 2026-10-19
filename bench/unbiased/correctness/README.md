@@ -325,3 +325,119 @@ effect is read from the whole answer: its long-set KL is 0.01479 against fp16's 
 `.engine.log`, `.done.txt`, `.scored.tsv` + `.offset.txt`; see `strata/README.txt`), `scores/<model>/<arm>/`
 (`summary.md`, per-sequence `.tsv` and `.json`), `checkbatch/` (section 3.3), `probes/`, `files/`, `scripts/`,
 `logs/` (the chains' stdout).
+
+## 8. `strata-poly`, DeepSeek V4 Flash UD-IQ2_XXS and GLM 5.3 Flash 3.0bit (2026-10-19)
+
+The step-12 procedure (sections 1 and 3) on the two large families the fork serves, on a RunPod box with two RTX PRO
+6000 Blackwell Server cards (96 GB each, CUDA arch 120), a Xeon 6952P under an 81.6-core cgroup quota and 1.5 TB of RAM.
+Everything was downloaded fresh from Hugging Face (`tools/pod/bringup.sh`'s repositories and revisions; SHA-256 in
+`docs/MODEL-FILES.md`); the fork is f499b8cf (`src/poly/main.cpp` and the dump tool take `@FILE` id lists, nothing on
+the serve path changed). A first run on a 2x B200 pod the same day was lost with the pod (terminated mid-run, results
+unpulled); this run restarted from scratch with the chain scripts versioned in `pod/` (`pod/README.md`).
+
+**Inputs.** The same source texts as the Qwen sets (`inputs-src/`), tokenized per model through the front end's
+`/apply-template` and `/tokenize` (`scripts/make-inputs-model.py`): DeepSeek `<｜begin▁of▁sentence｜><｜User｜>…<｜Assistant｜><think>`,
+GLM `[gMASK]<sop><|user|>…<|assistant|><think>`. Sets: short p00-p09 (128 steps), code lru (400) and puzzle (324),
+long d4k/d16k/d31k (256), realtext r16k (15,874 prompt tokens, the fixed 510-token answer). `inputs-deepseek/`,
+`inputs-glm/`.
+
+**References.** DeepSeek: the pinned llama.cpp 3cf03257 (it knows `deepseek4`), `/opt/llamacpp-ref`. GLM: the pinned
+tree does not know `glm5-next`, so its reference is llama.cpp master 99db719bdf07f7d537431ca556a0512bf3d995b6
+(2026-10-19) built the same way with the same dump tool (`/opt/llamacpp-master`; the fork's `third_party/llama.cpp`
+patch does not touch inference). Master's dump tool aborts in `sched_reserve` when CUDA sees no device, so its CPU run
+keeps a card visible. The GPU run is `--ngl 99` over both cards (llama.cpp's own layer split; neither model fits one
+card with its KV at 31K), 16-49 s a sequence; the CPU run is `--ngl 0` at 40 threads, 30 s (short) to 413 s (r16k,
+DeepSeek). Answers are each reference's own greedy ones (`inputs-<fam>/*/*.answer.<fam>.ids`), the real-text answer
+fixed. Full f32 logits stayed on the pod; `reference/<fam>/` has the top-20 extracts, checksums, generated ids,
+commands and forced-id files.
+
+**Floors.** DeepSeek: 3,282 positions, 2,943 with a top-2 gap of 0.5 nats or more, llama.cpp's CPU run disagrees with
+its GPU run at 9 of them (p04 18, p05 41, p06 126, p07 127, p09 17 and 60, puzzle 124 and 285, r16k 445). GLM: 2,878
+margin positions, 14 disagreements (d4k 95, lru 204 and 307, p00 122, p02 116 and 117, p03 78, p04 76, p06 81, p08 24,
+p09 40 and 56, two more). Full-vocabulary KL(GPU || CPU), mean by set: DeepSeek short 0.00726, code 0.00443, long
+0.00430, realtext 0.00662; GLM short 0.00848, code 0.00884, long 0.00530, realtext 0.00446. Both floors are several
+times the Qwen ones (section 3: short 0.0029 to 0.0039 bucketed) and GLM's 14 flips against Qwen's 1 say the same:
+llama.cpp's own CPU and GPU kernels sit further apart on these architectures, so the gate is correspondingly looser.
+
+**Arms** (`scripts/poly-run.py`, `STRATA_FREEZE_EXPERTS=1`, GPU 0 alone): base (`--tail-skip 0 --no-draft --lookup 0
+--window 1`), draft (`--tail-skip 0`, the draft block where the file has one, lookup 3, window 8), pb512 (base +
+`--prompt-batch 512`, long set and r16k). kvq8 is not run: `--kv q8_0` is implemented for the qwen35moe path only.
+DeepSeek holds every expert on the card (11,008 of 11,008, 78.2 GiB); GLM holds 10,167 of 12,096 (83.9 GiB) and
+computes about 16 % of expert reads on the CPU. A sequence stops at the answer's first end token (the engine stops
+when the forced token is an end token, as the reference's answers run on past it), identical in every arm: short set
+908 of 1,280 steps for DeepSeek, 942 for GLM, the other sets complete.
+
+### 8.1 Scores
+
+Per set, steps-weighted (`scores/<fam>/<arm>/summary.md` has every sequence).
+
+| Model | Arm | Set | Steps | Top-1 agree | Floor top-1 | KL top20 | Floor | Ratio | T1 failures | T2 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| DeepSeek | base | code | 724 | 0.981 | 0.983 | 0.00305 | 0.00445 | 0.69 | 1 | pass |
+| | | long | 768 | 0.987 | 0.988 | 0.02501 | 0.02611 | 0.96 | 0 | pass |
+| | | realtext | 510 | 0.961 | 0.959 | 0.06739 | 0.06771 | 1.00 | 0 | pass |
+| | | short | 908 | 0.979 | 0.980 | 0.00627 | 0.00744 | 0.84 | 2 | pass |
+| | draft | code | 724 | 0.981 | 0.983 | 0.00305 | 0.00445 | 0.69 | 1 | pass |
+| | | long | 768 | 0.987 | 0.988 | 0.02444 | 0.02611 | 0.94 | 0 | pass |
+| | | realtext | 510 | 0.961 | 0.959 | 0.06739 | 0.06771 | 1.00 | 0 | pass |
+| | | short | 908 | 0.979 | 0.980 | 0.00627 | 0.00744 | 0.84 | 2 | pass |
+| | pb512 | long | 768 | 0.991 | 0.988 | 0.02316 | 0.02611 | 0.89 | 0 | pass |
+| | | realtext | 510 | 0.967 | 0.959 | 0.07173 | 0.06771 | 1.06 | 1 | pass |
+| GLM | base | code | 724 | 0.975 | 0.977 | 0.00810 | 0.00890 | 0.91 | 5 | pass |
+| | | long | 768 | 0.973 | 0.980 | 0.01832 | 0.01621 | 1.13 | 1 | pass |
+| | | realtext | 510 | 0.967 | 0.976 | 0.02674 | 0.02963 | 0.90 | 1 | pass |
+| | | short | 942 | 0.972 | 0.965 | 0.00969 | 0.00964 | 1.01 | 0 | pass |
+| | draft | code | 724 | 0.979 | 0.977 | 0.00862 | 0.00890 | 0.97 | 4 | pass |
+| | | long | 768 | 0.978 | 0.980 | 0.01773 | 0.01621 | 1.09 | 2 | pass |
+| | | realtext | 510 | 0.965 | 0.976 | 0.02750 | 0.02963 | 0.93 | 2 | pass |
+| | | short | 942 | 0.977 | 0.965 | 0.00921 | 0.00964 | 0.96 | 1 | pass |
+| | pb512 | long | 768 | 0.980 | 0.980 | 0.01445 | 0.01621 | 0.89 | 2 | pass |
+| | | realtext | 510 | 0.963 | 0.976 | 0.03020 | 0.02963 | 1.02 | 0 | pass |
+
+**T2** passes every set in every arm: DeepSeek 0.69 to 1.06x the floor, GLM 0.89 to 1.13x. Top-1 agreement is within
+a point of the floor's everywhere, above it on GLM's short set and DeepSeek's pb512 sets.
+
+**T1, read with the floor.** DeepSeek base and draft (the same three positions): p03 75 (gap 0.59) and 103 (1.43),
+puzzle 10 (0.59), at all three both reference runs agree and the engine puts the reference's second token first; the
+engine's KL at those positions is 0.04 to 0.18 against a floor of 0.002 to 0.11. pb512's one, r16k 445 (0.51), is a
+position where llama.cpp's CPU run also disagrees with its GPU run. GLM base: d4k 95 and lru 307 are reference-spread
+positions (the floor's own KL there is 0.98 and 0.70); the other five (lru 360 gap 1.03, puzzle 238 0.79, 262 0.94, 267
+0.68, r16k 22 0.53) have both references agreeing. GLM draft fails at nine, four of them the same as base (d4k 95, lru
+360, puzzle 267, r16k 22) and five of its own (d4k 96, p06 95, puzzle 159 and 233, r16k 430), which is what the
+draft arm's different expert placement does (8.2). pb512 on GLM: d4k 95 (reference spread) and d4k 252 (0.67).
+Nothing fails in every arm but the three DeepSeek positions, which are the same computation in base and draft (the
+arms are bitwise equal there, 8.2). As for Qwen (findings 3 and 5): near ties by the margin's standard, no systematic
+bias (T2), and naming a kernel needs per-layer vectors. Ticket USTRAT-10.
+
+### 8.2 T0, bitwise
+
+`draft/<seq>.top.txt` against `base/<seq>.top.txt` (`logs/2026-10-19/t0-<fam>.out`, `pod/t0-floor-analysis.py`).
+
+- **DeepSeek: 15 of 16 identical.** The file has no draft block, so the draft arm is the n-gram lookup alone; it
+  guessed on 11 sequences (3 to 139 accepted guesses each) and the bytes still match on all of them but d4k, which
+  diverges from step 112 of 256 (139 of 196 guesses accepted over the run; the largest differences 0.05 in
+  log-probability, every argmax the same). That is finding 2 again: lookup windows of five or more tokens change the
+  bits, shorter ones do not.
+- **GLM: 0 of 16 identical, from step 0, including p04 and p09 where the draft arm made no guess at all.** The cause is
+  placement, not drafting: the draft block takes 0.4 GiB of the card, the engine keeps 10,115 instead of 10,167 experts
+  in VRAM, and the 52 that moved are computed by the CPU in one arm and the GPU in the other, which round differently
+  (finding 4's mechanism, now on `strata-poly`). Per step the two arms differ by up to 0.05 to 0.50 in log-probability
+  and the argmax moves on 0 to 11 steps a sequence (lru 5 of 400, puzzle 11 of 324, r16k 21 of 510), inside T2 in both.
+  A clean T0 for the GLM draft block needs the same expert set in both arms (an explicit expert count, or a card that
+  holds all 12,096). Ticket USTRAT-9.
+
+### 8.3 Reference drift (llama.cpp master against the pinned commit, DeepSeek)
+
+`pod/probe-master-cpu.sh`, `pod/probe-master-tab.py`: llama.cpp master 99db719b (the GLM reference build) run `--ngl 0` on DeepSeek's short and code sequences (p01-p09, lru, puzzle; 1,876 steps), teacher-forced on the pinned run's answers, against the pinned 3cf03257 GPU and CPU runs (`reference/deepseek-master/`, `logs/2026-10-19/probe-master-tab.out`). Mean full-vocabulary KL: pinned GPU || pinned CPU (the floor) 0.01044; pinned GPU || master CPU 0.00996; pinned CPU || master CPU 0.00992. Top-1 agreement 0.979 (floor), 0.973, 0.977. At the 1,732 margin positions master's argmax leaves the pinned GPU's at 8 (p03 1, p06 2, p07 1, p09 2, puzzle 2), where the pinned CPU run leaves it at 7 of the same positions' sequences and the engine (16 sequences, 2,943 positions) at 3. Reading: two builds of llama.cpp four months apart disagree with each other on this architecture by the same amount as llama.cpp's CPU and GPU kernels do, and a little more than the engine disagrees with either. The floor is a property of llama.cpp, not a constant; a correctness claim for DeepSeek has to name the llama.cpp commit as well as the device. Ticket USTRAT-11 (observation; nothing to fix in the fork).
+
+### 8.4 Not covered here
+
+- A 24 GB-class placement for either model (both ran with most or all experts resident; DeepSeek entirely).
+- `--kv q8_0` (qwen35moe only in this engine), the two-card `--layer-split` the pod now serves DeepSeek Q4 with
+  (PLAN.md step 18), the CPU expert tier beyond GLM's 16 %.
+- The B200 (arch 100) build: its pilot (p00, T2 1.18x, two T1 flips at steps 2 and 18) is not reproduced on this
+  arch-120 box, where p00 has no T1 failure in any arm; the pod was terminated before the rest ran.
+
+Files: `inputs-deepseek/`, `inputs-glm/`, `reference/{deepseek,glm}/`, `poly/{deepseek,glm}/<arm>/`,
+`scores/{deepseek,glm}/<arm>/`, `logs/2026-10-19/` (chain logs, per-arm outputs, T0 and top-20 derivations, the pod
+scripts as run), `pod/`, `scripts/make-inputs-model.py`, `scripts/pull-record-2026-10-19.sh`.

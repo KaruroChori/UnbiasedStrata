@@ -1,0 +1,43 @@
+{
+ "label": "/opt/us2-correctness/glm/poly/glm/draft/puzzle.top.txt",
+ "steps": 324,
+ "top1_agree": 0.9691358024691358,
+ "kl_top20_mean": 0.013756665112545335,
+ "kl_top20_p99": 0.24340986636852113,
+ "top20_overlap_mean": 0.9354938271604939,
+ "missing_ids": 418,
+ "t1_positions": 298,
+ "t1_failures": [
+  [
+   159,
+   2474,
+   264,
+   0.6620388031005859
+  ],
+  [
+   233,
+   2908,
+   279,
+   0.6735076904296875
+  ],
+  [
+   267,
+   568,
+   1959,
+   0.6807365417480469
+  ]
+ ],
+ "floor": {
+  "steps": 324,
+  "kl_full_mean": 0.01159490330943067,
+  "kl_full_p99": 0.1358373993446492,
+  "kl_top20_mean": 0.011610749028698745,
+  "top1_agree": 0.9783950617283951
+ },
+ "t2_ratio_vs_full_floor": 1.186440692554668,
+ "t2_ratio_vs_top20_floor": 1.1848215027766464,
+ "T1": "FAIL",
+ "T2": "pass",
+ "seq": "puzzle",
+ "set": "code"
+}

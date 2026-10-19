@@ -1,0 +1,24 @@
+{
+ "label": "/opt/us2-correctness/deepseek/poly/deepseek/base/p00.top.txt",
+ "steps": 128,
+ "top1_agree": 0.9609375,
+ "kl_top20_mean": 0.01173355085276584,
+ "kl_top20_p99": 0.09948202370724796,
+ "top20_overlap_mean": 0.9515624999999999,
+ "missing_ids": 124,
+ "t1_positions": 107,
+ "t1_failures": [],
+ "floor": {
+  "steps": 128,
+  "kl_full_mean": 0.013390469080268906,
+  "kl_full_p99": 0.10585235250337595,
+  "kl_top20_mean": 0.014413886189806335,
+  "top1_agree": 0.9609375
+ },
+ "t2_ratio_vs_full_floor": 0.8762613753431113,
+ "t2_ratio_vs_top20_floor": 0.8140449215607058,
+ "T1": "pass",
+ "T2": "pass",
+ "seq": "p00",
+ "set": "short"
+}

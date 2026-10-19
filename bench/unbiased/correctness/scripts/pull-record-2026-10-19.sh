@@ -13,8 +13,10 @@ for fam in deepseek glm; do
   rsync -az -e "$SSH" $H:$P/$fam/poly/$fam/ poly/$fam/
   rsync -az -e "$SSH" $H:$P/$fam/scores/$fam/ scores/$fam/
 done
-mkdir -p probes/deepseek-master-cpu logs/2026-10-19
-rsync -az -e "$SSH" --include='*.log' --include='*.out' --include='*.sh' --exclude='*' $H:$P/deepseek/probes/ probes/deepseek-master-cpu/
+mkdir -p reference/deepseek-master logs/2026-10-19
+# the reference-drift probe (pod/probe-master-cpu.sh): llama.cpp master's CPU run on DeepSeek, as reference/deepseek-master/
+rsync -az -e "$SSH" --include='*/' --include='*.top20.tsv' --include='*.sha256' --include='*.gen.txt' --include='command.sh' --include='*.force.ids' --exclude='*' $H:$P/deepseek/reference/deepseek-master/ reference/deepseek-master/
+rsync -az -e "$SSH" $H:$P/logs/probe-master-tab.out $H:$P/logs/probe-master-cpu.out logs/2026-10-19/
 rsync -az -e "$SSH" $H:$P/bin/ logs/2026-10-19/bin/
 rsync -az -e "$SSH" --exclude='build-*.log' $H:$P/logs/ logs/2026-10-19/
 echo pulled
