@@ -37,6 +37,12 @@ make build                           # build/bin/{strata,strata-poly,libstrata_k
 make test                            # the front end against a fake engine; no GPU, no model
 ```
 
+The two `git` lines are the only ones that reach the network. For a box without one, run them on a machine that has
+it and copy the tree over (`rsync -a UnbiasedStrata/ box:UnbiasedStrata/`; about 700 MB with `.git`), then `make build`
+there; that is how the A6000 VM below was done (2026-10-19, fresh clone: 5 s clone, 27 s submodule, 20.6 min `make build`
+at the default four archs on 12 cores and CUDA 12.4, 9 s `make test`). Configuring applies `patches/` to the submodule
+in place, so `git status` shows `third_party/llama.cpp` modified from then on; that is expected.
+
 `make build` configures once and builds only the four targets above, not upstream's `all`. Options, as `make`
 variables:
 

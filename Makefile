@@ -75,7 +75,7 @@ frontend:
 # and curl; no GPU and no model.  Runs in the CUDA-free build directory, so it works on the build box and on a laptop.
 test: frontend
 	cmake --build $(BUILD_DIR)-frontend -j $(JOBS) --target engine_test
-	$(BUILD_DIR)-frontend/engine_test frontend/tests/fake-engine.py
+	$(BUILD_DIR)-frontend/bin/engine_test frontend/tests/fake-engine.py
 	frontend/tests/e2e.sh $(BUILD_DIR)-frontend/bin/unbiased-strata
 
 clean:

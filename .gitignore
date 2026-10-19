@@ -25,7 +25,7 @@ __pycache__/
 *.occ1
 td.log
 
-# created by setup.py on the user's machine
+# build directories and a virtualenv, if one is made for tools/
 /.venv/
 /build/
 /models/
