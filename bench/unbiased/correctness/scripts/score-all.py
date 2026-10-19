@@ -3,8 +3,8 @@
   poly:   score-all.py poly <file-tag> <ref-tag> <arm>      e.g. poly qwen36-q3km qwen36-q3km base
   strata: score-all.py strata <ref-tag> <arm>               (ref-tag is the Flash-Next reference directory)
 Writes scores/<tag>/<arm>/<seq>.tsv + <seq>.json and summary.md (per set: steps, top-1, KL, floor, ratio, T1, T2)."""
-import json, pathlib, subprocess, sys
-ROOT = pathlib.Path.home() / 'us2-results/correctness'
+import json, os, pathlib, subprocess, sys
+ROOT = pathlib.Path(os.environ.get('US2_CORR_ROOT', pathlib.Path.home() / 'us2-results/correctness'))
 kind = sys.argv[1]
 if kind == 'poly':
     tag, ref, arm = sys.argv[2:5]; runs = ROOT / 'poly' / tag / arm; glob = '*.top.txt'; strip = '.top.txt'

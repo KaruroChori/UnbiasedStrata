@@ -8,6 +8,7 @@
 //       -lggml-base -Wl,-rpath,<llama>/build/bin -o q36_llama_dump
 // Usage: q36_llama_dump --model GGUF (--prompt TEXT | --tokens ID,ID,...) [--n 64] [--ngl 99] [--dump-layers F]
 //                       [--dump-logits F] [--force ID,ID,...] [--dump-full-logits F]
+//   --tokens and --force also take @FILE: the comma-separated ids read from that file.
 //   --force feeds that continuation instead of the greedy ids (teacher forcing); --dump-full-logits writes every
 //   step's logits (f32, [step][vocab]).
 //   --prompt is tokenized with special tokens parsed and no BOS added (Qwen adds none).
@@ -42,7 +43,17 @@ bool on_tensor(struct ggml_tensor* t, bool ask, void* user) {
     return true;
 }
 
-std::vector<int> parse_ids(const std::string& s) {
+std::vector<int> parse_ids(const std::string& arg) {
+    // "@path": the list is read from that file (a 31K-id list is over Linux's 128 KiB single-argument limit; 2026-10-19)
+    std::string s = arg;
+    if (!s.empty() && s[0] == '@') {
+        FILE* f = std::fopen(s.c_str() + 1, "rb");
+        if (!f) { std::fprintf(stderr, "cannot read %s\n", s.c_str() + 1); std::exit(2); }
+        s.clear();
+        char buf[65536]; size_t n;
+        while ((n = std::fread(buf, 1, sizeof buf, f)) > 0) s.append(buf, n);
+        std::fclose(f);
+    }
     std::vector<int> v;
     const char* p = s.c_str();
     while (*p) {

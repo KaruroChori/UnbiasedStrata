@@ -7,8 +7,9 @@ arms: base   = --tail-skip 0 --no-draft --lookup 0 --window 1          (arm 1)
       pb512  = base + --prompt-batch 512                                 (3.3 last paragraph, step 0 only)
 Writes poly/<file-tag>/<arm>/<seq>.top.txt, .ids.txt, .log, command.sh."""
 import os, pathlib, subprocess, sys, time
-ROOT = pathlib.Path.home() / 'us2-results/correctness'
-EXE = pathlib.Path.home() / 'us2-build/build/bin/strata-poly'
+# US2_CORR_ROOT / US2_POLY: another model's root and engine binary (DeepSeek, GLM: 2026-10-19)
+ROOT = pathlib.Path(os.environ.get('US2_CORR_ROOT', pathlib.Path.home() / 'us2-results/correctness'))
+EXE = pathlib.Path(os.environ.get('US2_POLY', pathlib.Path.home() / 'us2-build/build/bin/strata-poly'))
 tag, gguf, arm = sys.argv[1], sys.argv[2], sys.argv[3]; only = set(sys.argv[4:])
 
 def answer_path(p, seq, tag):
@@ -30,7 +31,7 @@ for p in sorted(ROOT.glob('inputs/*/*.prompt.ids')):
     prompt = p.read_text().strip(); ans = ans_path.read_text().strip()
     n = len(ans.split(','))
     cmd = [str(EXE), '--model', gguf, '--max-context', '32768'] + ARMS[arm] + \
-          ['--tokens', prompt, '--follow', ans, '--max-new', str(n), '--top-probs', '20']
+          ['--tokens', f'@{p}', '--follow', f'@{ans_path}', '--max-new', str(n), '--top-probs', '20']
     t0 = time.time()
     try:
         with open(OUT / f'{seq}.top.txt', 'w') as err, open(OUT / f'{seq}.ids.txt', 'w') as out:
@@ -39,7 +40,7 @@ for p in sorted(ROOT.glob('inputs/*/*.prompt.ids')):
         print(f'{p.parent.name}/{seq} {arm}: cannot exec ({e}); the id list needs a file option', flush=True)
         (OUT / f'{seq}.log').write_text(f'not run: {e}\n'); continue
     with open(OUT / 'command.sh', 'a') as f:
-        f.write('STRATA_FREEZE_EXPERTS=1 ' + ' '.join(c if len(c) < 200 else f'$(cat {p if c == prompt else ans_path})' for c in cmd) + '\n')
+        f.write('STRATA_FREEZE_EXPERTS=1 ' + ' '.join(cmd) + '\n')
     # top lines go to stderr with the engine's log; keep the log lines apart from the top lines
     raw = (OUT / f'{seq}.top.txt').read_text().splitlines()
     (OUT / f'{seq}.log').write_text('\n'.join(l for l in raw if not l.startswith('top ')) + '\n')

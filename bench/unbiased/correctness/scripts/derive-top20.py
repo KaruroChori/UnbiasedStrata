@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """reference/<tag>/<seq>.<gpu|cpu>.full (f32 [steps][vocab], kept on the box) -> <seq>.<mode>.top20.tsv committed:
 per step the argmax, the top-2 gap in nats and the 20 likeliest ids with their log-probabilities (id:logp)."""
-import pathlib, sys
+import os, pathlib, sys
 import numpy as np
-V = 248320
+V = int(os.environ.get('US2_VOCAB', 248320))
 for f in sorted(pathlib.Path(sys.argv[1]).glob('*.full')):
     out = f.with_name(f.name[:-5] + '.top20.tsv')
     if out.exists(): continue

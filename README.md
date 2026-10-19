@@ -191,7 +191,7 @@ UD-Q3_K_M on an RTX 3090 and Qwen3.6 UD-IQ4_XS on the A6000 pass as is (the IQ4_
 after the two fixes under "Known limits" (argument order; GLM's architecture name in the vocabulary load). The
 API-only checks (`frontend/tests/acceptance-real-engine.sh`) hold decode and prompt reading within 15 % of step 9 on
 the 3090 (Flash-Next with the installer's `--pool-workers 15`; 24 costs 14 %) and record the first B200 figures
-(72 and 74 tok/s decode on one card). Record: `bench/unbiased/2026-10-19-step13-acceptance/`.
+(72 and 74 tok/s decode on one card). Record: `bench/unbiased/2026-10-19-step13-acceptance/`. pi's compaction defaults (reserve 16K, keep the last 20K tokens) assume a window well above 64K: against a server at `--max-context 32768` a long pi session compacts to no effect and then sends `max_tokens: 1` ("Response was truncated before completion"); serve 128K or more to pi, or lower pi's `compaction` settings (USTRAT-8).
 
 ## Known limits
 

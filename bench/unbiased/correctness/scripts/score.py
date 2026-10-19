@@ -12,10 +12,10 @@ Q for an id in P's top 20 that the engine did not print: the engine's rest mass 
 the rest bucket (an upper bound on each missing id's probability is the engine's 20th probability; the spread is
 used, and the number of such ids is reported as 'missing').
 T1 gate: argmax equal at every position with gap >= 0.5. T2 gate: mean KL <= 1.5 x floor (full-vocab) on the positions."""
-import json, sys
+import json, os, sys
 import numpy as np
 
-V = 248320
+V = int(os.environ.get('US2_VOCAB', 248320))   # Qwen 248320; DeepSeek V4 Flash 129280; GLM 5.3 Flash 154880
 
 def load_full(path):
     a = np.fromfile(path, dtype=np.float32)

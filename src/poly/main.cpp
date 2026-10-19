@@ -26,6 +26,7 @@
 #include <mutex>
 #include <random>
 #include <stdexcept>
+#include <fstream>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -1179,7 +1180,15 @@ int main(int argc, char** argv) {
         else if (a == "--min-p") s.min_p = std::strtof(val(), nullptr);
         else if (a == "--seed") s.seed = std::strtoull(val(), nullptr, 10);
         else if (a == "--tokens" || a == "--eos-ids" || a == "--follow") {
-            if (!parse_ids(val(), a == "--tokens" ? ids : a == "--eos-ids" ? eos : follow)) {
+            // "@path": the id list read from that file (a 31K-id list is over Linux's 128 KiB argument limit; 2026-10-19)
+            std::string list = val();
+            if (!list.empty() && list[0] == '@') {
+                std::ifstream in(list.substr(1), std::ios::binary);
+                if (!in) { std::fprintf(stderr, "cannot read %s\n", list.c_str() + 1); return 2; }
+                list.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+                while (!list.empty() && (list.back() == '\n' || list.back() == '\r' || list.back() == ' ')) list.pop_back();
+            }
+            if (!parse_ids(list.c_str(), a == "--tokens" ? ids : a == "--eos-ids" ? eos : follow)) {
                 std::fprintf(stderr, "strata-poly: %s takes token ids separated by commas\n", a.c_str());
                 return 2;
             }

@@ -6,8 +6,9 @@ ref-run.py <model-tag> <gguf> gpu|cpu [seq ...]
   cpu: --ngl 0, --force on the answer, writes <seq>.cpu.full.
 Full logits are f32 [steps][vocab]; every run also gets <seq>.<mode>.log (stderr) and command.sh."""
 import hashlib, json, os, pathlib, subprocess, sys, time
-ROOT = pathlib.Path.home() / 'us2-results/correctness'
-DUMP = pathlib.Path.home() / 'llamacpp-ref/tools/q36_llama_dump'
+# US2_CORR_ROOT / US2_DUMP: another model's root and reference build (DeepSeek, GLM: 2026-10-19)
+ROOT = pathlib.Path(os.environ.get('US2_CORR_ROOT', pathlib.Path.home() / 'us2-results/correctness'))
+DUMP = pathlib.Path(os.environ.get('US2_DUMP', pathlib.Path.home() / 'llamacpp-ref/tools/q36_llama_dump'))
 tag, gguf, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 only = set(sys.argv[4:])
 
@@ -27,20 +28,22 @@ for p in seqs:
     n = meta['n_answer']
     nctx = ((meta['prompt_tokens'] + n + 8 + 255) // 256) * 256
     env = dict(os.environ, STRATA_DUMP_CTX=str(nctx))
-    cmd = [str(DUMP), '--model', gguf, '--tokens', prompt, '--ngl', '99' if mode == 'gpu' else '0',
+    cmd = [str(DUMP), '--model', gguf, '--tokens', f'@{p}', '--ngl', '99' if mode == 'gpu' else '0',
            '--dump-full-logits', str(OUT / f'{seq}.{mode}.full')]
     if mode == 'cpu' or ans_path.exists():
         ans = ans_path.read_text().strip().split(',')
         # --force N ids runs N+1 steps; the engines score N steps, so force all but the last and let step N be greedy
-        cmd += ['--force', ','.join(ans[:-1])]
+        forced = OUT / f'{seq}.force.ids'; forced.write_text(','.join(ans[:-1]) + '\n')
+        cmd += ['--force', f'@{forced}']
     else:
         cmd += ['--n', str(n)]
     t0 = time.time()
-    r = subprocess.run(cmd, env=env, capture_output=True, text=True)
+    # errors='replace': the DeepSeek vocabulary's pieces are not all valid UTF-8 in llama.cpp's load log (2026-10-19)
+    r = subprocess.run(cmd, env=env, capture_output=True, text=True, errors='replace')
     dt = time.time() - t0
     (OUT / f'{seq}.{mode}.log').write_text(r.stderr)
     with open(OUT / 'command.sh', 'a') as f:
-        f.write(f'STRATA_DUMP_CTX={nctx} ' + ' '.join(c if len(c) < 200 else f'$(cat {p})' for c in cmd) + '\n')
+        f.write(f'STRATA_DUMP_CTX={nctx} ' + ' '.join(cmd) + '\n')
     if r.returncode != 0:
         print(f'{setname}/{seq} {mode}: EXIT {r.returncode} after {dt:.0f} s; see {seq}.{mode}.log', flush=True); continue
     gen = [l for l in r.stdout.splitlines() if l.startswith('gen:')][0].split()[1:]

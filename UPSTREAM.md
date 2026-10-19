@@ -113,6 +113,11 @@ and teacher-forced per-step distributions on 16 sequences per model (within llam
 and arm). Two upstream claims did not hold and are not repeated here: the draft block is not bitwise inert above 4-token
 windows, and `strata`'s output is not reproducible across starts unless the expert cache is pinned. Tickets USTRAT-1 to 5.
 
+One test-only hunk since (2026-10-19, correctness checks of DeepSeek V4 Flash and GLM 5.3 Flash): `src/poly/main.cpp`
+`--tokens`, `--eos-ids` and `--follow` accept `@FILE` (the comma-separated ids read from that file), because a 31K-id
+list is over Linux's 128 KiB single-argument limit. `tools/qwen35/q36_llama_dump.cpp` (upstream's llama.cpp-side parity
+program, not part of the build) takes the same `@FILE` for `--tokens` and `--force`. Nothing on the serve path changes.
+
 ## Removed
 
 Each entry names the rule above that it satisfies.
