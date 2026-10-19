@@ -1,0 +1,15 @@
+== /v1/models
+['qwen3.6-35b-a3b-ud-q3_k_m-3090']
+== 1. sampled chat with thinking: answer present, reasoning separated, finish=stop
+{"content": "391", "reasoning_chars": 615, "finish": "stop", "ok": true}
+== 2. same request, same seed, twice: identical ids (sampling is seeded)
+{"a": "The sea whispers ancient secrets to the shore with every rhythmic tide.", "same": true}
+== 3. tool call, pi-shaped: a tool_calls entry with a JSON-parsable argument object
+{"tool_calls": [{"type": "function", "function": {"name": "read", "arguments": "{\"path\":\"/etc/hostname\"}"}, "id": "qIVST84ePX6uBhFf5MYzIl2OF934FRez"}], "ok": true}
+== 4. decode speed: 3 x 256 tokens of prose, thinking off, median tokens/s from the server's timings
+{"decode_tok_s": [188.5, 184.0, 199.2], "median": 188.5, "expected": 200.0, "floor": 170.0, "ok": true}
+== 5. prompt reading: one ~6k-token prompt, tokens/s from the server's timings
+{"prompt_tokens": 8275, "pp_tok_s": 3523.2, "answer": "260", "expected": 3821.6, "floor": 3248.4, "ok": true}
+== /health
+{"status":"ok","busy":false,"service":"strata","loaded":true,"model":"qwen3.6-35b-a3b-ud-q3_k_m-3090","max_context":32768}
+ACCEPTANCE_OK qwen3.6-35b-a3b-ud-q3_k_m-3090

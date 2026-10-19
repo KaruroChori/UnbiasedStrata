@@ -8,3 +8,9 @@
 == 3. tool call, pi-shaped: a tool_calls entry with a JSON-parsable argument object
 {"tool_calls": [{"type": "function", "function": {"name": "read", "arguments": "{\"path\":\"/etc/hostname\"}"}, "id": "lIS9te6jK0wExMD0sn12lGgSrq1GwhGF"}], "ok": true}
 == 4. decode speed: 3 x 256 tokens of prose, thinking off, median tokens/s from the server's timings
+{"decode_tok_s": [79.1, 88.9, 92.2], "median": 88.9, "expected": 119.1, "floor": 101.2, "ok": false}
+== 5. prompt reading: one ~6k-token prompt, tokens/s from the server's timings
+{"prompt_tokens": 8275, "pp_tok_s": 2086.1, "answer": "260", "expected": 2064.7, "floor": 1755.0, "ok": true}
+== /health
+{"status":"ok","busy":false,"service":"strata","loaded":true,"model":"qwen3.8-flash-next-iq3_xxs-3090","max_context":65536}
+ACCEPTANCE_FAIL qwen3.8-flash-next-iq3_xxs-3090

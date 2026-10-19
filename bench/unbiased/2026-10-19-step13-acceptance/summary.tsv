@@ -1,0 +1,29 @@
+run	model	task	pass	pi_exit	wall_s	turns	tool_calls	input_tokens	output_tokens	temperature	judge
+20261019T0215Z-deepseek-v4-flash-ud-iq2_xxs-b200-md-toc	deepseek-v4-flash-ud-iq2_xxs-b200	md-toc	True	0	252	9	7	2905	13021	0.6	{"pass": true, "hidden": "4 passed in 0.09s", "own_tests": "17 passed in 0.01s"}
+20261019T0219Z-deepseek-v4-flash-ud-iq2_xxs-b200-kvstore	deepseek-v4-flash-ud-iq2_xxs-b200	kvstore	True	0	53	2	1	1784	1473	0.6	{"pass": true, "failures": []}
+20261019T0220Z-deepseek-v4-flash-ud-iq2_xxs-b200-bugfix	deepseek-v4-flash-ud-iq2_xxs-b200	bugfix	True	0	62	8	12	2751	3517	0.6	{"pass": true, "tests_untouched": true, "pytest": "6 passed in 0.02s"}
+20261019T0221Z-deepseek-v4-flash-ud-iq2_xxs-b200-minesweeper	deepseek-v4-flash-ud-iq2_xxs-b200	minesweeper	False	0	47	2	1	1750	2043	0.6	{"pass": false, "why": "no index.html"}
+20261019T0222Z-deepseek-v4-flash-ud-iq2_xxs-b200-minesweeper-t1	deepseek-v4-flash-ud-iq2_xxs-b200	minesweeper	False	0	161	12	9	1390	7187	1.0	{"pass": false, "cells": 0, "revealed_after_click": 0, "console_errors": 1}
+20261019T0217Z-glm-5.3-flash-3.0bit-b200-md-toc	glm-5.3-flash-3.0bit-b200	md-toc	False	0	119	1	0	1673	8192	0.6	{"pass": false, "why": "no mdtoc.py"}
+20261019T0219Z-glm-5.3-flash-3.0bit-b200-kvstore	glm-5.3-flash-3.0bit-b200	kvstore	False	0	119	1	0	1634	8192	0.6	{"pass": false, "why": "no kvstore.py"}
+20261019T0221Z-glm-5.3-flash-3.0bit-b200-bugfix	glm-5.3-flash-3.0bit-b200	bugfix	False	0	54	8	12	5002	2930	0.6	{"pass": false, "tests_untouched": true, "pytest": "2 failed, 4 passed in 0.02s"}
+20261019T0225Z-glm-5.3-flash-3.0bit-b200-kvstore-low	glm-5.3-flash-3.0bit-b200	kvstore	True	0	55	4	4	1667	2739	0.6	{"pass": true, "failures": []}
+20261019T0225Z-glm-5.3-flash-3.0bit-b200-md-toc-low	glm-5.3-flash-3.0bit-b200	md-toc	False	0	29	1	0	0	0	0.6	{"pass": false, "why": "no mdtoc.py"}
+20261019T0226Z-glm-5.3-flash-3.0bit-b200-bugfix-low	glm-5.3-flash-3.0bit-b200	bugfix	True	0	18	5	6	3097	928	0.6	{"pass": true, "tests_untouched": true, "pytest": "6 passed in 0.01s"}
+20261019T0226Z-glm-5.3-flash-3.0bit-b200-minesweeper-low	glm-5.3-flash-3.0bit-b200	minesweeper	False	0	30	1	0	0	0	0.6	{"pass": false, "why": "no index.html"}
+20261019T0227Z-glm-5.3-flash-3.0bit-b200-minesweeper-low-t1	glm-5.3-flash-3.0bit-b200	minesweeper	False	0	43	2	2	1	2598	1.0	{"pass": false, "why": "no index.html"}
+20261019T0213Z-qwen3.6-35b-a3b-ud-iq4_xs-md-toc-smoke	qwen3.6-35b-a3b-ud-iq4_xs	md-toc	True	0	31	5	4	2563	5917	0.6	{"pass": true, "hidden": "4 passed in 0.09s", "own_tests": "1 failed, 29 passed in 0.48s"}
+20261019T0215Z-qwen3.6-35b-a3b-ud-iq4_xs-md-toc	qwen3.6-35b-a3b-ud-iq4_xs	md-toc	True	0	38	10	9	1007	7011	0.6	{"pass": true, "hidden": "4 passed in 0.09s", "own_tests": "25 passed in 0.38s"}
+20261019T0216Z-qwen3.6-35b-a3b-ud-iq4_xs-kvstore	qwen3.6-35b-a3b-ud-iq4_xs	kvstore	True	0	64	14	13	4024	10433	0.6	{"pass": true, "failures": []}
+20261019T0217Z-qwen3.6-35b-a3b-ud-iq4_xs-bugfix	qwen3.6-35b-a3b-ud-iq4_xs	bugfix	True	0	11	6	11	2939	1829	0.6	{"pass": true, "tests_untouched": true, "pytest": "6 passed in 0.01s"}
+20261019T0217Z-qwen3.6-35b-a3b-ud-iq4_xs-minesweeper	qwen3.6-35b-a3b-ud-iq4_xs	minesweeper	True	137	1499	14	13	5187	8620	0.6	{"pass": true, "cells": 81, "revealed_after_click": 1, "console_errors": 0}
+20261019T0242Z-qwen3.6-35b-a3b-ud-iq4_xs-minesweeper-t1	qwen3.6-35b-a3b-ud-iq4_xs	minesweeper	False	0	83	31	30	3251	14439	1.0	{"pass": false, "cells": 0, "revealed_after_click": 0, "console_errors": 0}
+20261019T0232Z-qwen3.8-flash-next-iq3_xxs-3090-md-toc	qwen3.8-flash-next-iq3_xxs-3090	md-toc	True	0	119	16	13	3868	9358	0.6	{"pass": true, "hidden": "4 passed in 0.10s", "own_tests": "17 passed in 0.08s"}
+20261019T0234Z-qwen3.8-flash-next-iq3_xxs-3090-kvstore	qwen3.8-flash-next-iq3_xxs-3090	kvstore	True	0	91	8	8	2094	7102	0.6	{"pass": true, "failures": []}
+20261019T0236Z-qwen3.8-flash-next-iq3_xxs-3090-bugfix	qwen3.8-flash-next-iq3_xxs-3090	bugfix	True	0	34	6	11	2922	2350	0.6	{"pass": true, "tests_untouched": true, "pytest": "6 passed in 0.01s"}
+20261019T0237Z-qwen3.8-flash-next-iq3_xxs-3090-minesweeper	qwen3.8-flash-next-iq3_xxs-3090	minesweeper	True	0	185	30	31	4838	14332	0.6	{"pass": true, "cells": 81, "revealed_after_click": 56, "console_errors": 0}
+20261019T0247Z-qwen3.6-35b-a3b-ud-q3_k_m-3090-md-toc	qwen3.6-35b-a3b-ud-q3_k_m-3090	md-toc	True	0	48	13	11	2581	7323	0.6	{"pass": true, "hidden": "4 passed in 0.08s", "own_tests": "39 passed in 0.58s"}
+20261019T0248Z-qwen3.6-35b-a3b-ud-q3_k_m-3090-kvstore	qwen3.6-35b-a3b-ud-q3_k_m-3090	kvstore	True	0	47	10	9	11471	6142	0.6	{"pass": true, "failures": []}
+20261019T0249Z-qwen3.6-35b-a3b-ud-q3_k_m-3090-bugfix	qwen3.6-35b-a3b-ud-q3_k_m-3090	bugfix	True	0	18	7	12	2959	2284	0.6	{"pass": true, "tests_untouched": true, "pytest": "6 passed in 0.01s"}
+20261019T0250Z-qwen3.6-35b-a3b-ud-q3_k_m-3090-minesweeper	qwen3.6-35b-a3b-ud-q3_k_m-3090	minesweeper	True	0	47	9	8	5663	8512	0.6	{"pass": true, "cells": 81, "revealed_after_click": 1, "console_errors": 0}
+20261019T0251Z-qwen3.6-35b-a3b-ud-q3_k_m-3090-minesweeper-t1	qwen3.6-35b-a3b-ud-q3_k_m-3090	minesweeper	True	0	378	11	10	3486	8454	1.0	{"pass": true, "cells": 81, "revealed_after_click": 49, "console_errors": 0}

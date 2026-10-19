@@ -182,11 +182,29 @@ that directory's README: upstream's own `poly_expert_parity` exceeds its bound o
 inert above 4-token windows (it passes the KL gate); `strata`'s bits depend on the free VRAM at start when not every
 expert fits the card.
 
+**Model acceptance (PLAN.md step 13, 2026-10-19).** A coding agent (pi 0.85.1, in a container with tools, sampled as
+the model card asks) completed four work items through the fork's server with every served model: a Markdown
+table-of-contents CLI with tests, an HTTP key-value store with persistence, three planted bugs, and a browser
+Minesweeper that a headless browser can play; Minesweeper again at temperature 1.0. Flash-Next IQ3_XXS and Qwen3.6
+UD-Q3_K_M on an RTX 3090 and Qwen3.6 UD-IQ4_XS on the A6000 pass as is (the IQ4_XS temperature-1.0 page threw a
+`ReferenceError` of the agent's own making); DeepSeek V4 Flash UD-IQ2_XXS and GLM 5.3 Flash 3.0bit on a B200 pass
+after the two fixes under "Known limits" (argument order; GLM's architecture name in the vocabulary load). The
+API-only checks (`frontend/tests/acceptance-real-engine.sh`) hold decode and prompt reading within 15 % of step 9 on
+the 3090 (Flash-Next with the installer's `--pool-workers 15`; 24 costs 14 %) and record the first B200 figures
+(72 and 74 tok/s decode on one card). Record: `bench/unbiased/2026-10-19-step13-acceptance/`.
+
 ## Known limits
 
 - One request at a time: the front end has one slot and queues the rest.
 - No constrained decoding: a request's `response_format` or tool schema is parsed, not enforced at the sampler; the
-  server logs `a grammar was requested; this engine does not constrain sampling` once per such request.
+  server logs `a grammar was requested; this engine does not constrain sampling` once per such request. One
+  consequence is handled: llama.cpp's tool-call grammars expect required arguments in the schema's order, which
+  only a constrained sampler guarantees, so `patches/llama.cpp-any-argument-order.patch` accepts any order (DeepSeek
+  V4 Flash and GLM 5.3 Flash write `content` before `path`; without the patch their finished calls came back as parse
+  errors). A tool call that is malformed in other ways is still an error to the client, not a retry.
+- GLM 5.3 Flash's template honours `reasoning_effort` only as `low` or `high` and treats anything else as `max`, at
+  which it thinks to the token cap on a coding task; send one of the two, or set `--chat-template-kwargs
+  '{"reasoning_effort":"low"}'` on the server as the default.
 - Pictures are encoded on the CPU, 15 s each at the 300-row default on an 8-thread Ryzen 7 1700, quadratic in rows
   (2040 rows took 146 s). The front end's ggml is built without CUDA (the engines bring their own), so `--mmproj-gpu`
   is refused; giving the encoder the card is a build change to llama.cpp's ggml in this tree, not done.
