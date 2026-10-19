@@ -1066,6 +1066,19 @@ bool strata_context::load(common_params & params, std::string & err) {
     mparams.vocab_only = true;
     I.model = llama_model_load_from_file(params.model.path.c_str(), mparams);
     if (I.model == nullptr) {
+        // An architecture this llama.cpp does not know (GLM 5.3 Flash's file says "glm5-next", from neurall's fork)
+        // still has an ordinary vocabulary and chat template; the engine, not llama.cpp, runs the tensors. A
+        // vocabulary-only load reads nothing architecture-specific, so the name is overridden to one llama.cpp knows.
+        LOG_WRN("vocabulary load failed; retrying with general.architecture overridden to \"llama\" (vocabulary only)\n");
+        llama_model_kv_override ov[2] = {};
+        snprintf(ov[0].key, sizeof(ov[0].key), "%s", "general.architecture");
+        ov[0].tag = LLAMA_KV_OVERRIDE_TYPE_STR;
+        snprintf(ov[0].val_str, sizeof(ov[0].val_str), "%s", "llama");
+        ov[1].key[0] = 0;
+        mparams.kv_overrides = ov;
+        I.model = llama_model_load_from_file(params.model.path.c_str(), mparams);
+    }
+    if (I.model == nullptr) {
         err = "could not read the vocabulary from " + params.model.path;
         return false;
     }
