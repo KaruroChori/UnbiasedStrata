@@ -1,0 +1,75 @@
+[fork-flash-next-128k-q4kv-kvres131072]   still loading (0 s) ...
+[fork-flash-next-128k-q4kv-kvres131072]   still loading (30 s) ...
+Using the Strata server already running at http://127.0.0.1:18090.
+Running the suite (about 3-10 minutes) ...
+warming up (not measured) ...
+  calibrated: about 1.08 tokens per word
+chat: 3 short questions x 3 runs, up to 100 new tokens
+  run 1 q1: decode 72.01047425080012 tok/s, first token 0.358 s, 100 tokens
+  run 1 q2: decode 72.66695048371231 tok/s, first token 0.492 s, 100 tokens
+  run 1 q3: decode 78.22710513880965 tok/s, first token 0.377 s, 100 tokens
+  run 2 q1: decode 108.82995703964929 tok/s, first token 0.306 s, 100 tokens
+  run 2 q2: decode 98.46641052138462 tok/s, first token 0.249 s, 100 tokens
+  run 2 q3: decode 98.94350325963875 tok/s, first token 0.263 s, 100 tokens
+  run 3 q1: decode 101.92577950056369 tok/s, first token 0.31 s, 100 tokens
+  run 3 q2: decode 81.02056449236933 tok/s, first token 0.242 s, 100 tokens
+  run 3 q3: decode 104.5828412305703 tok/s, first token 0.249 s, 100 tokens
+4K prompt: 3 fresh prompts of about 4096 tokens, 24 new tokens
+  run 1: 4019 tokens, prompt 1444.940192634724 tok/s (0 reused), first token 2.816 s
+  run 2: 4019 tokens, prompt 1552.3979701015644 tok/s (0 reused), first token 2.617 s
+  run 3: 4019 tokens, prompt 1547.0747238246427 tok/s (0 reused), first token 2.631 s
+16K prompt: 3 fresh prompts of about 16384 tokens, 24 new tokens
+  run 1: 16058 tokens, prompt 2886.590673604934 tok/s (0 reused), first token 5.607 s
+  run 2: 16058 tokens, prompt 2991.566123429209 tok/s (0 reused), first token 5.411 s
+  run 3: 16058 tokens, prompt 2991.571696654108 tok/s (0 reused), first token 5.411 s
+agent: a session of 6 turns with four tools, x 3 runs
+  run 1 turn 0: prompt 645, reused 0, read 645, first token 1.439 s
+  run 1 turn 1: prompt 3796, reused 673, read 3123, first token 3.109 s
+  run 1 turn 2: prompt 5329, reused 3859, read 1470, first token 2.635 s
+  run 1 turn 3: prompt 8762, reused 5322, read 3440, first token 2.949 s
+  run 1 turn 4: prompt 11688, reused 8825, read 2863, first token 2.87 s
+  run 1 turn 5: prompt 14646, reused 11747, read 2899, first token 2.739 s
+  run 2 turn 0: prompt 645, reused 0, read 645, first token 1.319 s
+  run 2 turn 1: prompt 3782, reused 662, read 3120, first token 2.583 s
+  run 2 turn 2: prompt 5315, reused 3846, read 1469, first token 2.443 s
+  run 2 turn 3: prompt 8748, reused 5308, read 3440, first token 2.608 s
+  run 2 turn 4: prompt 11674, reused 8812, read 2862, first token 2.564 s
+  run 2 turn 5: prompt 14630, reused 11731, read 2899, first token 2.564 s
+  run 3 turn 0: prompt 645, reused 0, read 645, first token 1.3 s
+  run 3 turn 1: prompt 3812, reused 692, read 3120, first token 2.559 s
+  run 3 turn 2: prompt 5345, reused 3875, read 1470, first token 2.452 s
+  run 3 turn 3: prompt 8778, reused 5409, read 3369, first token 2.583 s
+  run 3 turn 4: prompt 11704, reused 8842, read 2862, first token 2.566 s
+  run 3 turn 5: prompt 14661, reused 11762, read 2899, first token 2.563 s
+32K prompt: 3 fresh prompts of about 32768 tokens, 24 new tokens
+  run 1: 32049 tokens, prompt 3070.733511419078 tok/s (0 reused), first token 10.504 s
+  run 2: 32049 tokens, prompt 3075.030691299023 tok/s (0 reused), first token 10.499 s
+  run 3: 32049 tokens, prompt 3075.693499354948 tok/s (0 reused), first token 10.493 s
+
+Results (median, range over the runs):
+  chat decode tok/s                     98.47   (72.01 - 108.83, n=9)
+  chat first token (s)                   0.31   (0.24 - 0.49, n=9)
+  4K prompt tok/s                     1547.08   (1444.94 - 1552.40, n=3)
+  4K first token (s)                     2.63   (2.62 - 2.82, n=3)
+  16K prompt tok/s                    2991.57   (2886.59 - 2991.57, n=3)
+  16K first token (s)                    5.41   (5.41 - 5.61, n=3)
+  32K prompt tok/s                    3075.03   (3070.73 - 3075.69, n=3)
+  32K first token (s)                   10.50   (10.49 - 10.50, n=3)
+  agent cache hit %                     68.80   (68.77 - 69.03, n=3)
+  agent re-read tokens/session          72.00   (2.00 - 75.00, n=3)
+  agent turn first token (s)             2.58   (2.44 - 3.11, n=15)
+  agent decode tok/s                   120.05   (75.49 - 171.19, n=15)
+
+Report: /tank/nvme/strata/us2-bench-20261019/record/fork-flash-next-128k-q4kv-kvres131072/community/2026-10-19-community-rtx-4090-qwen3-8-flash-next-iq3-xxs/README.md
+Share it: open a pull request that adds the folder /tank/nvme/strata/us2-bench-20261019/record/fork-flash-next-128k-q4kv-kvres131072/community/2026-10-19-community-rtx-4090-qwen3-8-flash-next-iq3-xxs (see docs/COMMUNITY_BENCHMARKS.md), or paste README.md into a GitHub issue. Home folders, user and host names and IP addresses are already replaced; read it once before you share it.
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/HOW_IT_WORKS.md 0 {"ok": true, "err": null, "ttft_s": 2.444, "total_s": 7.068, "prompt_tokens": 1561, "reused_tokens": 0, "read_tokens": 1561, "generated_tokens": 512, "prompt_tps": 640.6223516873073, "prompt_tps_source": "engine", "decode_tps": 110.44722697488719, "decode_tps_source": "engine", "prompt_ms": 2436.693, "decode_ms": 4626.644, "drafts_offered": 470, "drafts_accepted": 300}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/INSTALL.md 0 {"ok": true, "err": null, "ttft_s": 2.863, "total_s": 6.935, "prompt_tokens": 4330, "reused_tokens": 0, "read_tokens": 4330, "generated_tokens": 512, "prompt_tps": 1520.7843454041931, "prompt_tps_source": "engine", "decode_tps": 125.51991897947148, "decode_tps_source": "engine", "prompt_ms": 2847.215, "decode_ms": 4071.067, "drafts_offered": 455, "drafts_accepted": 297}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/DETAILS.md 0 {"ok": true, "err": null, "ttft_s": 2.935, "total_s": 7.207, "prompt_tokens": 5050, "reused_tokens": 0, "read_tokens": 5050, "generated_tokens": 512, "prompt_tps": 1729.3803921138883, "prompt_tps_source": "engine", "decode_tps": 119.61246497648713, "decode_tps_source": "engine", "prompt_ms": 2920.121, "decode_ms": 4272.13, "drafts_offered": 461, "drafts_accepted": 304}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/HOW_IT_WORKS.md 1 {"ok": true, "err": null, "ttft_s": 2.471, "total_s": 6.67, "prompt_tokens": 1561, "reused_tokens": 0, "read_tokens": 1561, "generated_tokens": 512, "prompt_tps": 636.6857427667238, "prompt_tps_source": "engine", "decode_tps": 121.617874733589, "decode_tps_source": "engine", "prompt_ms": 2451.759, "decode_ms": 4201.685, "drafts_offered": 480, "drafts_accepted": 304}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/INSTALL.md 1 {"ok": true, "err": null, "ttft_s": 2.656, "total_s": 7.031, "prompt_tokens": 4330, "reused_tokens": 0, "read_tokens": 4330, "generated_tokens": 512, "prompt_tps": 1639.1220968043556, "prompt_tps_source": "engine", "decode_tps": 116.81711537621854, "decode_tps_source": "engine", "prompt_ms": 2641.658, "decode_ms": 4374.359, "drafts_offered": 447, "drafts_accepted": 286}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/DETAILS.md 1 {"ok": true, "err": null, "ttft_s": 2.743, "total_s": 6.883, "prompt_tokens": 5050, "reused_tokens": 0, "read_tokens": 5050, "generated_tokens": 512, "prompt_tps": 1852.8696731831421, "prompt_tps_source": "engine", "decode_tps": 123.39352973590887, "decode_tps_source": "engine", "prompt_ms": 2725.502, "decode_ms": 4141.222, "drafts_offered": 464, "drafts_accepted": 295}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/HOW_IT_WORKS.md 2 {"ok": true, "err": null, "ttft_s": 2.471, "total_s": 6.423, "prompt_tokens": 1561, "reused_tokens": 0, "read_tokens": 1561, "generated_tokens": 512, "prompt_tps": 634.6630085791314, "prompt_tps_source": "engine", "decode_tps": 129.20001173166446, "decode_tps_source": "engine", "prompt_ms": 2459.573, "decode_ms": 3955.108, "drafts_offered": 456, "drafts_accepted": 312}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/INSTALL.md 2 {"ok": true, "err": null, "ttft_s": 2.662, "total_s": 6.816, "prompt_tokens": 4330, "reused_tokens": 0, "read_tokens": 4330, "generated_tokens": 512, "prompt_tps": 1639.7701443679387, "prompt_tps_source": "engine", "decode_tps": 122.95159869560625, "decode_tps_source": "engine", "prompt_ms": 2640.614, "decode_ms": 4156.107, "drafts_offered": 436, "drafts_accepted": 293}
+[fork-flash-next-128k-q4kv-kvres131072] SUSTAINED docs/DETAILS.md 2 {"ok": true, "err": null, "ttft_s": 2.733, "total_s": 6.732, "prompt_tokens": 5050, "reused_tokens": 0, "read_tokens": 5050, "generated_tokens": 512, "prompt_tps": 1858.7695828737017, "prompt_tps_source": "engine", "decode_tps": 127.72994639841544, "decode_tps_source": "engine", "prompt_ms": 2716.851, "decode_ms": 4000.628, "drafts_offered": 445, "drafts_accepted": 290}
+[fork-flash-next-128k-q4kv-kvres131072] SUMMARY {"chat": {"median": 98.466, "min": 72.01, "max": 108.83, "n": 9}, "prefill": {"4K": {"median": 1547.075, "min": 1444.94, "max": 1552.398, "n": 3}, "16K": {"median": 2991.566, "min": 2886.591, "max": 2991.572, "n": 3}, "32K": {"median": 3075.031, "min": 3070.734, "max": 3075.693, "n": 3}}, "sustained": {"decode_tps": {"median": 122.95159869560625, "min": 110.44722697488719, "max": 129.20001173166446, "n": 9}, "prompt_tps": {"median": 1639.1220968043556, "min": 634.6630085791314, "max": 1858.7695828737017, "n": 9}, "ttft_s": {"median": 2.662, "min": 2.444, "max": 2.935, "n": 9}, "total_s": {"median": 6.883, "min": 6.423, "max": 7.207, "n": 9}, "draft_acceptance_pct": 65.16771998055421}}
+DONE

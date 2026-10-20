@@ -1,0 +1,389 @@
+strata generate: memory guard: limit 66.7 GiB (source: meminfo), current 1.3 GiB, reclaimable cache credited 0.0 GiB; available 65.4 GiB (MemAvailable 65.4 GiB), floor 2560 MiB
+0.00.540.184 I chat template, example_format: '<|im_start|>system
+Reasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.
+
+You are a helpful assistant<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+
+Hi there<|im_end|>
+<|im_start|>user
+How are you?<|im_end|>
+<|im_start|>assistant
+<think>
+'
+0.00.541.366 I chat template, thinking = 1
+0.00.541.377 I waiting for the engine (/tank/nvme/strata/us2-bench-20261019/UnbiasedStrata/build/bin/strata) to load
+strata generate: PCIe probe: 12.4 GB/s host->device (best of 12.4 12.4 12.4 12.3) -> pcie_frac 0.34 (default 0.55)
+strata generate: this CPU has no AVX-512: the expert kernels run on AVX-2 (multi-token for the i-quant gate/up rows)
+strata generate: native pack: /tank/nvme/strata/pack-iq3-xxs experts (largest blob 2.33 MB), token embedding IQ3_S in mapped host memory (260 MiB, 0.2 s)
+strata generate: 1466 MiB of weights loaded from /tank/nvme/strata/pack-iq3-xxs in 1.0 s (302 canonical tensors skipped: served natively)
+strata generate: 300 native projection matrices, 1781.11 MiB of weights, in 1.0 s
+strata: PLE table mlock failed (Cannot allocate memory; raise `ulimit -l`): its pages stay faulted in but may be reclaimed
+strata generate: PLE table loaded (not locked) (--ple-io ram) in 11.0 s
+strata generate: profile /tank/nvme/strata/pack-iq3-xxs/expert-profile.bin: 24576 ranked pairs, built for 24576 slots
+strata generate: PLE on, table 320001536 rows of /tank/nvme/strata/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00002-of-00002.gguf
+strata mtp: draft layer loaded, 820 MiB of VRAM (experts 675, dense 111), files read in 0.53 s (1489 MiB/s)
+strata generate: experimental native Q5_K head, 437043200 bytes, in 0.2 s
+strata generate: GPU 0: NVIDIA GeForce RTX 4090, compute capability 8.9
+strata generate: expert arena read through the file cache (buffered (not Windows))
+strata generate: expert arena: cudaHostRegister PORTABLE ok; MAP_HUGETLB unavailable (needed 20464 2 MiB pages, vm.nr_hugepages=0); transparent huge pages are on for every mapping (THP always): MADV_HUGEPAGE not requested
+strata generate: loaded 39.97 GiB at 1.56 GiB/s
+strata generate: GPU host-callback thread started before host-core pinning
+strata generate: CPU pool tasks/phase: 48 (automatic), participating threads: 16
+strata generate: 15 pool workers on logical processors 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15, the host thread on 0 (draining too) (--host-core first)
+strata aux cpus: threads that are neither pool workers nor the host go to CPUs none spare (every CPU is the host's, a worker's or shares a core with a worker or has no known core) (off at start; a request's aux_cpus=1 turns it on)
+strata generate: expert cache auto: 17.34 GiB free, 700 MiB reserved (+184 MiB for the draft head) -> 7594 slots
+strata generate: expert cache 10162 slots, 16.48 GiB of VRAM; policy is
+strata generate: the GPU computes the experts in the cache; it rounds differently from the CPU,
+                 so a reply can differ slightly from a run without the cache (same quality:
+                 bench/results/2026-09-27-cache-parity).
+                 PROFILE, ranked by routing frequency, no eviction.
+strata generate: pre-filled 10162 of 10162 slots from the profile in 1.5 s (11876 MB/s); slot 0 verified
+strata generate: R4 hit path ON - resident experts are computed on the GPU
+strata generate: 15 expert-pool workers + the host thread
+strata generate: session is up (engine 0.1.45)
+strata generate: token graph hit path: 10162 resident experts, decided on the device
+prefill: the CPU share is ON by default for prompt chunks below 1024 tokens (the idle CPU takes some of the experts the GPU would stream; answers can differ slightly from 0.1.40.3, mean KL ~0.004). STRATA_PREFILL_CPU_SHARE=0 turns it off.
+strata serve: prompt chunk auto: 8192 tokens, a 384-slot ring
+strata serve: the prompt path borrows 2430 CUDA0 cache slots (4.00 GiB)
+strata hc: CUDA0: the hyper-connection read runs as staged (the norm per token and stream, the down projection's activations staged ahead by cp.async); checked bit for bit against the plain read on this card (STRATA_HC_SPLIT=1 or 0 for the earlier ones)
+strata verify: window up to 6 tokens, 70.0 MiB of device buffers
+strata mtp: draft head over 106299 tokens (178.4 MiB)
+strata serve: STRATA_ROUTE_TAIL_SKIP=7 is ON (default): a missed expert that every token of a verify window routes at rank 7 or lower is skipped (+10..20% decode on 12-16 GB cards that miss experts, answers differ slightly from 0.1.41); STRATA_ROUTE_TAIL_SKIP=0 turns it off
+strata serve: adaptive overlap: off (STRATA_ADAPT_OVERLAP=1 turns it on)
+strata serve: 428 MiB of VRAM free with everything loaded
+0.50.778.728 I engine info: arena_mib=40925
+0.50.778.734 I engine info: context=131072
+0.50.778.736 I engine info: conversation_cache_mib=0
+0.50.778.736 I engine info: conversation_cache_min_free_mib=2560
+0.50.778.736 I engine info: conversation_cache_min_tokens=0
+0.50.778.736 I engine info: conversation_cache_slots=4
+0.50.778.736 I engine info: cvec=0
+0.50.778.736 I engine info: engine=0.1.45
+0.50.778.736 I engine info: expert_cache_mib=16870
+0.50.778.737 I engine info: expert_cache_primary_mib=16870
+0.50.778.737 I engine info: expert_slots=10162
+0.50.778.737 I engine info: expert_slots_primary=10162
+0.50.778.737 I engine info: kv=q4_0
+0.50.778.738 I engine info: kv_resident=0
+0.50.778.738 I engine info: logit_bias=1
+0.50.778.738 I engine info: lookup=3
+0.50.778.738 I engine info: mtp_max=4
+0.50.778.738 I engine info: pcie_frac=0.34
+0.50.778.738 I engine info: pool_workers=15
+0.50.778.738 I engine info: prefill_cap=8192
+0.50.778.739 I engine info: prefill_pipe=0
+0.50.778.739 I engine info: prefill_stages=1
+0.50.778.739 I engine info: spec=6
+0.50.778.739 I engine info: spec_min_p=0.50
+0.50.778.739 I engine info: stream_all_min=1024
+0.50.778.739 I engine info: tail_role_token=-1
+0.50.778.739 I engine info: vram_elastic=0
+0.50.778.739 I engine info: vram_free_mib=428
+0.50.778.741 I engine ready: context 131072 tokens, model qwen3.8-flash-next-iq3_xxs
+0.50.779.769 I srv          main: listening on http://127.0.0.1:18090, context 131072 tokens
+0.51.362.864 I srv        launch: task 0: GEN 24 prompt=34 n_predict=24
+strata serve: WARNING: only 428 MiB of VRAM free at the start of this request (below 512 MiB): when the card is this full the driver can page GPU memory to system RAM, decode falls to a few tok/s and a window may never finish (#2065). Add --vram-reserve-mib 832 to the config's args, or lower --max-context / --batch
+strata verify: capturing the 6-token window (428 MiB of VRAM free)
+strata verify: captured the 6-token window (upload no error, sync no error)
+strata verify: capturing the 3-token window (402 MiB of VRAM free)
+strata verify: captured the 3-token window (upload no error, sync no error)
+strata verify: capturing the 1-token window (376 MiB of VRAM free)
+strata verify: captured the 1-token window (upload no error, sync no error)
+strata verify: capturing the 4-token window (354 MiB of VRAM free)
+strata verify: captured the 4-token window (upload no error, sync no error)
+strata serve: prompt 34 tokens = 0 reused + 34 read in 389 ms (87.5 tok/s), 24 generated in 478 ms (50.2 tok/s), drafts accepted 17 of 23, 1 checkpoints
+strata serve: decode expert cache hit rate: 70.8% (9112 hits / 12867 lookups); 1034 more read by the GPU over PCIe or from another GPU (7.4% of all 13901 routed)
+strata serve: route tail skip: 2246 missed experts skipped (2500 entries) since the start
+0.52.231.581 I srv       on_done: task 0: DONE produced=24 prompt=34 prompt_ms=388.7 decode_ms=478.4 finish=cancel drafts=17/23 reused=0
+0.52.239.565 I srv        launch: task 44: GEN 1 prompt=260 n_predict=1
+0.53.063.288 I srv       on_done: task 44: DONE produced=1 prompt=260 prompt_ms=812.1 decode_ms=13.6 finish=cancel drafts=0/0 reused=0
+strata serve: prompt 260 tokens = 0 reused + 260 read in 812 ms (320.2 tok/s), 1 generated in 14 ms (73.5 tok/s), drafts accepted 0 of 0, 1 checkpoints
+strata serve: decode expert cache hit rate: 88.1% (379 hits / 430 lookups); 4 more read by the GPU over PCIe or from another GPU (0.9% of all 434 routed)
+strata serve: route tail skip: 2485 missed experts skipped (2768 entries) since the start
+strata serve: WARNING: only 278 MiB of VRAM free at the start of this request (below 512 MiB): when the card is this full the driver can page GPU memory to system RAM, decode falls to a few tok/s and a window may never finish (#2065). Add --vram-reserve-mib 960 to the config's args, or lower --max-context / --batch
+0.53.081.466 I srv        launch: task 86: GEN 1 prompt=906 n_predict=1
+0.54.200.588 I srv       on_done: task 86: DONE produced=1 prompt=906 prompt_ms=1106.6 decode_ms=12.8 finish=cancel drafts=0/0 reused=0
+strata serve: prompt 906 tokens = 0 reused + 906 read in 1107 ms (818.7 tok/s), 1 generated in 13 ms (78.3 tok/s), drafts accepted 0 of 0, 1 checkpoints
+strata serve: decode expert cache hit rate: 88.0% (381 hits / 433 lookups); 4 more read by the GPU over PCIe or from another GPU (0.9% of all 437 routed)
+strata serve: route tail skip: 2723 missed experts skipped (3037 entries) since the start
+0.54.219.830 I srv        launch: task 143: GEN 8 prompt=1028 n_predict=8
+strata verify: capturing the 2-token window (278 MiB of VRAM free)
+strata verify: captured the 2-token window (upload no error, sync no error)
+0.55.380.378 I srv       on_done: task 143: DONE produced=8 prompt=1028 prompt_ms=999.7 decode_ms=162.1 finish=cancel drafts=3/8 reused=0
+strata serve: prompt 1028 tokens = 0 reused + 1028 read in 1000 ms (1028.3 tok/s), 8 generated in 162 ms (49.3 tok/s), drafts accepted 3 of 8, 1 checkpoints
+strata serve: decode expert cache hit rate: 83.7% (4697 hits / 5609 lookups); 192 more read by the GPU over PCIe or from another GPU (3.3% of all 5801 routed)
+strata serve: route tail skip: 3315 missed experts skipped (3680 entries) since the start
+0.55.383.587 I srv        launch: task 202: GEN 100 prompt=51 n_predict=100
+strata serve: PCIe share: the CPU pool takes 125 us per missed expert (14.0 GB/s of expert bytes), the link 12.4 GB/s -> pcie_frac 0.30 (was 0.34; --pcie-frac N fixes it, STRATA_PCIE_FRAC_DEFAULT=old keeps the start-up rule)
+0.57.113.319 I srv       on_done: task 202: DONE produced=100 prompt=51 prompt_ms=343.6 decode_ms=1384.7 finish=cancel drafts=70/91 reused=0
+strata serve: prompt 51 tokens = 0 reused + 51 read in 344 ms (148.4 tok/s), 100 generated in 1385 ms (72.2 tok/s), drafts accepted 70 of 91, 1 checkpoints
+strata serve: decode expert cache hit rate: 84.6% (43902 hits / 51880 lookups); 2315 more read by the GPU over PCIe or from another GPU (4.3% of all 54195 routed)
+strata serve: route tail skip: 9550 missed experts skipped (10416 entries) since the start
+strata serve: suffix drafts: 2 windows, 1 of 4 drafts accepted
+0.57.126.671 I srv        launch: task 289: GEN 100 prompt=43 n_predict=100
+strata serve: prompt 43 tokens = 0 reused + 43 read in 472 ms (91.0 tok/s), 100 generated in 1374 ms (72.8 tok/s), drafts accepted 50 of 99, 1 checkpoints
+strata serve: decode expert cache hit rate: 88.5% (58201 hits / 65736 lookups); 933 more read by the GPU over PCIe or from another GPU (1.4% of all 66669 routed)
+strata serve: route tail skip: 15264 missed experts skipped (16725 entries) since the start
+0.58.967.790 I srv       on_done: task 289: DONE produced=100 prompt=43 prompt_ms=472.5 decode_ms=1373.7 finish=length drafts=50/99 reused=0
+0.58.977.469 I srv        launch: task 381: GEN 100 prompt=46 n_predict=100
+1.00.611.168 I srv       on_done: task 381: DONE produced=100 prompt=46 prompt_ms=361.9 decode_ms=1276.7 finish=cancel drafts=50/85 reused=0
+strata serve: prompt 46 tokens = 0 reused + 46 read in 362 ms (127.1 tok/s), 100 generated in 1277 ms (78.3 tok/s), drafts accepted 50 of 85, 1 checkpoints
+strata serve: decode expert cache hit rate: 89.0% (53118 hits / 59701 lookups); 768 more read by the GPU over PCIe or from another GPU (1.3% of all 60469 routed)
+strata serve: route tail skip: 20529 missed experts skipped (22449 entries) since the start
+1.00.618.803 I srv        launch: task 463: GEN 100 prompt=51 n_predict=100
+1.01.823.607 I srv       on_done: task 463: DONE produced=100 prompt=51 prompt_ms=287.3 decode_ms=918.8 finish=cancel drafts=67/89 reused=0
+strata serve: prompt 51 tokens = 0 reused + 51 read in 287 ms (177.5 tok/s), 100 generated in 919 ms (108.8 tok/s), drafts accepted 67 of 89, 1 checkpoints
+strata serve: decode expert cache hit rate: 89.8% (48058 hits / 53530 lookups); 977 more read by the GPU over PCIe or from another GPU (1.8% of all 54507 routed)
+strata serve: route tail skip: 25457 missed experts skipped (27695 entries) since the start
+1.01.833.472 I srv        launch: task 524: GEN 100 prompt=43 n_predict=100
+1.03.080.710 I srv       on_done: task 524: DONE produced=100 prompt=43 prompt_ms=235.0 decode_ms=1015.5 finish=cancel drafts=55/96 reused=0
+strata serve: prompt 43 tokens = 0 reused + 43 read in 235 ms (182.9 tok/s), 100 generated in 1015 ms (98.5 tok/s), drafts accepted 55 of 96, 1 checkpoints
+strata serve: decode expert cache hit rate: 95.4% (63323 hits / 66407 lookups); 170 more read by the GPU over PCIe or from another GPU (0.3% of all 66577 routed)
+strata serve: route tail skip: 28803 missed experts skipped (31309 entries) since the start
+1.03.089.466 I srv        launch: task 587: GEN 100 prompt=46 n_predict=100
+strata serve: PCIe share: the CPU pool takes 98 us per missed expert (17.8 GB/s of expert bytes), the link 12.4 GB/s -> pcie_frac 0.25 (was 0.30; --pcie-frac N fixes it, STRATA_PCIE_FRAC_DEFAULT=old keeps the start-up rule)
+strata serve: prompt 46 tokens = 0 reused + 46 read in 249 ms (184.9 tok/s), 100 generated in 1010 ms (99.0 tok/s), drafts accepted 50 of 92, 1 checkpoints
+strata serve: decode expert cache hit rate: 94.2% (61090 hits / 64839 lookups); 243 more read by the GPU over PCIe or from another GPU (0.4% of all 65082 routed)
+strata serve: route tail skip: 32692 missed experts skipped (35439 entries) since the start
+1.04.344.300 I srv       on_done: task 587: DONE produced=100 prompt=46 prompt_ms=248.8 decode_ms=1009.8 finish=length drafts=50/92 reused=0
+1.04.353.465 I srv        launch: task 650: GEN 100 prompt=51 n_predict=100
+1.05.626.400 I srv       on_done: task 650: DONE produced=100 prompt=51 prompt_ms=296.5 decode_ms=980.8 finish=cancel drafts=69/87 reused=0
+strata serve: prompt 51 tokens = 0 reused + 51 read in 297 ms (172.0 tok/s), 100 generated in 981 ms (102.0 tok/s), drafts accepted 69 of 87, 1 checkpoints
+strata serve: decode expert cache hit rate: 88.1% (46731 hits / 53053 lookups); 982 more read by the GPU over PCIe or from another GPU (1.8% of all 54035 routed)
+strata serve: route tail skip: 37618 missed experts skipped (40681 entries) since the start
+strata serve: suffix drafts: 1 windows, 1 of 1 drafts accepted
+1.05.633.473 I srv        launch: task 714: GEN 100 prompt=43 n_predict=100
+1.07.090.392 I srv       on_done: task 714: DONE produced=100 prompt=43 prompt_ms=227.2 decode_ms=1232.2 finish=cancel drafts=49/107 reused=0
+strata serve: prompt 43 tokens = 0 reused + 43 read in 227 ms (189.2 tok/s), 100 generated in 1232 ms (81.2 tok/s), drafts accepted 49 of 107, 1 checkpoints
+strata serve: decode expert cache hit rate: 96.2% (70852 hits / 73683 lookups); 140 more read by the GPU over PCIe or from another GPU (0.2% of all 73823 routed)
+strata serve: route tail skip: 40889 missed experts skipped (44184 entries) since the start
+1.07.101.468 I srv        launch: task 787: GEN 100 prompt=46 n_predict=100
+1.08.286.797 I srv       on_done: task 787: DONE produced=100 prompt=46 prompt_ms=233.3 decode_ms=956.0 finish=cancel drafts=51/88 reused=0
+strata serve: prompt 46 tokens = 0 reused + 46 read in 233 ms (197.2 tok/s), 100 generated in 956 ms (104.6 tok/s), drafts accepted 51 of 88, 1 checkpoints
+strata serve: decode expert cache hit rate: 94.8% (59483 hits / 62772 lookups); 206 more read by the GPU over PCIe or from another GPU (0.3% of all 62978 routed)
+strata serve: route tail skip: 44539 missed experts skipped (48055 entries) since the start
+1.08.317.467 I srv        launch: task 848: GEN 24 prompt=4019 n_predict=24
+strata serve: prompt 4019 tokens = 0 reused + 4019 read in 2778 ms (1446.9 tok/s), 24 generated in 369 ms (65.0 tok/s), drafts accepted 11 of 23, 1 checkpoints
+strata serve: decode expert cache hit rate: 84.1% (13221 hits / 15724 lookups); 334 more read by the GPU over PCIe or from another GPU (2.1% of all 16058 routed)
+strata serve: route tail skip: 45787 missed experts skipped (49418 entries) since the start
+1.11.457.850 I srv       on_done: task 848: DONE produced=24 prompt=4019 prompt_ms=2777.7 decode_ms=369.2 finish=cancel drafts=11/23 reused=0
+1.11.485.836 I srv        launch: task 1006: GEN 24 prompt=4019 n_predict=24
+strata serve: prompt 4019 tokens = 0 reused + 4019 read in 2584 ms (1555.6 tok/s), 24 generated in 274 ms (87.5 tok/s), drafts accepted 8 of 19, 1 checkpoints
+strata serve: decode expert cache hit rate: 96.1% (15626 hits / 16256 lookups); 14 more read by the GPU over PCIe or from another GPU (0.1% of all 16270 routed)
+strata serve: route tail skip: 46407 missed experts skipped (50059 entries) since the start
+1.14.339.444 I srv       on_done: task 1006: DONE produced=24 prompt=4019 prompt_ms=2583.6 decode_ms=274.1 finish=cancel drafts=8/19 reused=0
+1.14.370.182 I srv        launch: task 1149: GEN 24 prompt=4019 n_predict=24
+strata serve: prompt 4019 tokens = 0 reused + 4019 read in 2595 ms (1548.6 tok/s), 24 generated in 213 ms (112.5 tok/s), drafts accepted 11 of 24, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.6% (16775 hits / 17185 lookups); 20 more read by the GPU over PCIe or from another GPU (0.1% of all 17205 routed)
+strata serve: route tail skip: 47027 missed experts skipped (50709 entries) since the start
+1.17.172.062 I srv       on_done: task 1149: DONE produced=24 prompt=4019 prompt_ms=2595.3 decode_ms=213.4 finish=cancel drafts=11/24 reused=0
+1.17.234.126 I srv        launch: task 1290: GEN 24 prompt=16058 n_predict=24
+1.23.008.551 I srv       on_done: task 1290: DONE produced=24 prompt=16058 prompt_ms=5559.4 decode_ms=220.9 finish=cancel drafts=12/16 reused=0
+strata serve: prompt 16058 tokens = 0 reused + 16058 read in 5559 ms (2888.4 tok/s), 24 generated in 221 ms (108.6 tok/s), drafts accepted 12 of 16, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.1% (13562 hits / 13974 lookups); 42 more read by the GPU over PCIe or from another GPU (0.3% of all 14016 routed)
+strata serve: route tail skip: 47467 missed experts skipped (51168 entries) since the start
+1.23.065.502 I srv        launch: task 1579: GEN 24 prompt=16058 n_predict=24
+strata serve: prompt 16058 tokens = 0 reused + 16058 read in 5358 ms (2997.1 tok/s), 24 generated in 208 ms (115.3 tok/s), drafts accepted 11 of 16, 1 checkpoints
+strata serve: decode expert cache hit rate: 98.4% (14324 hits / 14554 lookups); 19 more read by the GPU over PCIe or from another GPU (0.1% of all 14573 routed)
+strata serve: route tail skip: 47842 missed experts skipped (51549 entries) since the start
+1.28.632.028 I srv       on_done: task 1579: DONE produced=24 prompt=16058 prompt_ms=5357.9 decode_ms=208.1 finish=cancel drafts=11/16 reused=0
+1.28.693.528 I srv        launch: task 1857: GEN 24 prompt=16058 n_predict=24
+strata serve: prompt 16058 tokens = 0 reused + 16058 read in 5363 ms (2994.1 tok/s), 24 generated in 218 ms (110.1 tok/s), drafts accepted 9 of 16, 1 checkpoints
+strata serve: decode expert cache hit rate: 99.0% (14978 hits / 15127 lookups); 2 more read by the GPU over PCIe or from another GPU (0.0% of all 15129 routed)
+strata serve: route tail skip: 48142 missed experts skipped (51850 entries) since the start
+1.34.269.898 I srv       on_done: task 1857: DONE produced=24 prompt=16058 prompt_ms=5363.2 decode_ms=217.9 finish=cancel drafts=9/16 reused=0
+1.34.298.426 W srv        launch: task 2136: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.34.301.620 I srv        launch: task 2136: GEN 64 prompt=645 n_predict=64
+1.36.044.433 I srv       on_done: task 2136: DONE produced=29 prompt=645 prompt_ms=1409.9 decode_ms=334.7 finish=stop drafts=17/27 reused=0
+strata serve: prompt 645 tokens = 0 reused + 645 read in 1410 ms (457.5 tok/s), 29 generated in 335 ms (86.7 tok/s), drafts accepted 17 of 27, 1 checkpoints
+strata serve: decode expert cache hit rate: 87.4% (15280 hits / 17474 lookups); 244 more read by the GPU over PCIe or from another GPU (1.4% of all 17718 routed)
+strata serve: route tail skip: 49161 missed experts skipped (52969 entries) since the start
+1.36.063.628 W srv        launch: task 2223: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.36.065.518 I srv        launch: task 2223: GEN 64 prompt=3796 n_predict=64
+strata serve: prompt 3796 tokens = 673 reused + 3123 read in 3071 ms (1016.8 tok/s), 64 generated in 845 ms (75.7 tok/s), drafts accepted 36 of 61, 2 checkpoints
+strata serve: decode expert cache hit rate: 84.7% (32932 hits / 38865 lookups); 822 more read by the GPU over PCIe or from another GPU (2.1% of all 39687 routed)
+strata serve: route tail skip: 52038 missed experts skipped (56088 entries) since the start
+strata serve: suffix drafts: 3 windows, 4 of 4 drafts accepted
+1.39.981.858 I srv       on_done: task 2223: DONE produced=64 prompt=3796 prompt_ms=3071.4 decode_ms=844.9 finish=cancel drafts=36/61 reused=673
+1.40.004.990 W srv        launch: task 2419: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.40.008.946 I srv        launch: task 2419: GEN 64 prompt=5329 n_predict=64
+strata serve: prompt 5329 tokens = 3859 reused + 1470 read in 2594 ms (566.6 tok/s), 64 generated in 823 ms (77.8 tok/s), drafts accepted 37 of 75, 3 checkpoints
+strata serve: decode expert cache hit rate: 93.0% (43990 hits / 47314 lookups); 309 more read by the GPU over PCIe or from another GPU (0.6% of all 47623 routed)
+strata serve: route tail skip: 54331 missed experts skipped (58507 entries) since the start
+strata serve: suffix drafts: 3 windows, 3 of 6 drafts accepted
+1.43.423.945 I srv       on_done: task 2419: DONE produced=64 prompt=5329 prompt_ms=2594.3 decode_ms=822.5 finish=cancel drafts=37/75 reused=3859
+1.43.454.922 W srv        launch: task 2589: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.43.457.509 I srv        launch: task 2589: GEN 64 prompt=8762 n_predict=64
+strata serve: prompt 8762 tokens = 5322 reused + 3440 read in 2903 ms (1185.0 tok/s), 64 generated in 557 ms (114.8 tok/s), drafts accepted 38 of 51, 4 checkpoints
+strata serve: decode expert cache hit rate: 95.0% (33941 hits / 35710 lookups); 91 more read by the GPU over PCIe or from another GPU (0.3% of all 35801 routed)
+strata serve: route tail skip: 55515 missed experts skipped (59771 entries) since the start
+1.46.917.947 I srv       on_done: task 2589: DONE produced=64 prompt=8762 prompt_ms=2903.1 decode_ms=557.3 finish=length drafts=38/51 reused=5322
+1.46.952.163 W srv        launch: task 2763: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.46.960.672 I srv        launch: task 2763: GEN 64 prompt=11688 n_predict=64
+strata serve: prompt 11688 tokens = 8825 reused + 2863 read in 2821 ms (1014.8 tok/s), 60 generated in 497 ms (120.7 tok/s), drafts accepted 38 of 58, 5 checkpoints
+strata serve: decode expert cache hit rate: 95.7% (35377 hits / 36957 lookups); 150 more read by the GPU over PCIe or from another GPU (0.4% of all 37107 routed)
+strata serve: route tail skip: 56837 missed experts skipped (61169 entries) since the start
+strata serve: suffix drafts: 1 windows, 2 of 3 drafts accepted
+1.50.273.475 I srv       on_done: task 2763: DONE produced=60 prompt=11688 prompt_ms=2821.1 decode_ms=497.0 finish=stop drafts=38/58 reused=8825
+1.50.307.307 W srv        launch: task 2929: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.50.316.250 I srv        launch: task 2929: GEN 64 prompt=14646 n_predict=64
+strata serve: prompt 14646 tokens = 11747 reused + 2899 read in 2689 ms (1077.9 tok/s), 57 generated in 548 ms (104.1 tok/s), drafts accepted 34 of 62, 6 checkpoints
+strata serve: decode expert cache hit rate: 95.8% (37780 hits / 39420 lookups); 144 more read by the GPU over PCIe or from another GPU (0.4% of all 39564 routed)
+strata serve: route tail skip: 58122 missed experts skipped (62500 entries) since the start
+strata serve: suffix drafts: 2 windows, 6 of 6 drafts accepted
+1.53.547.870 I srv       on_done: task 2929: DONE produced=57 prompt=14646 prompt_ms=2689.5 decode_ms=547.6 finish=stop drafts=34/62 reused=11747
+1.53.564.088 W srv        launch: task 3091: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.53.565.476 I srv        launch: task 3091: GEN 64 prompt=645 n_predict=64
+1.55.090.051 I srv       on_done: task 3091: DONE produced=15 prompt=645 prompt_ms=1295.8 decode_ms=228.3 finish=stop drafts=10/18 reused=0
+strata serve: prompt 645 tokens = 0 reused + 645 read in 1296 ms (497.8 tok/s), 15 generated in 228 ms (65.7 tok/s), drafts accepted 10 of 18, 1 checkpoints
+strata serve: decode expert cache hit rate: 95.0% (11342 hits / 11942 lookups); 42 more read by the GPU over PCIe or from another GPU (0.4% of all 11984 routed)
+strata serve: route tail skip: 58682 missed experts skipped (63098 entries) since the start
+1.55.114.581 W srv        launch: task 3168: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.55.122.057 I srv        launch: task 3168: GEN 64 prompt=3782 n_predict=64
+strata serve: prompt 3782 tokens = 662 reused + 3120 read in 2541 ms (1227.7 tok/s), 64 generated in 476 ms (134.5 tok/s), drafts accepted 41 of 63, 2 checkpoints
+strata serve: decode expert cache hit rate: 97.5% (39665 hits / 40673 lookups); 65 more read by the GPU over PCIe or from another GPU (0.2% of all 40738 routed)
+strata serve: route tail skip: 59718 missed experts skipped (64178 entries) since the start
+strata serve: suffix drafts: 2 windows, 4 of 6 drafts accepted
+1.58.133.810 I srv       on_done: task 3168: DONE produced=64 prompt=3782 prompt_ms=2541.3 decode_ms=475.9 finish=cancel drafts=41/63 reused=662
+1.58.158.726 W srv        launch: task 3319: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+1.58.161.510 I srv        launch: task 3319: GEN 64 prompt=5315 n_predict=64
+2.01.040.858 I srv       on_done: task 3319: DONE produced=64 prompt=5315 prompt_ms=2405.6 decode_ms=474.4 finish=cancel drafts=43/63 reused=3846
+strata serve: prompt 5315 tokens = 3846 reused + 1469 read in 2406 ms (610.7 tok/s), 64 generated in 474 ms (134.9 tok/s), drafts accepted 43 of 63, 3 checkpoints
+strata serve: decode expert cache hit rate: 97.4% (39169 hits / 40219 lookups); 53 more read by the GPU over PCIe or from another GPU (0.1% of all 40272 routed)
+strata serve: route tail skip: 60748 missed experts skipped (65244 entries) since the start
+strata serve: suffix drafts: 1 windows, 1 of 3 drafts accepted
+2.01.070.830 W srv        launch: task 3463: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.01.073.509 I srv        launch: task 3463: GEN 64 prompt=8748 n_predict=64
+2.04.152.451 I srv       on_done: task 3463: DONE produced=64 prompt=8748 prompt_ms=2564.5 decode_ms=514.6 finish=cancel drafts=37/69 reused=5308
+strata serve: prompt 8748 tokens = 5308 reused + 3440 read in 2564 ms (1341.4 tok/s), 64 generated in 515 ms (124.4 tok/s), drafts accepted 37 of 69, 4 checkpoints
+strata serve: decode expert cache hit rate: 98.2% (44849 hits / 45676 lookups); 29 more read by the GPU over PCIe or from another GPU (0.1% of all 45705 routed)
+strata serve: route tail skip: 61612 missed experts skipped (66151 entries) since the start
+2.04.186.820 W srv        launch: task 3617: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.04.189.529 I srv        launch: task 3617: GEN 64 prompt=11674 n_predict=64
+strata serve: prompt 11674 tokens = 8812 reused + 2862 read in 2518 ms (1136.7 tok/s), 58 generated in 614 ms (94.4 tok/s), drafts accepted 36 of 55, 5 checkpoints
+strata serve: decode expert cache hit rate: 97.3% (35083 hits / 36057 lookups); 86 more read by the GPU over PCIe or from another GPU (0.2% of all 36143 routed)
+strata serve: route tail skip: 62471 missed experts skipped (67027 entries) since the start
+strata serve: suffix drafts: 2 windows, 5 of 6 drafts accepted
+2.07.321.969 I srv       on_done: task 3617: DONE produced=58 prompt=11674 prompt_ms=2517.8 decode_ms=614.4 finish=stop drafts=36/55 reused=8812
+2.07.358.369 W srv        launch: task 3774: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.07.363.314 I srv        launch: task 3774: GEN 64 prompt=14630 n_predict=64
+strata serve: prompt 14630 tokens = 11731 reused + 2899 read in 2516 ms (1152.3 tok/s), 41 generated in 346 ms (118.4 tok/s), drafts accepted 22 of 39, 6 checkpoints
+strata serve: decode expert cache hit rate: 98.2% (26808 hits / 27288 lookups); 29 more read by the GPU over PCIe or from another GPU (0.1% of all 27317 routed)
+strata serve: route tail skip: 63050 missed experts skipped (67612 entries) since the start
+strata serve: suffix drafts: 2 windows, 4 of 4 drafts accepted
+2.10.224.076 I srv       on_done: task 3774: DONE produced=41 prompt=14630 prompt_ms=2515.9 decode_ms=346.3 finish=stop drafts=22/39 reused=11731
+2.10.243.342 W srv        launch: task 3918: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.10.243.360 I srv        launch: task 3918: GEN 64 prompt=645 n_predict=64
+strata serve: prompt 645 tokens = 0 reused + 645 read in 1281 ms (503.6 tok/s), 45 generated in 356 ms (126.3 tok/s), drafts accepted 30 of 44, 1 checkpoints
+strata serve: decode expert cache hit rate: 95.7% (27554 hits / 28807 lookups); 78 more read by the GPU over PCIe or from another GPU (0.3% of all 28885 routed)
+strata serve: route tail skip: 63956 missed experts skipped (68570 entries) since the start
+2.11.881.883 I srv       on_done: task 3918: DONE produced=45 prompt=645 prompt_ms=1280.7 decode_ms=356.2 finish=stop drafts=30/44 reused=0
+2.11.902.570 W srv        launch: task 4001: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.11.902.637 I srv        launch: task 4001: GEN 64 prompt=3812 n_predict=64
+2.14.808.395 I srv       on_done: task 4001: DONE produced=64 prompt=3812 prompt_ms=2526.3 decode_ms=377.5 finish=cancel drafts=43/50 reused=692
+strata serve: prompt 3812 tokens = 692 reused + 3120 read in 2526 ms (1235.0 tok/s), 64 generated in 378 ms (169.5 tok/s), drafts accepted 43 of 50, 2 checkpoints
+strata serve: decode expert cache hit rate: 97.8% (32532 hits / 33273 lookups); 47 more read by the GPU over PCIe or from another GPU (0.1% of all 33320 routed)
+strata serve: route tail skip: 64736 missed experts skipped (69375 entries) since the start
+2.14.834.144 W srv        launch: task 4147: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.14.836.404 I srv        launch: task 4147: GEN 64 prompt=5345 n_predict=64
+2.17.757.028 I srv       on_done: task 4147: DONE produced=64 prompt=5345 prompt_ms=2413.5 decode_ms=507.3 finish=cancel drafts=40/64 reused=3875
+strata serve: prompt 5345 tokens = 3875 reused + 1470 read in 2413 ms (609.1 tok/s), 64 generated in 507 ms (126.2 tok/s), drafts accepted 40 of 64, 3 checkpoints
+strata serve: decode expert cache hit rate: 98.0% (40848 hits / 41688 lookups); 45 more read by the GPU over PCIe or from another GPU (0.1% of all 41733 routed)
+strata serve: route tail skip: 65745 missed experts skipped (70415 entries) since the start
+2.17.783.266 W srv        launch: task 4293: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.17.783.402 I srv        launch: task 4293: GEN 64 prompt=8778 n_predict=64
+strata serve: prompt 8778 tokens = 5409 reused + 3369 read in 2546 ms (1323.3 tok/s), 64 generated in 534 ms (119.9 tok/s), drafts accepted 35 of 70, 4 checkpoints
+strata serve: decode expert cache hit rate: 98.4% (46432 hits / 47205 lookups); 23 more read by the GPU over PCIe or from another GPU (0.0% of all 47228 routed)
+strata serve: route tail skip: 66543 missed experts skipped (71246 entries) since the start
+2.20.866.017 I srv       on_done: task 4293: DONE produced=64 prompt=8778 prompt_ms=2545.8 decode_ms=533.9 finish=length drafts=35/70 reused=5409
+2.20.899.617 W srv        launch: task 4447: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.20.901.534 I srv        launch: task 4447: GEN 64 prompt=11704 n_predict=64
+2.23.861.134 I srv       on_done: task 4447: DONE produced=59 prompt=11704 prompt_ms=2517.6 decode_ms=441.0 finish=stop drafts=36/57 reused=8842
+strata serve: prompt 11704 tokens = 8842 reused + 2862 read in 2518 ms (1136.8 tok/s), 59 generated in 441 ms (133.8 tok/s), drafts accepted 36 of 57, 5 checkpoints
+strata serve: decode expert cache hit rate: 97.6% (36489 hits / 37392 lookups); 90 more read by the GPU over PCIe or from another GPU (0.2% of all 37482 routed)
+strata serve: route tail skip: 67496 missed experts skipped (72231 entries) since the start
+strata serve: suffix drafts: 2 windows, 5 of 6 drafts accepted
+2.23.895.085 W srv        launch: task 4595: a grammar was requested (1914 chars); this engine does not constrain sampling, parsing only
+2.23.895.321 I srv        launch: task 4595: GEN 64 prompt=14661 n_predict=64
+strata serve: prompt 14661 tokens = 11762 reused + 2899 read in 2515 ms (1152.8 tok/s), 44 generated in 488 ms (90.1 tok/s), drafts accepted 27 of 41, 6 checkpoints
+strata serve: decode expert cache hit rate: 95.4% (25529 hits / 26757 lookups); 141 more read by the GPU over PCIe or from another GPU (0.5% of all 26898 routed)
+strata serve: route tail skip: 68460 missed experts skipped (73240 entries) since the start
+strata serve: suffix drafts: 5 windows, 10 of 13 drafts accepted
+2.26.901.842 I srv       on_done: task 4595: DONE produced=44 prompt=14661 prompt_ms=2514.8 decode_ms=488.5 finish=stop drafts=27/41 reused=11762
+2.26.988.316 I srv        launch: task 4745: GEN 24 prompt=32049 n_predict=24
+strata serve: prompt 32049 tokens = 0 reused + 32049 read in 10422 ms (3075.1 tok/s), 24 generated in 424 ms (56.6 tok/s), drafts accepted 9 of 19, 2 checkpoints
+strata serve: decode expert cache hit rate: 87.4% (13055 hits / 14933 lookups); 202 more read by the GPU over PCIe or from another GPU (1.3% of all 15135 routed)
+strata serve: route tail skip: 69707 missed experts skipped (74591 entries) since the start
+2.37.839.133 I srv       on_done: task 4745: DONE produced=24 prompt=32049 prompt_ms=10422.1 decode_ms=424.3 finish=cancel drafts=9/19 reused=0
+2.37.929.511 I srv        launch: task 5286: GEN 24 prompt=32049 n_predict=24
+2.48.576.822 I srv       on_done: task 5286: DONE produced=24 prompt=32049 prompt_ms=10412.7 decode_ms=234.8 finish=cancel drafts=12/15 reused=0
+strata serve: prompt 32049 tokens = 0 reused + 32049 read in 10413 ms (3077.9 tok/s), 24 generated in 235 ms (102.2 tok/s), drafts accepted 12 of 15, 2 checkpoints
+strata serve: decode expert cache hit rate: 95.9% (12775 hits / 13315 lookups); 18 more read by the GPU over PCIe or from another GPU (0.1% of all 13333 routed)
+strata serve: route tail skip: 70383 missed experts skipped (75311 entries) since the start
+2.48.662.824 I srv        launch: task 5817: GEN 24 prompt=32049 n_predict=24
+strata serve: prompt 32049 tokens = 0 reused + 32049 read in 10406 ms (3079.8 tok/s), 24 generated in 210 ms (114.5 tok/s), drafts accepted 11 of 21, 2 checkpoints
+strata serve: decode expert cache hit rate: 98.0% (15496 hits / 15815 lookups); 7 more read by the GPU over PCIe or from another GPU (0.0% of all 15822 routed)
+strata serve: route tail skip: 70945 missed experts skipped (75906 entries) since the start
+2.59.282.820 I srv       on_done: task 5817: DONE produced=24 prompt=32049 prompt_ms=10406.1 decode_ms=209.7 finish=cancel drafts=11/21 reused=0
+2.59.385.500 I srv        launch: task 6347: GEN 512 prompt=1561 n_predict=512
+3.06.449.020 I srv       on_done: task 6347: DONE produced=512 prompt=1561 prompt_ms=2425.5 decode_ms=4636.4 finish=cancel drafts=300/470 reused=0
+strata serve: prompt 1561 tokens = 0 reused + 1561 read in 2425 ms (643.6 tok/s), 512 generated in 4636 ms (110.4 tok/s), drafts accepted 300 of 470, 1 checkpoints
+strata serve: decode expert cache hit rate: 95.4% (300885 hits / 315316 lookups); 985 more read by the GPU over PCIe or from another GPU (0.3% of all 316301 routed)
+strata serve: route tail skip: 81480 missed experts skipped (87053 entries) since the start
+strata serve: suffix drafts: 11 windows, 18 of 25 drafts accepted
+3.06.465.467 I srv        launch: task 6699: GEN 512 prompt=4330 n_predict=512
+strata serve: prompt 4330 tokens = 0 reused + 4330 read in 2833 ms (1528.6 tok/s), 512 generated in 4085 ms (125.3 tok/s), drafts accepted 297 of 455, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.2% (304848 hits / 313529 lookups); 580 more read by the GPU over PCIe or from another GPU (0.2% of all 314109 routed)
+strata serve: route tail skip: 88748 missed experts skipped (94709 entries) since the start
+strata serve: suffix drafts: 5 windows, 7 of 14 drafts accepted
+3.13.383.765 I srv       on_done: task 6699: DONE produced=512 prompt=4330 prompt_ms=2832.7 decode_ms=4084.6 finish=length drafts=297/455 reused=0
+3.13.400.066 I srv        launch: task 7044: GEN 512 prompt=5050 n_predict=512
+strata serve: prompt 5050 tokens = 0 reused + 5050 read in 2905 ms (1738.5 tok/s), 512 generated in 4285 ms (119.5 tok/s), drafts accepted 304 of 461, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.3% (304756 hits / 313185 lookups); 602 more read by the GPU over PCIe or from another GPU (0.2% of all 313787 routed)
+strata serve: route tail skip: 96285 missed experts skipped (102673 entries) since the start
+strata serve: suffix drafts: 4 windows, 7 of 12 drafts accepted
+3.20.592.598 I srv       on_done: task 7044: DONE produced=512 prompt=5050 prompt_ms=2904.7 decode_ms=4285.4 finish=cancel drafts=304/461 reused=0
+3.20.610.073 I srv        launch: task 7401: GEN 512 prompt=1561 n_predict=512
+strata serve: prompt 1561 tokens = 0 reused + 1561 read in 2444 ms (638.7 tok/s), 512 generated in 4216 ms (121.4 tok/s), drafts accepted 304 of 480, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.1% (311950 hits / 321349 lookups); 596 more read by the GPU over PCIe or from another GPU (0.2% of all 321945 routed)
+strata serve: route tail skip: 104841 missed experts skipped (111621 entries) since the start
+strata serve: suffix drafts: 4 windows, 6 of 9 drafts accepted
+3.27.263.754 I srv       on_done: task 7401: DONE produced=512 prompt=1561 prompt_ms=2443.9 decode_ms=4216.3 finish=cancel drafts=304/480 reused=0
+3.27.279.264 I srv        launch: task 7732: GEN 512 prompt=4330 n_predict=512
+strata serve: prompt 4330 tokens = 0 reused + 4330 read in 2626 ms (1649.1 tok/s), 512 generated in 4388 ms (116.7 tok/s), drafts accepted 286 of 447, 1 checkpoints
+strata serve: decode expert cache hit rate: 96.7% (303725 hits / 314241 lookups); 715 more read by the GPU over PCIe or from another GPU (0.2% of all 314956 routed)
+strata serve: route tail skip: 113081 missed experts skipped (120350 entries) since the start
+strata serve: suffix drafts: 2 windows, 5 of 5 drafts accepted
+3.34.295.521 I srv       on_done: task 7732: DONE produced=512 prompt=4330 prompt_ms=2625.7 decode_ms=4388.2 finish=cancel drafts=286/447 reused=0
+3.34.313.510 I srv        launch: task 8081: GEN 512 prompt=5050 n_predict=512
+3.41.180.949 I srv       on_done: task 8081: DONE produced=512 prompt=5050 prompt_ms=2711.4 decode_ms=4155.9 finish=cancel drafts=295/464 reused=0
+strata serve: prompt 5050 tokens = 0 reused + 5050 read in 2711 ms (1862.5 tok/s), 512 generated in 4156 ms (123.2 tok/s), drafts accepted 295 of 464, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.2% (309644 hits / 318708 lookups); 517 more read by the GPU over PCIe or from another GPU (0.2% of all 319225 routed)
+strata serve: route tail skip: 120960 missed experts skipped (128641 entries) since the start
+strata serve: suffix drafts: 6 windows, 10 of 13 drafts accepted
+3.41.190.696 I srv        launch: task 8423: GEN 512 prompt=1561 n_predict=512
+3.47.605.592 I srv       on_done: task 8423: DONE produced=512 prompt=1561 prompt_ms=2444.2 decode_ms=3969.0 finish=cancel drafts=312/456 reused=0
+strata serve: prompt 1561 tokens = 0 reused + 1561 read in 2444 ms (638.6 tok/s), 512 generated in 3969 ms (129.0 tok/s), drafts accepted 312 of 456, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.4% (298469 hits / 306579 lookups); 425 more read by the GPU over PCIe or from another GPU (0.1% of all 307004 routed)
+strata serve: route tail skip: 128587 missed experts skipped (136700 entries) since the start
+strata serve: suffix drafts: 4 windows, 7 of 10 drafts accepted
+3.47.625.530 I srv        launch: task 8742: GEN 512 prompt=4330 n_predict=512
+strata serve: prompt 4330 tokens = 0 reused + 4330 read in 2628 ms (1647.7 tok/s), 512 generated in 4171 ms (122.8 tok/s), drafts accepted 293 of 436, 1 checkpoints
+strata serve: decode expert cache hit rate: 96.8% (296200 hits / 306029 lookups); 565 more read by the GPU over PCIe or from another GPU (0.2% of all 306594 routed)
+strata serve: route tail skip: 136626 missed experts skipped (145182 entries) since the start
+strata serve: suffix drafts: 3 windows, 5 of 6 drafts accepted
+3.54.422.437 I srv       on_done: task 8742: DONE produced=512 prompt=4330 prompt_ms=2628.0 decode_ms=4170.8 finish=cancel drafts=293/436 reused=0
+3.54.438.675 I srv        launch: task 9081: GEN 512 prompt=5050 n_predict=512
+strata serve: prompt 5050 tokens = 0 reused + 5050 read in 2701 ms (1869.4 tok/s), 512 generated in 4014 ms (127.6 tok/s), drafts accepted 290 of 445, 1 checkpoints
+strata serve: decode expert cache hit rate: 97.3% (304160 hits / 312514 lookups); 537 more read by the GPU over PCIe or from another GPU (0.2% of all 313051 routed)
+strata serve: route tail skip: 144005 missed experts skipped (152940 entries) since the start
+strata serve: suffix drafts: 6 windows, 9 of 16 drafts accepted
+4.01.156.394 I srv       on_done: task 9081: DONE produced=512 prompt=5050 prompt_ms=2701.5 decode_ms=4013.8 finish=length drafts=290/445 reused=0
+4.01.160.179 E srv    operator(): ; shutting down so the service manager can restart
+4.03.861.634 I srv    operator(): cleaning up before exit...

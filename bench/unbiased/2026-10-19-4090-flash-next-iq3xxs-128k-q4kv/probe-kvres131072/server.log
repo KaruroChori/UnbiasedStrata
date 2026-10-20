@@ -1,0 +1,107 @@
+strata generate: memory guard: limit 66.7 GiB (source: meminfo), current 1.4 GiB, reclaimable cache credited 0.0 GiB; available 65.4 GiB (MemAvailable 65.4 GiB), floor 2560 MiB
+strata generate: PCIe probe: 12.3 GB/s host->device (best of 12.2 12.3 12.3 12.3) -> pcie_frac 0.34 (default 0.55)
+strata generate: this CPU has no AVX-512: the expert kernels run on AVX-2 (multi-token for the i-quant gate/up rows)
+0.00.464.925 I chat template, example_format: '<|im_start|>system
+Reasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.
+
+You are a helpful assistant<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+<think>
+
+</think>
+
+Hi there<|im_end|>
+<|im_start|>user
+How are you?<|im_end|>
+<|im_start|>assistant
+<think>
+'
+0.00.466.270 I chat template, thinking = 1
+0.00.466.313 I waiting for the engine (/tank/nvme/strata/us2-bench-20261019/UnbiasedStrata/build/bin/strata) to load
+strata generate: native pack: /tank/nvme/strata/pack-iq3-xxs experts (largest blob 2.33 MB), token embedding IQ3_S in mapped host memory (260 MiB, 0.2 s)
+strata generate: 1466 MiB of weights loaded from /tank/nvme/strata/pack-iq3-xxs in 1.0 s (302 canonical tensors skipped: served natively)
+strata generate: 300 native projection matrices, 1781.11 MiB of weights, in 1.0 s
+strata: PLE table mlock failed (Cannot allocate memory; raise `ulimit -l`): its pages stay faulted in but may be reclaimed
+strata generate: PLE table loaded (not locked) (--ple-io ram) in 7.8 s
+strata generate: profile /tank/nvme/strata/pack-iq3-xxs/expert-profile.bin: 24576 ranked pairs, built for 24576 slots
+strata generate: PLE on, table 320001536 rows of /tank/nvme/strata/IQ3_XXS/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00002-of-00002.gguf
+strata mtp: draft layer loaded, 820 MiB of VRAM (experts 675, dense 111), files read in 0.55 s (1417 MiB/s)
+strata generate: experimental native Q5_K head, 437043200 bytes, in 0.2 s
+strata generate: GPU 0: NVIDIA GeForce RTX 4090, compute capability 8.9
+strata generate: expert arena read through the file cache (buffered (not Windows))
+strata generate: expert arena: cudaHostRegister PORTABLE ok; MAP_HUGETLB unavailable (needed 20464 2 MiB pages, vm.nr_hugepages=0); transparent huge pages are on for every mapping (THP always): MADV_HUGEPAGE not requested
+strata generate: loaded 39.97 GiB at 1.52 GiB/s
+strata generate: GPU host-callback thread started before host-core pinning
+strata generate: CPU pool tasks/phase: 48 (automatic), participating threads: 16
+strata generate: 15 pool workers on logical processors 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15, the host thread on 0 (draining too) (--host-core first)
+strata aux cpus: threads that are neither pool workers nor the host go to CPUs none spare (every CPU is the host's, a worker's or shares a core with a worker or has no known core) (off at start; a request's aux_cpus=1 turns it on)
+strata generate: expert cache auto: 17.34 GiB free, 700 MiB reserved (+184 MiB for the draft head) -> 7594 slots
+strata generate: expert cache 10162 slots, 16.48 GiB of VRAM; policy is
+strata generate: the GPU computes the experts in the cache; it rounds differently from the CPU,
+                 so a reply can differ slightly from a run without the cache (same quality:
+                 bench/results/2026-09-27-cache-parity).
+                 PROFILE, ranked by routing frequency, no eviction.
+strata generate: pre-filled 10162 of 10162 slots from the profile in 1.5 s (11761 MB/s); slot 0 verified
+strata generate: R4 hit path ON - resident experts are computed on the GPU
+strata generate: 15 expert-pool workers + the host thread
+strata generate: session is up (engine 0.1.45)
+strata generate: token graph hit path: 10162 resident experts, decided on the device
+prefill: the CPU share is ON by default for prompt chunks below 1024 tokens (the idle CPU takes some of the experts the GPU would stream; answers can differ slightly from 0.1.40.3, mean KL ~0.004). STRATA_PREFILL_CPU_SHARE=0 turns it off.
+strata serve: prompt chunk auto: 8192 tokens, a 384-slot ring
+strata serve: the prompt path borrows 2430 CUDA0 cache slots (4.00 GiB)
+strata hc: CUDA0: the hyper-connection read runs as staged (the norm per token and stream, the down projection's activations staged ahead by cp.async); checked bit for bit against the plain read on this card (STRATA_HC_SPLIT=1 or 0 for the earlier ones)
+strata verify: window up to 6 tokens, 70.0 MiB of device buffers
+strata mtp: draft head over 106299 tokens (178.4 MiB)
+strata serve: STRATA_ROUTE_TAIL_SKIP=7 is ON (default): a missed expert that every token of a verify window routes at rank 7 or lower is skipped (+10..20% decode on 12-16 GB cards that miss experts, answers differ slightly from 0.1.41); STRATA_ROUTE_TAIL_SKIP=0 turns it off
+strata serve: adaptive overlap: off (STRATA_ADAPT_OVERLAP=1 turns it on)
+strata serve: 428 MiB of VRAM free with everything loaded
+0.48.717.741 I engine info: arena_mib=40925
+0.48.717.749 I engine info: context=131072
+0.48.717.752 I engine info: conversation_cache_mib=0
+0.48.717.752 I engine info: conversation_cache_min_free_mib=2560
+0.48.717.752 I engine info: conversation_cache_min_tokens=0
+0.48.717.752 I engine info: conversation_cache_slots=4
+0.48.717.753 I engine info: cvec=0
+0.48.717.753 I engine info: engine=0.1.45
+0.48.717.753 I engine info: expert_cache_mib=16870
+0.48.717.753 I engine info: expert_cache_primary_mib=16870
+0.48.717.754 I engine info: expert_slots=10162
+0.48.717.754 I engine info: expert_slots_primary=10162
+0.48.717.754 I engine info: kv=q4_0
+0.48.717.755 I engine info: kv_resident=0
+0.48.717.755 I engine info: logit_bias=1
+0.48.717.756 I engine info: lookup=3
+0.48.717.756 I engine info: mtp_max=4
+0.48.717.756 I engine info: pcie_frac=0.34
+0.48.717.756 I engine info: pool_workers=15
+0.48.717.756 I engine info: prefill_cap=8192
+0.48.717.757 I engine info: prefill_pipe=0
+0.48.717.757 I engine info: prefill_stages=1
+0.48.717.757 I engine info: spec=6
+0.48.717.757 I engine info: spec_min_p=0.50
+0.48.717.757 I engine info: stream_all_min=1024
+0.48.717.757 I engine info: tail_role_token=-1
+0.48.717.758 I engine info: vram_elastic=0
+0.48.717.758 I engine info: vram_free_mib=428
+0.48.717.760 I engine ready: context 131072 tokens, model qwen3.8-flash-next-iq3_xxs
+0.48.718.352 I srv          main: listening on http://127.0.0.1:18090, context 131072 tokens
+0.51.094.798 I srv        launch: task 0: GEN 64 prompt=22 n_predict=64
+strata serve: WARNING: only 428 MiB of VRAM free at the start of this request (below 512 MiB): when the card is this full the driver can page GPU memory to system RAM, decode falls to a few tok/s and a window may never finish (#2065). Add --vram-reserve-mib 832 to the config's args, or lower --max-context / --batch
+strata verify: capturing the 6-token window (428 MiB of VRAM free)
+strata verify: captured the 6-token window (upload no error, sync no error)
+strata verify: capturing the 3-token window (402 MiB of VRAM free)
+strata verify: captured the 3-token window (upload no error, sync no error)
+strata verify: capturing the 1-token window (376 MiB of VRAM free)
+strata verify: captured the 1-token window (upload no error, sync no error)
+strata verify: capturing the 4-token window (354 MiB of VRAM free)
+strata verify: captured the 4-token window (upload no error, sync no error)
+strata verify: capturing the 2-token window (326 MiB of VRAM free)
+strata verify: captured the 2-token window (upload no error, sync no error)
+0.51.872.918 I srv       on_done: task 0: DONE produced=33 prompt=22 prompt_ms=310.8 decode_ms=465.7 finish=stop drafts=21/25 reused=0
+strata serve: prompt 22 tokens = 0 reused + 22 read in 311 ms (70.8 tok/s), 33 generated in 466 ms (70.9 tok/s), drafts accepted 21 of 25, 1 checkpoints
+strata serve: decode expert cache hit rate: 85.8% (14815 hits / 17267 lookups); 554 more read by the GPU over PCIe or from another GPU (3.1% of all 17821 routed)
+strata serve: route tail skip: 2007 missed experts skipped (2207 entries) since the start
+0.51.929.298 E srv    operator(): ; shutting down so the service manager can restart
+0.54.677.277 I srv    operator(): cleaning up before exit...

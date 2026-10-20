@@ -1,0 +1,13 @@
+[
+ "/usr/bin/python3",
+ "/tank/nvme/strata/us2-bench-20261019/upstream-tools/tools/strata_bench.py",
+ "--url",
+ "http://127.0.0.1:18090",
+ "--config",
+ "/tank/nvme/strata/us2-bench-20261019/record/fork-flash-next-128k-q4kv-kvres131072/server.json",
+ "--runs",
+ "3",
+ "--long",
+ "--out",
+ "/tank/nvme/strata/us2-bench-20261019/record/fork-flash-next-128k-q4kv-kvres131072/community"
+]

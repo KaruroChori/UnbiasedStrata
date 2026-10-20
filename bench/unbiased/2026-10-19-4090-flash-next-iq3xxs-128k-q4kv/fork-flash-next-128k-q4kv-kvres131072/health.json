@@ -1,0 +1,8 @@
+{
+ "status": "ok",
+ "busy": false,
+ "service": "strata",
+ "loaded": true,
+ "model": "qwen3.8-flash-next-iq3_xxs",
+ "max_context": 131072
+}
