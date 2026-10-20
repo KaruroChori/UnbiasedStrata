@@ -69,3 +69,6 @@ build-vision-cuda12.bat
 
 # local Windows HIP packaging output
 dist-hip/
+
+# macOS Finder metadata
+.DS_Store
