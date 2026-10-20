@@ -30,8 +30,7 @@ GPU, Pascal or newer, CUDA 12.x), each recorded below with the file, the reason 
   ignores `/third_party/llama.cpp*`.
 - **`patches/*.patch` applied at configure time.** Each patch is checked in reverse first, so configuring twice
   applies it once. The submodule's working tree is therefore modified after a configure; `git -C
-  third_party/llama.cpp diff` shows exactly the patches, and `.gitmodules` sets `ignore = dirty` so `git status`
-  does not report them (a changed submodule commit is still reported). UnbiasedStrata 1 applied its patch in `make` and in
+  third_party/llama.cpp diff` shows exactly the patches. UnbiasedStrata 1 applied its patch in `make` and in
   CMake both; here it is CMake only, so a tree configured directly gets it too.
 - **llama.cpp's libraries for the front end.** A second `add_subdirectory` of the submodule with
   `LLAMA_BUILD_COMMON` and `LLAMA_BUILD_MTMD` on and tests, tools, examples, server, app, UI, prebuilt UI,
