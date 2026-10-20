@@ -82,9 +82,9 @@ The native kernels are compiled with `--use_fast_math` to "match the pinned llam
 contract" (`CMakeLists.txt:506-519`); ggml-cuda itself uses `-use_fast_math`
 (`third_party/llama.cpp/ggml/src/ggml-cuda/CMakeLists.txt:186`).
 
-One patch is applied to the submodule at configure time (`CMakeLists.txt:1462-1478`, `UPSTREAM.md:62-64`):
-`patches/llama.cpp-qwen3-coder-any-argument-order.patch`, a tool-call parser change. It touches nothing the
-engines or the reference arithmetic use.
+The submodule's branch (robertkarl/llama.cpp `UnbiasedStrata`; at the time of these checks the same change was a
+configure-time patch) carries tool-call parser changes only (`common/parsers/*`, `common/chat-auto-parser-generator.cpp`;
+UPSTREAM.md "Changes to llama.cpp"). They touch nothing the engines or the reference arithmetic use.
 
 Both model architectures load at the pin: `qwen35moe` (`src/llama-arch.h:47`, graph
 `src/models/qwen35moe.cpp`) and `qwen4exp` (`src/llama-arch.h:48`, graph `src/models/qwen4exp.cpp`;

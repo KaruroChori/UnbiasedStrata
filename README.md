@@ -32,7 +32,7 @@ and curl for the tests. Nothing is downloaded after the clone: ggml, llama, comm
 
 ```
 git clone <this repo> && cd UnbiasedStrata
-git submodule update --init          # shallow, third_party/llama.cpp @ 3cf03257
+git submodule update --init          # shallow, third_party/llama.cpp @ robertkarl/llama.cpp UnbiasedStrata (a6de9af3)
 make build                           # build/bin/{strata,strata-poly,libstrata_kq.so,unbiased-strata}
 make test                            # the front end against a fake engine; no GPU, no model
 ```
@@ -40,8 +40,9 @@ make test                            # the front end against a fake engine; no G
 The two `git` lines are the only ones that reach the network. For a box without one, run them on a machine that has
 it and copy the tree over (`rsync -a UnbiasedStrata/ box:UnbiasedStrata/`; about 700 MB with `.git`), then `make build`
 there; that is how the A6000 VM below was done (2026-10-19, fresh clone: 5 s clone, 27 s submodule, 20.6 min `make build`
-at the default four archs on 12 cores and CUDA 12.4, 9 s `make test`). Configuring applies `patches/` to the submodule
-in place, so `git status` shows `third_party/llama.cpp` modified from then on; that is expected.
+at the default four archs on 12 cores and CUDA 12.4, 9 s `make test`). The submodule is a fork of llama.cpp
+(robertkarl/llama.cpp, branch `UnbiasedStrata`: upstream's pin plus the tool-call parser commits in UPSTREAM.md); nothing is
+patched at configure, and `git status` is clean after a build.
 
 `make build` configures once and builds only the four targets above, not upstream's `all`. Options, as `make`
 variables:
@@ -57,8 +58,8 @@ variables:
 
 `make frontend` builds `unbiased-strata` alone, without CUDA, into `build-frontend/`: for a laptop or a CI box.
 `make test` builds that and runs `frontend/tests/`: seven adapter cases against `fake-engine.py` (cancel, drain,
-backpressure, child exit, `ERR`) and `e2e.sh`, the HTTP surface a coding agent touches. The `patches/` directory is
-applied to the submodule at configure time (one patch, the Qwen3-Coder tool-call grammar; see UPSTREAM.md).
+backpressure, child exit, `ERR`) and `e2e.sh`, the HTTP surface a coding agent touches. The llama.cpp changes the front
+end needs (the tool-call grammars) are commits on the submodule's branch; see UPSTREAM.md.
 
 Boxes this has been built and served on: a RunPod RTX 3090 (24 GB, driver 580, CUDA 12.x) and an RTX A6000 (48 GB)
 in a Proxmox VM with no route to the internet. The front end's tests also run on macOS.
@@ -205,8 +206,8 @@ the 3090 (Flash-Next with the installer's `--pool-workers 15`; 24 costs 14 %) an
 - No constrained decoding: a request's `response_format` or tool schema is parsed, not enforced at the sampler; the
   server logs `a grammar was requested; this engine does not constrain sampling` once per such request. One
   consequence is handled: llama.cpp's tool-call grammars expect required arguments in the schema's order, which
-  only a constrained sampler guarantees, so `patches/llama.cpp-any-argument-order.patch` accepts any order (DeepSeek
-  V4 Flash and GLM 5.3 Flash write `content` before `path`; without the patch their finished calls came back as parse
+  only a constrained sampler guarantees, so the submodule's branch accepts any order (DeepSeek
+  V4 Flash and GLM 5.3 Flash write `content` before `path`; at upstream's pin their finished calls came back as parse
   errors). A tool call that is malformed in other ways is still an error to the client, not a retry.
 - GLM 5.3 Flash's template honours `reasoning_effort` only as `low` or `high` and treats anything else as `max`, at
   which it thinks to the token cap on a coding task; send one of the two, or set `--chat-template-kwargs

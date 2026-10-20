@@ -5,7 +5,7 @@
 | What | Where | Version |
 | --- | --- | --- |
 | Engines (`strata`, `strata-poly`), tools, docs | https://github.com/VecSzn/PolyStrata | tag `v0.1.45-poly.1`, commit `d0cd84dc6bd009d1d9e2191e4e28cc76b80f1ee3` |
-| ggml, llama, common, mtmd, cpp-httplib | https://github.com/ggml-org/llama.cpp, as the submodule `third_party/llama.cpp` | commit `3cf03257f219afbe7334045ff7c6a06ac68c627d`, the one upstream pins |
+| ggml, llama, common, mtmd, cpp-httplib | https://github.com/robertkarl/llama.cpp, branch `UnbiasedStrata`, as the submodule `third_party/llama.cpp` | commit `a6de9af3b19b5e3a5397f2c835a29a13c37664bd`: ggml-org `3cf03257f219afbe7334045ff7c6a06ac68c627d` (the commit upstream pins) plus the two parser commits below |
 
 Commit `0197ae86` ("Import PolyStrata v0.1.45-poly.1 (d0cd84dc) unmodified") is the upstream tree, every tracked
 file, with the same tree hash as upstream's commit. `git diff 0197ae86 HEAD` is the whole story of this fork;
@@ -21,17 +21,18 @@ between a request and a token, (3) breaks or complicates the one-command build, 
 Everything else stays, built or not. Engine changes are bug fixes for the target (Linux x86-64, one NVIDIA
 GPU, Pascal or newer, CUDA 12.x), each recorded below with the file, the reason and the measurement.
 
-## Build (`CMakeLists.txt`, `Makefile`, `.gitmodules`, `.gitignore`, `patches/`)
+## Build (`CMakeLists.txt`, `Makefile`, `.gitmodules`, `.gitignore`)
 
 - **ggml from the submodule, not a fetch.** `STRATA_GGML_DIR` defaults to `third_party/llama.cpp` and the
   configure stops with the `git submodule update --init` line if `ggml/CMakeLists.txt` is missing. Upstream's
   `FetchContent` of llama.cpp (the only network access of its build) is deleted. The three later
   `if(STRATA_GGML_DIR)` blocks are unchanged; their `else()` branches are now dead. `.gitignore` no longer
   ignores `/third_party/llama.cpp*`.
-- **`patches/*.patch` applied at configure time.** Each patch is checked in reverse first, so configuring twice
-  applies it once. The submodule's working tree is therefore modified after a configure; `git -C
-  third_party/llama.cpp diff` shows exactly the patches. UnbiasedStrata 1 applied its patch in `make` and in
-  CMake both; here it is CMake only, so a tree configured directly gets it too.
+- **llama.cpp changes are commits on a fork, not configure-time patches.** The submodule points at
+  robertkarl/llama.cpp, branch `UnbiasedStrata`: ggml-org `3cf03257` plus the two commits under "Changes to llama.cpp"
+  below. Until 2026-10-19 the same changes were `patches/*.patch`, applied to the submodule's working tree by CMake at
+  configure (UnbiasedStrata 1 did it in `make` and in CMake both), which left the submodule dirty after every build and
+  meant the pinned commit alone did not name the sources compiled. The pin now does; `git status` is clean after a build.
 - **llama.cpp's libraries for the front end.** A second `add_subdirectory` of the submodule with
   `LLAMA_BUILD_COMMON` and `LLAMA_BUILD_MTMD` on and tests, tools, examples, server, app, UI, prebuilt UI,
   OpenSSL and llguidance off. It reuses the ggml targets configured above. Gated by `STRATA_FRONTEND` (default on),
@@ -85,15 +86,17 @@ Recorded here because a client written for one of the two may notice.
   end reports it as an engine death with an empty message. Open; matters only to a service manager.
 - **Default `min_p`** is llama-server's 0.05 when a request omits it; upstream's server sends none. pi sends 0.
 
-## Patches to llama.cpp (`patches/`)
+## Changes to llama.cpp (robertkarl/llama.cpp, branch `UnbiasedStrata`)
 
-- `llama.cpp-qwen3-coder-any-argument-order.patch` (`common/parsers/qwen3-coder.cpp`): the Qwen3-Coder
+Two commits on top of ggml-org `3cf03257`; `git -C third_party/llama.cpp diff 3cf03257 HEAD` is exactly these.
+
+- `9547d8d` (`common/parsers/qwen3-coder.cpp`): the Qwen3-Coder
   tool-call grammar accepts a call's arguments in any order. Upstream takes the required ones first and the
   optional ones after; Qwen3.8 Flash-Next often writes the optional ones first (`limit`, `offset`, `path`), and
   because the grammar's tool-call group is optional and has no end anchor, such a call was dropped silently:
   the client got `finish_reason=stop` and an empty answer (UnbiasedStrata 1, 2026-10-08, REGINA-104). Qwen3.6's
-  template routes to the same parser. Carried over unchanged; it applies cleanly at this pin.
-- `llama.cpp-any-argument-order.patch` (`common/chat-auto-parser-generator.cpp`, `common/parsers/deepseek.cpp`): the same for every
+  template routes to the same parser. Carried over from UnbiasedStrata 1 unchanged.
+- `a6de9af` (`common/chat-auto-parser-generator.cpp`, `common/parsers/deepseek.cpp`): the same for every
   template the auto-generated PEG grammar serves (DeepSeek V4 Flash's DSML, GLM 5.3 Flash's `<arg_key>` form, and
   the rest). Upstream accepts the required arguments only in the schema's order, which holds when its own sampler
   is constrained by the grammar; this engine samples unconstrained, and both models wrote `content` before `path`

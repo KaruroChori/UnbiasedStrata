@@ -1459,23 +1459,8 @@ if(STRATA_NATIVE_EXPERTS)
   if(NOT EXISTS ${STRATA_GGML_DIR}/ggml/CMakeLists.txt)
     message(FATAL_ERROR "ggml was not found in ${STRATA_GGML_DIR}: run `git submodule update --init` first")
   endif()
-  # UnbiasedStrata: patches/*.patch are applied to the submodule here, at configure time, so a tree built with cmake
-  # directly gets them too.  Each is checked in reverse first, so a configure is idempotent.  See UPSTREAM.md.
-  file(GLOB _strata_patches ${CMAKE_CURRENT_SOURCE_DIR}/patches/*.patch)
-  list(SORT _strata_patches)
-  foreach(_strata_patch IN LISTS _strata_patches)
-    execute_process(COMMAND patch -p1 -N -R --dry-run -s -i ${_strata_patch} WORKING_DIRECTORY ${STRATA_GGML_DIR}
-                    RESULT_VARIABLE _strata_patched OUTPUT_QUIET ERROR_QUIET)
-    if(NOT _strata_patched EQUAL 0)
-      execute_process(COMMAND patch -p1 -N -s -i ${_strata_patch} WORKING_DIRECTORY ${STRATA_GGML_DIR}
-                      RESULT_VARIABLE _strata_patch_rc OUTPUT_VARIABLE _strata_patch_out ERROR_VARIABLE _strata_patch_out)
-      if(NOT _strata_patch_rc EQUAL 0)
-        message(FATAL_ERROR "could not apply ${_strata_patch} to ${STRATA_GGML_DIR}:\n${_strata_patch_out}")
-      endif()
-      get_filename_component(_strata_patch_name ${_strata_patch} NAME)
-      message(STATUS "applied patches/${_strata_patch_name} to ${STRATA_GGML_DIR}")
-    endif()
-  endforeach()
+  # UnbiasedStrata: the submodule is the fork robertkarl/llama.cpp, branch UnbiasedStrata (upstream's pin plus the
+  # tool-call parser commits UPSTREAM.md lists). Nothing is patched at configure; the submodule's tree is what is built.
   add_subdirectory(${STRATA_GGML_DIR}/ggml ${CMAKE_BINARY_DIR}/ggml EXCLUDE_FROM_ALL)
   # part of strata_kernels_cpu (the pool calls these and they call its CPU probe: one library, so GNU ld's
   # one-pass static linking has no cycle to resolve)

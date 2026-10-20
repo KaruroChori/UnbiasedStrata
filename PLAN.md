@@ -190,7 +190,7 @@ Facts that shape the implementation either way:
 - The parser patch `qwen3-coder any argument order` from the old fork (`patches/`) is still needed
   at this pin: Qwen3.6 and Qwen3.8 route to that parser and the upstream grammar silently drops a
   call whose optional argument comes first. Applied once, at configure time, idempotently (the old
-  fork had to apply it in two places; we apply it in one).
+  fork had to apply it in two places; we apply it in one). (2026-10-19: the patch and its DeepSeek/GLM counterpart are commits on robertkarl/llama.cpp, branch `UnbiasedStrata`, which the submodule pins; nothing is applied at configure any more.)
 - Prompt caching stays in the engine. The front end sends the full id list every request.
 - Encode images on CPU by default to leave VRAM for the expert cache; `--vision-gpu` to move it.
 
@@ -227,9 +227,9 @@ between `generate.cpp` and `src/poly/main.cpp`. Fallbacks, in order: one binary 
 
 ```
 Makefile                  make build | make test | make bench ; CUDA_ARCHS=, PORTABLE=, JOBS=
-CMakeLists.txt            upstream's, plus: submodule default, patch step, front end, merged MMQ lib
-.gitmodules               third_party/llama.cpp -> ggml-org/llama.cpp @ 3cf03257, shallow
-patches/                  *.patch with header: file, reason, measurement; applied at configure
+CMakeLists.txt            upstream's, plus: submodule default, front end, merged MMQ lib
+.gitmodules               third_party/llama.cpp -> robertkarl/llama.cpp branch UnbiasedStrata (3cf03257 + parser commits), shallow
+                          (patches/ applied at configure until 2026-10-19; now commits on that branch, see UPSTREAM.md)
 frontend/                 strata-context.cpp, engine.hpp, vision.hpp, ui_stub.cpp, main.cpp, tests
 src/ include/             upstream engine, unchanged except what UPSTREAM.md lists
 tools/                    upstream's offline Python, minus installers (§8)
@@ -346,7 +346,7 @@ present-unmeasured, the exact build lines, the exact run line per measured model
 limits (no constrained decoding, one request at a time, CPU image encode time). No superlatives.
 
 `UPSTREAM.md`: the upstream commit; the llama.cpp pin; each engine or build hunk with file, reason,
-and the measurement that justified it; each patch under `patches/`; the list of features dropped
+and the measurement that justified it; each commit on the llama.cpp fork's branch; the list of features dropped
 relative to upstream with the rule. Updated in the same commit as any engine or build change.
 
 ## 11. Measurements
