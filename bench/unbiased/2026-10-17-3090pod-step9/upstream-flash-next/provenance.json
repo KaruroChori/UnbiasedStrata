@@ -1,9 +1,0 @@
-{
- "arm": "upstream-flash-next",
- "engine_binary": "/opt/polystrata-v0.1.45-poly.1/build/strata",
- "engine_sha256": "4e7254efedee4f6e898cec87e0da4f4e38c81be174553bfaf77536de720d0d37",
- "fork_commit": "4c25aa6f6a99d6cb9f0a350bf1141865c158f593",
- "nvidia_smi": "NVIDIA GeForce RTX 3090, 580.126.20, 24576 MiB",
- "cpu_quota": "3112500/100000",
- "started_utc": "2026-10-18T05:48:30Z"
-}

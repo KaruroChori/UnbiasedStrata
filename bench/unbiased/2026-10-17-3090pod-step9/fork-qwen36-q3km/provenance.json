@@ -1,9 +1,0 @@
-{
- "arm": "fork-qwen36-q3km",
- "engine_binary": "/opt/us2-build/build/bin/strata-poly",
- "engine_sha256": "7ba58112d0b9b73d48e10e2f04186dd5412a888e1fc82de80ec399de6ee9fd92",
- "fork_commit": "143ada26fe968d27686cab50ad76c9c171eb748d",
- "nvidia_smi": "NVIDIA GeForce RTX 3090, 580.126.20, 24576 MiB",
- "cpu_quota": "3112500/100000",
- "started_utc": "2026-10-18T06:35:57Z"
-}

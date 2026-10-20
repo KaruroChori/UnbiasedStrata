@@ -1,5 +1,0 @@
-gate 0, 256 experts, 8 used: 0 picks differ, 0 rounding ties, weights within 3.7e-07 relative: ok
-gate 0, 128 experts, 8 used: 0 picks differ, 0 rounding ties, weights within 4.1e-07 relative: ok
-gate 1, 256 experts, 8 used: 0 picks differ, 0 rounding ties, weights within 2.9e-07 relative: ok
-gate 2, 256 experts, 6 used: 0 picks differ, 0 rounding ties, weights within 2.7e-07 relative: ok
-gate 1, 64 experts, 4 used: 0 picks differ, 0 rounding ties, weights within 2.3e-07 relative: ok

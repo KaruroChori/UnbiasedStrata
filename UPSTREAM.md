@@ -67,7 +67,7 @@ Recorded here because a client written for one of the two may notice.
 - **`/health`** returns llama.cpp's `{"status": "ok", "busy": ...}` plus upstream's `"service": "strata"`,
   `"loaded": true`, `"model"`, `"max_context"` (commit 453d3015). Upstream's `tools/strata_bench.py` refuses a server
   without the first two; the first step-9 fork arm was lost to that
-  (`bench/unbiased/2026-10-17-3090pod-step9/README.md`).
+  (the step-9 record's README; records are in history at 7551f138, `bench/unbiased/`).
 - **Streams always end with a usage chunk** (empty `choices`, `usage`, `timings`), as upstream's server does,
   whether or not the client sent `stream_options.include_usage`; llama-server sends it only on request (96f4ef1f).
   Same reason: the bench client reads `prompt_tokens` from it.
@@ -80,7 +80,7 @@ Recorded here because a client written for one of the two may notice.
   embedding width at start. The default row budget is upstream's installer's (300 on the CPU, 1024 on the GPU;
   `--image-max-tokens` overrides). The encoder runs on the CPU: the front end's ggml is built without CUDA, and
   `--mmproj-gpu` is refused when ggml has no GPU device (17e27213). Measured in
-  `bench/unbiased/2026-10-18-a6000-qwen36-iq4xs-images-step8/`.
+  2026-10-18 on the A6000 (record in history at 7551f138).
 - **`--sse-ping-interval`** is llama-server's (default 30 s); the measured Flash-Next runs used 10.
 - **SIGTERM exits 1**, not 0, after stopping the engine: the engine child dies with the process group and the front
   end reports it as an engine death with an empty message. Open; matters only to a service manager.
@@ -110,7 +110,7 @@ No changes: `git diff 0197ae86 HEAD -- src include` is empty (checked 2026-10-18
 these sources built in this tree; their binaries differ from upstream's build of the same sources, and the step-9
 record says so where it matters.
 
-Step 12 (`bench/unbiased/correctness/`, 2026-10-18) checked these builds against llama.cpp `3cf03257`: upstream's
+Step 12 (harness `bench/correctness/`; record in history at 7551f138, `bench/unbiased/correctness/`; 2026-10-18) checked these builds against llama.cpp `3cf03257`: upstream's
 parity programs that cover the kernels in use (38 pass, `poly_expert_parity` fails its own bound on one UD-Q3_K_M expert),
 and teacher-forced per-step distributions on 16 sequences per model (within llama.cpp's own CPU-vs-GPU spread on every set
 and arm). Two upstream claims did not hold and are not repeated here: the draft block is not bitwise inert above 4-token
@@ -145,7 +145,7 @@ Each entry names the rule above that it satisfies.
   a 1.8 MB GIF, the figure SVGs and their generator), `.github/` (issue and PR templates), `SECURITY.md` (the
   upstream project's advisory process) and `AGENTS.md` (contributor notes for upstream's tests and installers).
   `README.md` is rewritten for this fork (PLAN.md step 10); the fork's model-file record is `docs/MODEL-FILES.md`,
-  its measurements are under `bench/unbiased/`.
+  its measurements are the "Measured" section of `README.md` (records in history at 7551f138).
 - **Documents only removed components (decided 2026-10-17):** `docs/INSTALL.md`, `AI_SETUP.md`, `MCP_SERVER.md`,
   `IMAGES.md`, `LLAMA_SWAP.md`, `COMMUNITY_BENCHMARKS.md`, `FAQ.md`; `chat.py` (a terminal client) and
   `tools/calibrate.py` (imports `setup` and `serve.server`), with their tests.
@@ -156,5 +156,9 @@ Each entry names the rule above that it satisfies.
   (one helper from `setup`), `tools/make_poly_release.py`, and the tests that imported `setup` or `serve`
   (`test_mtp_fetch.py`, `test_shards.py`, `test_strata_tokenizer.py`, `test_effort_end_args.py`,
   `test_research_run.py`, `test_benchmark_prompt.py`, `test_dll_closure.py`, `test_windows_amd_gpu.py`, the
-  `test_conversation_cache_*` and `test_strata_bench.py`). The benchmark scripts under `bench/results/*/` stay as
-  the record they are. Upstream's copies run against upstream.
+  `test_conversation_cache_*` and `test_strata_bench.py`). Upstream's copies run against upstream.
+- **Per-machine results and logs (decided 2026-10-19):** upstream's `bench/results/` (23 MB, one directory per
+  community machine) and the fork's own `bench/unbiased/` run directories (57 MB). A result from one machine is a
+  record, not source; the numbers that matter are in `README.md` "Measured", and the directories are in history at
+  7551f138. `bench/` keeps what is reusable: `bench_vs_llama.py` with `profile_corpus.json`, the kernel probes, and
+  `bench/correctness/` (the step-12 harness, moved from `bench/unbiased/correctness/scripts/`).

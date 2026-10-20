@@ -15,14 +15,16 @@ Pascal or newer, CUDA 12.x, Linux x86-64, on a machine that may have no network 
 | `strata-poly` | a GGUF in place | Qwen3.6-35B-A3B Unsloth UD-Q3_K_M and UD-IQ4_XS (the `-MTP` files) | GLM 5.3 Flash, DeepSeek V4 Flash, LFM2.5, Ornith 1.5, Gemma 4, Tiel Coder, MiniCPM-V |
 
 "Measured" means the file is in [docs/MODEL-FILES.md](docs/MODEL-FILES.md) with its SHA-256, has been served through
-the front end on at least one box, and has a row in a results directory under `bench/unbiased/`. "Present" means
+the front end on at least one box, and has a row under "Measured" below (the per-run records behind those rows, one
+directory per run with the command, the raw client output, the server log and the model files' checksums, were removed
+from the tree on 2026-10-19; they are in git history at commit 7551f138, `bench/unbiased/`). "Present" means
 upstream's engine supports it and nothing here has been removed that it needs, but no file has been loaded through
 this front end. Upstream's model notes are kept as they were: [docs/MODELS.md](docs/MODELS.md),
 [docs/QWEN36.md](docs/QWEN36.md), [docs/GLM.md](docs/GLM.md), [docs/DEEPSEEK.md](docs/DEEPSEEK.md),
 [docs/LFM.md](docs/LFM.md), [docs/BACKENDS.md](docs/BACKENDS.md).
 
 Pictures: Qwen3.6 with its projector file (`--mmproj`, below); the encoder runs on the CPU in the front end and the
-engine takes the rows. Measured once, `bench/unbiased/2026-10-18-a6000-qwen36-iq4xs-images-step8/`.
+engine takes the rows. Measured once, 2026-10-18 on the A6000 (record in history, see "Measured").
 
 ## Build
 
@@ -114,7 +116,7 @@ build/bin/unbiased-strata --engine build/bin/strata \
 ```
 
 On the 48 GB card the same line with `--resident-experts --ple-io mmap` in place of `--expert-cache auto --ple-io ram
---pool-workers 15` (the whole expert set stays in VRAM): `bench/unbiased/2026-10-17-a6000-flash-next-iq3xxs-step6/server-command.sh`.
+--pool-workers 15` (the whole expert set stays in VRAM); that is the A6000 line of 2026-10-17.
 
 What the flags do, per upstream's [docs/DETAILS.md](docs/DETAILS.md) and [docs/BACKENDS.md](docs/BACKENDS.md):
 `--expert-cache auto` sizes the VRAM expert cache from the free memory after everything else is loaded; `--prefill auto`
@@ -145,11 +147,13 @@ not fetch them. The files that have been served, with sizes and SHA-256, are in
 
 ## Measured
 
-All numbers are from `bench/unbiased/`, each directory with the command, the raw client output, the server log and the
-model files' checksums. Tokens per second, median of 3 runs. Upstream is PolyStrata v0.1.45-poly.1 with its Python
+Each number came from a run directory with the command, the raw client output, the server log and the model files'
+checksums; the per-run records were removed from the tree on 2026-10-19 and are in git history at commit 7551f138 (`git checkout 7551f138 -- bench/unbiased bench/results`). What stays in `bench/` is
+reusable tooling only: upstream's `bench_vs_llama.py` and its corpus, the kernel probes, and `bench/correctness/`, the
+teacher-forced harness of the correctness checks. Tokens per second, median of 3 runs. Upstream is PolyStrata v0.1.45-poly.1 with its Python
 server, on the same card, the same files, the same client, back to back.
 
-**Upstream versus this fork, RTX 3090, 2026-10-18** (`bench/unbiased/2026-10-17-3090pod-step9/README.md`; the client is
+**Upstream versus this fork, RTX 3090, 2026-10-18** (the step-9 record, in history at 7551f138; the client is
 upstream's `tools/strata_bench.py --runs 3 --long` plus a three-document sustained supplement):
 
 | Model | Workload | upstream | fork |
@@ -181,7 +185,7 @@ requests, not medians of a benchmark):
 
 Greedy answers to the same prompt were identical on the two boxes and identical to upstream on the pod for both
 Flash-Next and Qwen3.6 (text and token count). Against llama.cpp at the pinned commit (PLAN.md step 12,
-`bench/unbiased/correctness/`, 2026-10-18 on the A6000): teacher-forced on 16 sequences per model, both engines' per-step
+harness `bench/correctness/`, record in history at 7551f138, 2026-10-18 on the A6000): teacher-forced on 16 sequences per model, both engines' per-step
 distributions are as close to llama.cpp's GPU run as llama.cpp's own CPU run is (mean KL 0.6 to 1.2x that spread on every
 set and arm), and the greedy token agrees at every position with a 0.5-nat margin except a handful of near ties per arm
 (Qwen3.6: 4 of 2,700; Flash-Next: 0 to 4 of about 2,880 depending on the arm). The findings, each with a ticket, are in
@@ -198,7 +202,7 @@ UD-Q3_K_M on an RTX 3090 and Qwen3.6 UD-IQ4_XS on the A6000 pass as is (the IQ4_
 after the two fixes under "Known limits" (argument order; GLM's architecture name in the vocabulary load). The
 API-only checks (`frontend/tests/acceptance-real-engine.sh`) hold decode and prompt reading within 15 % of step 9 on
 the 3090 (Flash-Next with the installer's `--pool-workers 15`; 24 costs 14 %) and record the first B200 figures
-(72 and 74 tok/s decode on one card). Record: `bench/unbiased/2026-10-19-step13-acceptance/`. pi's compaction defaults (reserve 16K, keep the last 20K tokens) assume a window well above 64K: against a server at `--max-context 32768` a long pi session compacts to no effect and then sends `max_tokens: 1` ("Response was truncated before completion"); serve 128K or more to pi, or lower pi's `compaction` settings (USTRAT-8).
+(72 and 74 tok/s decode on one card). Record: the step-13 directory, in history at 7551f138. pi's compaction defaults (reserve 16K, keep the last 20K tokens) assume a window well above 64K: against a server at `--max-context 32768` a long pi session compacts to no effect and then sends `max_tokens: 1` ("Response was truncated before completion"); serve 128K or more to pi, or lower pi's `compaction` settings (USTRAT-8).
 
 ## Known limits
 
@@ -220,7 +224,8 @@ the 3090 (Flash-Next with the installer's `--pool-workers 15`; 24 costs 14 %) an
 - On SIGTERM the front end exits with status 1 after stopping the engine. Harmless under a shell; a systemd unit should
   not use `Restart=on-failure` until this is fixed.
 - The engines are upstream's at v0.1.45-poly.1, unmodified, including their correctness; the checks against llama.cpp at
-  the pinned commit are above ("Measured") and in `bench/unbiased/correctness/`. Two things to know from them: `strata`'s
+  the pinned commit are above ("Measured"); the harness is `bench/correctness/`, the record is in history (commit 7551f138,
+  `bench/unbiased/correctness/`). Two things to know from them: `strata`'s
   answer can differ from one start to the next on a card that does not hold every expert, because `--expert-cache auto`
   sizes the cache from the free VRAM and the CPU-computed share of the misses rounds differently (a fixed `--expert-cache N`
   pins it); and `strata-poly`'s drafting changes low-order bits above 4-token windows (within llama.cpp's own CPU/GPU spread).

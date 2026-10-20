@@ -235,7 +235,8 @@ src/ include/             upstream engine, unchanged except what UPSTREAM.md lis
 tools/                    upstream's offline Python, minus installers (§8)
 data/                     upstream's profiles and draft vocabs (runtime data, kept)
 docs/                     upstream's engineering docs (kept), minus marketing (§8)
-bench/                    upstream's corpus and results (kept) + bench/unbiased/<date>-<card>-<model>/
+bench/                    bench_vs_llama.py + corpus, kernel probes, correctness/ harness (2026-10-19: per-run records and
+                          upstream's results/ removed from the tree, in history at 7551f138)
 sycl/ metal/ tests/       kept, unbuilt
 README.md UPSTREAM.md PLAN.md LICENSE
 ```
@@ -292,7 +293,7 @@ request and a token; (3) breaks or complicates the one-command build; (4) market
 | `README.md` | 57 KB | rewritten (§10) |
 
 Kept although large and unbuilt, per the brief: `sycl/` (7.8 MB), `metal/` (1.2 MB), `tests/`,
-`bench/` (23 MB of upstream results and the profile corpus), `docs/` engineering pages (`DETAILS.md`,
+`bench/` (23 MB of upstream results and the profile corpus; the results went 2026-10-19, see UPSTREAM.md), `docs/` engineering pages (`DETAILS.md`,
 `BACKENDS.md`, `QUANTS.md`, `MULTI_GPU.md`, `AMD_HIP.md`, `INTEL.md`, ...), `data/`, `ref/`,
 `third_party/ggml/` (upstream's `ggml-common.h` copy), `tools/vision/`, `chat.py` (stdlib client,
 depends on nothing), `tools/make_poly_release.py`, `tools/calibrate.py` (inert after the cut).
@@ -364,7 +365,7 @@ Pass: fork within noise of upstream (the run-to-run range) on decode and PP. A f
 upstream on any row is a bug to find before the README claims anything. The llama.cpp rows already
 recorded stay in the table as context, labelled with their different quant.
 
-Rows 1 and 2 measured 2026-10-18 UTC on the RTX 3090 pod: `bench/unbiased/2026-10-17-3090pod-step9/README.md`.
+Rows 1 and 2 measured 2026-10-18 UTC on the RTX 3090 pod: the step-9 record (in history at 7551f138, `bench/unbiased/2026-10-17-3090pod-step9/`).
 Row 1 (Flash-Next): fork faster on every workload (chat decode 103.1 vs 87.1 tok/s, sustained 119.1 vs 105.1,
 prefill 4K/16K/32K 2065/2531/2616 vs 1924/2342/2393). Row 2 (Qwen3.6 UD-Q3_K_M): decode within the
 run-to-run range (chat 213.5 vs 220.8, sustained 200.0 vs 207.6, ranges overlap); prefill 4K 4.7 % faster,

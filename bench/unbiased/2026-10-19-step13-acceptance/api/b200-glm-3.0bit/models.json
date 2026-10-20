@@ -1,1 +1,0 @@
-{"object":"list","data":[{"id":"glm-5.3-flash-3.0bit-b200","object":"model","created":1792378233,"owned_by":"unbiasedstrata","context_length":32768,"input_modalities":["text"],"meta":{"vocab_type":true,"n_vocab":154880,"n_ctx":32768,"engine":"strata-poly"}}]}

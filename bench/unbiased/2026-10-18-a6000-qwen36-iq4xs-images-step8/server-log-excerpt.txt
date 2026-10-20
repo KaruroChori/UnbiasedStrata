@@ -1,6 +1,0 @@
-0.00.838.912 I vision: /mnt/ds4/unbiased-strata/qwen36/mmproj-F16.gguf, rows of 2048, encoder on the CPU (8 CPU threads), at most 300 rows a picture, image_pad=248056
-0.04.593.109 I srv          main: listening on http://127.0.0.1:18091, context 32768 tokens
-1.47.821.733 I srv  encode_pictu: task 0: picture 1: 276 rows (23x12) encoded in 15353 ms on the CPU
-1.47.821.778 I srv        launch: task 0: GENI 400 image_pad=248056 /tmp/unbiased-strata-pictures-Hyc14W prompt=353 n_predict=400
-12.53.976.809 I srv  encode_pictu: task 21: picture 1: 276 rows (23x12) encoded in 15402 ms on the CPU
-12.53.976.869 I srv        launch: task 21: GENI 26944 temperature=0.6 top_p=0.95 top_k=20 image_pad=248056 /tmp/unbiased-strata-pictures-khVjTw prompt=861 n_predict=26944

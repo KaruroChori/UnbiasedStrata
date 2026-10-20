@@ -1,8 +1,0 @@
-{
- "status": "ok",
- "busy": false,
- "service": "strata",
- "loaded": true,
- "model": "qwen3.6-35b-a3b-ud-q3_k_m",
- "max_context": 32768
-}

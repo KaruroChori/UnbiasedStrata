@@ -1,6 +1,8 @@
 # Correctness plan: the two engines against llama.cpp at 3cf03257
 
-_Results (step 12, run 2026-10-18 on the A6000 VM): `bench/unbiased/correctness/README.md`._
+_Results (step 12, run 2026-10-18 on the A6000 VM): `bench/unbiased/correctness/README.md` in git history at commit
+7551f138; the run directories were removed from the tree on 2026-10-19, and the harness moved from
+`bench/unbiased/correctness/scripts/` to `bench/correctness/`. The `bench/unbiased/...` paths below are as they were at the time._
 
 PLAN.md step 11 (`PLAN.md:318`), written 2026-10-18. This is a plan: nothing in it has been run, no code was
 changed, and every line number was read from this tree, the submodule `third_party/llama.cpp` (HEAD
