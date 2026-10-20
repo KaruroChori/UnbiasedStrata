@@ -419,11 +419,13 @@ bias (T2), and naming a kernel needs per-layer vectors. Ticket USTRAT-10.
   log-probability, every argmax the same). That is finding 2 again: lookup windows of five or more tokens change the
   bits, shorter ones do not.
 - **GLM: 0 of 16 identical, from step 0, including p04 and p09 where the draft arm made no guess at all.** The cause is
-  placement, not drafting: the draft block takes 0.4 GiB of the card, the engine keeps 10,115 instead of 10,167 experts
-  in VRAM, and the 52 that moved are computed by the CPU in one arm and the GPU in the other, which round differently
+  placement, not drafting: the draft arm's defaults take 0.4 GiB of the card (the file carries no draft block, as its
+  header shows, so the arm was the n-gram lookup with its window-8 verification buffers), the engine keeps 10,115
+  instead of 10,167 experts in VRAM, and the 52 that moved are computed by the CPU in one arm and the GPU in the other, which round differently
   (finding 4's mechanism, now on `strata-poly`). Per step the two arms differ by up to 0.05 to 0.50 in log-probability
   and the argmax moves on 0 to 11 steps a sequence (lru 5 of 400, puzzle 11 of 324, r16k 21 of 510), inside T2 in both.
-  A clean T0 for the GLM draft block needs the same expert set in both arms (an explicit expert count, or a card that
+  A clean T0 for GLM's lookup (and for its draft block, which `tools/glm_draft_fetch.py` supplies as `--draft-model`
+  and which these runs did not have) needs the same expert set in both arms (an explicit expert count, or a card that
   holds all 12,096). Ticket USTRAT-9.
 
 ### 8.3 Reference drift (llama.cpp master against the pinned commit, DeepSeek)
