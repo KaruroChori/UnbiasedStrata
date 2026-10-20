@@ -1,4 +1,41 @@
-# UnbiasedStrata 2
+## Credits and license
+
+The engines are PolyStrata's, by VecSzn and contributors, built on [Strata](https://github.com/Niko1221/Strata) by
+Niko1221. The front end is built from [llama.cpp / ggml](https://github.com/ggml-org/llama.cpp)'s server, common and
+mtmd code. Qwen3.8-Flash-Next and Qwen3.6-35B-A3B are by the Qwen team; the IQ3_XXS GSQ-RCO file is
+[ISTA-DASLab](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)'s, the Qwen3.6 files are
+[Unsloth](https://huggingface.co/unsloth)'s. Upstream's full credits: [docs/HOW_IT_WORKS.md](docs/HOW_IT_WORKS.md#credits).
+MIT License ([LICENSE](LICENSE)); some parts and every model have their own licenses
+([which ones](docs/HOW_IT_WORKS.md#license)).
+
+# UnbiasedStrata 2 - note from a human.
+
+
+Issues with Strata / PolyStrata:
+
+* piping instructions from markdown into agent == bad idea
+* replacing components at build-time or runtime isn't great
+* desired: clone; submodule init; make; situation
+
+UnbiasedStrata aims to be the suckless (dwm) variant of Strata.
+
+It's been vetted in a few ways:
+* agents went through and verified kernels to the difference between CPU/GPU within llama.cpp
+* full a run of Qwen 3.8 Flash Next over Bob-bench wide test set with a high score.
+
+
+This wouldn't exist without llama.cpp.
+
+without Niko's Strata.
+
+Without PolyStrata either.
+
+Use at your own risk. Works on my machine.
+
+
+# AI generate nonsense from here on out
+
+
 
 A fork of [PolyStrata](https://github.com/VecSzn/PolyStrata) v0.1.45-poly.1 that keeps its two inference engines
 unchanged and replaces everything around them: no installer, no downloads at build or start, no Python between a
@@ -7,64 +44,12 @@ request and a token. One `make build` on a Linux box with an NVIDIA card produce
 Pascal or newer, CUDA 12.x, Linux x86-64, on a machine that may have no network at all. What was changed and why is in
 [UPSTREAM.md](UPSTREAM.md); the plan this follows is [PLAN.md](PLAN.md).
 
-## The two engines
-
-| Engine | Input | Models measured here | Models present, unmeasured |
-| --- | --- | --- | --- |
-| `strata` | a pack directory made from a GGUF (`tools/iq_pack.py`), the native shards, an MTP draft directory | Qwen3.8-Flash-Next GSQ-RCO IQ3_XXS | the other Flash-Next quants, Flash-Next Coder, Unsloth NVFP4 |
-| `strata-poly` | a GGUF in place | Qwen3.6-35B-A3B Unsloth UD-Q3_K_M and UD-IQ4_XS (the `-MTP` files) | GLM 5.3 Flash, DeepSeek V4 Flash, LFM2.5, Ornith 1.5, Gemma 4, Tiel Coder, MiniCPM-V |
-
-"Measured" means the file is in [docs/MODEL-FILES.md](docs/MODEL-FILES.md) with its SHA-256, has been served through
-the front end on at least one box, and has a row under "Measured" below (the per-run records behind those rows, one
-directory per run with the command, the raw client output, the server log and the model files' checksums, were removed
-from the tree on 2026-10-19; they are in git history at commit 7551f138, `bench/unbiased/`). "Present" means
-upstream's engine supports it and nothing here has been removed that it needs, but no file has been loaded through
-this front end. Upstream's model notes are kept as they were: [docs/MODELS.md](docs/MODELS.md),
-[docs/QWEN36.md](docs/QWEN36.md), [docs/GLM.md](docs/GLM.md), [docs/DEEPSEEK.md](docs/DEEPSEEK.md),
-[docs/LFM.md](docs/LFM.md), [docs/BACKENDS.md](docs/BACKENDS.md).
-
-Pictures: Qwen3.6 with its projector file (`--mmproj`, below); the encoder runs on the CPU in the front end and the
-engine takes the rows. Measured once, 2026-10-18 on the A6000 (record in history, see "Measured").
-
-## Build
-
-Requirements: CMake 3.24 or newer, a C++20 compiler (GCC 11 to 14), a CUDA 12.x toolkit and driver, git, python3
-and curl for the tests. Nothing is downloaded after the clone: ggml, llama, common and mtmd come from the
-`third_party/llama.cpp` submodule, pinned to the commit upstream pins.
-
 ```
 git clone <this repo> && cd UnbiasedStrata
 git submodule update --init          # shallow, third_party/llama.cpp @ robertkarl/llama.cpp UnbiasedStrata (a6de9af3)
 make build                           # build/bin/{strata,strata-poly,libstrata_kq.so,unbiased-strata}
 make test                            # the front end against a fake engine; no GPU, no model
 ```
-
-The two `git` lines are the only ones that reach the network. For a box without one, run them on a machine that has
-it and copy the tree over (`rsync -a UnbiasedStrata/ box:UnbiasedStrata/`; about 700 MB with `.git`), then `make build`
-there; that is how the A6000 VM below was done (2026-10-19, fresh clone: 5 s clone, 27 s submodule, 20.6 min `make build`
-at the default four archs on 12 cores and CUDA 12.4, 9 s `make test`). The submodule is a fork of llama.cpp
-(robertkarl/llama.cpp, branch `UnbiasedStrata`: upstream's pin plus the tool-call parser commits in UPSTREAM.md); nothing is
-patched at configure, and `git status` is clean after a build.
-
-`make build` configures once and builds only the four targets above, not upstream's `all`. Options, as `make`
-variables:
-
-| Variable | Default | Meaning |
-| --- | --- | --- |
-| `CUDA_ARCHS` | `61;75;86;89` | GTX 10, RTX 20 / GTX 16, RTX 30, RTX 40. One arch (`CUDA_ARCHS=86`) builds several times faster. An arch below 75 turns on upstream's `STRATA_EXPERIMENTAL_SM60`. Arches the installed nvcc cannot compile are dropped with a note. |
-| `PORTABLE=1` | off | AVX2 baseline for the CPU expert kernels instead of `-march=native`: build on one box, run on another. |
-| `NVCC` | `nvcc` on PATH, else `/usr/local/cuda/bin/nvcc` | the CUDA compiler |
-| `HOSTCXX` | newest `g++-NN` that this nvcc accepts | one compiler for the C, C++ and CUDA host sides (a mix fails to link on `__cxa_call_terminate`) |
-| `JOBS` | `nproc`, capped at 16 | parallel compile jobs |
-| `BUILD_DIR` | `build` | |
-
-`make frontend` builds `unbiased-strata` alone, without CUDA, into `build-frontend/`: for a laptop or a CI box.
-`make test` builds that and runs `frontend/tests/`: seven adapter cases against `fake-engine.py` (cancel, drain,
-backpressure, child exit, `ERR`) and `e2e.sh`, the HTTP surface a coding agent touches. The llama.cpp changes the front
-end needs (the tool-call grammars) are commits on the submodule's branch; see UPSTREAM.md.
-
-Boxes this has been built and served on: a RunPod RTX 3090 (24 GB, driver 580, CUDA 12.x) and an RTX A6000 (48 GB)
-in a Proxmox VM with no route to the internet. The front end's tests also run on macOS.
 
 ## Run
 
@@ -79,13 +64,6 @@ option (`--host`, `--port`, `--api-key`, `--alias`, `--temp`, `--top-k`, `--top-
 engine, which is started as a child process with `--serve` added and spoken to over its line protocol
 ([docs/BACKENDS.md](docs/BACKENDS.md)). The server answers `/v1/chat/completions` (streaming and not), `/v1/models`,
 `/health`, `/props`, `/tokenize`, `/detokenize`, as llama.cpp's server does, one request at a time.
-
-The exact lines that produced the measured rows. Upstream's installer would have chosen these flags for a 24 GB card;
-here they are written out.
-
-**Qwen3.6-35B-A3B UD-Q3_K_M or UD-IQ4_XS from the GGUF** (`strata-poly`; the `-MTP` files from
-`unsloth/Qwen3.6-35B-A3B-MTP-GGUF`, which carry the draft block). The expert profile file is created by the engine when
-it is missing and read on later starts; pass the same path each time.
 
 ```
 build/bin/unbiased-strata --engine build/bin/strata-poly \
@@ -115,16 +93,6 @@ build/bin/unbiased-strata --engine build/bin/strata \
      --max-context 65536 --kv int8 --ple-io ram --pool-workers 15 --kv-resident 32768
 ```
 
-On the 48 GB card the same line with `--resident-experts --ple-io mmap` in place of `--expert-cache auto --ple-io ram
---pool-workers 15` (the whole expert set stays in VRAM); that is the A6000 line of 2026-10-17.
-
-What the flags do, per upstream's [docs/DETAILS.md](docs/DETAILS.md) and [docs/BACKENDS.md](docs/BACKENDS.md):
-`--expert-cache auto` sizes the VRAM expert cache from the free memory after everything else is loaded; `--prefill auto`
-picks the prompt chunking; `--spec 4` with `--spec-min-p 0.5` is the MTP speculative window and how sure the draft
-must be to extend it; `--kv int8` with `--kv-resident 32768` keeps 32K tokens of attention reads in VRAM as int8 and
-streams the rest from host memory; `--ple-io ram|mmap|direct` is how the second shard, the 28.8 GB n-gram table, is
-read (RAM, mapped, or unbuffered from the SSD); `--pool-workers` is how many CPU threads compute experts; `--tail-skip 6`
-is `strata-poly`'s route-tail skip, the value upstream's installer sets for Qwen3.6.
 
 ### Preparing a Flash-Next pack
 
@@ -204,45 +172,4 @@ API-only checks (`frontend/tests/acceptance-real-engine.sh`) hold decode and pro
 the 3090 (Flash-Next with the installer's `--pool-workers 15`; 24 costs 14 %) and record the first B200 figures
 (72 and 74 tok/s decode on one card). Record: the step-13 directory, in history at 7551f138. pi's compaction defaults (reserve 16K, keep the last 20K tokens) assume a window well above 64K: against a server at `--max-context 32768` a long pi session compacts to no effect and then sends `max_tokens: 1` ("Response was truncated before completion"); serve 128K or more to pi, or lower pi's `compaction` settings (USTRAT-8).
 
-## Known limits
 
-- One request at a time: the front end has one slot and queues the rest.
-- No constrained decoding: a request's `response_format` or tool schema is parsed, not enforced at the sampler; the
-  server logs `a grammar was requested; this engine does not constrain sampling` once per such request. One
-  consequence is handled: llama.cpp's tool-call grammars expect required arguments in the schema's order, which
-  only a constrained sampler guarantees, so the submodule's branch accepts any order (DeepSeek
-  V4 Flash and GLM 5.3 Flash write `content` before `path`; at upstream's pin their finished calls came back as parse
-  errors). A tool call that is malformed in other ways is still an error to the client, not a retry.
-- GLM 5.3 Flash's template honours `reasoning_effort` only as `low` or `high` and treats anything else as `max`, at
-  which it thinks to the token cap on a coding task; send one of the two, or set `--chat-template-kwargs
-  '{"reasoning_effort":"low"}'` on the server as the default.
-- Pictures are encoded on the CPU, 15 s each at the 300-row default on an 8-thread Ryzen 7 1700, quadratic in rows
-  (2040 rows took 146 s). The front end's ggml is built without CUDA (the engines bring their own), so `--mmproj-gpu`
-  is refused; giving the encoder the card is a build change to llama.cpp's ggml in this tree, not done.
-- Streams always end with a usage chunk (empty `choices`), as upstream's server does, whether or not the client asked
-  for `stream_options.include_usage`.
-- On SIGTERM the front end exits with status 1 after stopping the engine. Harmless under a shell; a systemd unit should
-  not use `Restart=on-failure` until this is fixed.
-- The engines are upstream's at v0.1.45-poly.1, unmodified, including their correctness; the checks against llama.cpp at
-  the pinned commit are above ("Measured"); the harness is `bench/correctness/`, the record is in history (commit 7551f138,
-  `bench/unbiased/correctness/`). Two things to know from them: `strata`'s
-  answer can differ from one start to the next on a card that does not hold every expert, because `--expert-cache auto`
-  sizes the cache from the free VRAM and the CPU-computed share of the misses rounds differently (a fixed `--expert-cache N`
-  pins it); and `strata-poly`'s drafting changes low-order bits above 4-token windows (within llama.cpp's own CPU/GPU spread).
-
-## What was removed, and the rule
-
-A file was removed only if it (1) reaches the network during setup, build or start, (2) puts Python between a
-request and a token, (3) breaks the one-command build, or (4) is marketing. The list, by rule:
-[UPSTREAM.md, Removed](UPSTREAM.md#removed). Everything else from upstream stays in the tree, built or not, including
-its engineering docs under `docs/`, its offline tools under `tools/`, its parity tests and its benchmark records.
-
-## Credits and license
-
-The engines are PolyStrata's, by VecSzn and contributors, built on [Strata](https://github.com/Niko1221/Strata) by
-Niko1221. The front end is built from [llama.cpp / ggml](https://github.com/ggml-org/llama.cpp)'s server, common and
-mtmd code. Qwen3.8-Flash-Next and Qwen3.6-35B-A3B are by the Qwen team; the IQ3_XXS GSQ-RCO file is
-[ISTA-DASLab](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)'s, the Qwen3.6 files are
-[Unsloth](https://huggingface.co/unsloth)'s. Upstream's full credits: [docs/HOW_IT_WORKS.md](docs/HOW_IT_WORKS.md#credits).
-MIT License ([LICENSE](LICENSE)); some parts and every model have their own licenses
-([which ones](docs/HOW_IT_WORKS.md#license)).
